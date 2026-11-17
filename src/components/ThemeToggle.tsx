@@ -52,7 +52,7 @@ export function ThemeToggle() {
       onClick={cycle}
       aria-label="تغيير المظهر"
       title={LABEL[theme]}
-      className="press grid h-9 w-9 place-items-center rounded-full border border-border bg-muted/40 text-base hover:bg-muted"
+      className="press grid h-8 w-8 place-items-center rounded-full border border-border bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
     >
       <span dangerouslySetInnerHTML={{ __html: ICONS[theme] }} />
     </button>

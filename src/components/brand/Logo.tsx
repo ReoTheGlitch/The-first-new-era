@@ -12,7 +12,7 @@ export function LogoMark({ className }: { className?: string }) {
       alt={BRAND_NAME}
       width={406}
       height={186}
-      className={cn("h-7 w-auto select-none drop-shadow-[0_0_14px_var(--violet)]", className)}
+      className={cn("h-7 w-auto select-none", className)}
       draggable={false}
     />
   );
