@@ -8,6 +8,8 @@ export type MistakeItem = {
   conceptId: string;
   lessonId: string;
   lessonTitle: string;
+  subjectSlug: string;
+  subjectName: string;
   prompt: string;
   chosenLabel: string | null;
   correctLabel: string;
@@ -75,7 +77,7 @@ export const getMistakes = createServerFn({ method: "POST" })
     const { data: qs } = await db
       .from("questions")
       .select(
-        "id, prompt_ar, explanation_ar, concept_id, concepts(id, lesson_id, lessons(id, title_ar)), question_options(id, label_ar, is_correct)",
+        "id, prompt_ar, explanation_ar, concept_id, concepts(id, lesson_id, lessons(id, title_ar, units(courses(subjects(slug, name_ar))))), question_options(id, label_ar, is_correct)",
       )
       .in(
         "id",
@@ -96,6 +98,8 @@ export const getMistakes = createServerFn({ method: "POST" })
           conceptId: q.concept_id,
           lessonId: q.concepts?.lessons?.id ?? "",
           lessonTitle: q.concepts?.lessons?.title_ar ?? "",
+          subjectSlug: q.concepts?.lessons?.units?.courses?.subjects?.slug ?? "",
+          subjectName: q.concepts?.lessons?.units?.courses?.subjects?.name_ar ?? "",
           prompt: q.prompt_ar,
           chosenLabel: chosen,
           correctLabel: correct,
