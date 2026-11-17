@@ -95,7 +95,10 @@ function Profile() {
           {me.achievements.length ? (
             <ul className="grid gap-3 sm:grid-cols-2">
               {me.achievements.map((a, i) => (
-                <li key={i} className="flex items-center gap-3 rounded-xl bg-muted/60 p-3">
+                <li
+                  key={i}
+                  className="flex items-center gap-3 rounded-xl bg-muted/60 p-3 glow-pulse"
+                >
                   <AppIcon name="achievements" tile size={40} />
                   <div className="min-w-0">
                     <p className="truncate font-medium">{a.achievements?.title_ar}</p>

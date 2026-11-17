@@ -54,8 +54,11 @@ function Assistant() {
   const [subject, setSubject] = useState<"physics" | "chemistry" | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isTyping, setIsTyping] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const typingRef = useRef<{ full: string; pos: number; msgIdx: number } | null>(null);
   useEffect(
     () => endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" }),
     [messages, busy],
@@ -66,11 +69,54 @@ function Assistant() {
     el.style.height = "auto";
     el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
   }, [input]);
+  useEffect(
+    () => () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    },
+    [],
+  );
+
+  function finalizeTyping() {
+    if (!typingRef.current) return;
+    const { full, msgIdx } = typingRef.current;
+    clearInterval(intervalRef.current!);
+    intervalRef.current = null;
+    typingRef.current = null;
+    setIsTyping(false);
+    setMessages((prev) => {
+      const u = [...prev];
+      if (u[msgIdx]) u[msgIdx] = { role: "assistant", content: full };
+      return u;
+    });
+  }
+
+  function startTyping(full: string, msgIdx: number) {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    typingRef.current = { full, pos: 0, msgIdx };
+    setIsTyping(true);
+    intervalRef.current = setInterval(() => {
+      const s = typingRef.current;
+      if (!s) return;
+      s.pos = Math.min(s.pos + 3, s.full.length);
+      setMessages((prev) => {
+        const u = [...prev];
+        if (u[s.msgIdx]) u[s.msgIdx] = { role: "assistant", content: s.full.slice(0, s.pos) };
+        return u;
+      });
+      if (s.pos >= s.full.length) {
+        clearInterval(intervalRef.current!);
+        intervalRef.current = null;
+        typingRef.current = null;
+        setIsTyping(false);
+      }
+    }, 15);
+  }
 
   async function send(e: React.FormEvent) {
     e.preventDefault();
     const text = input.trim();
     if (!text || busy) return;
+    finalizeTyping();
     const next = [...messages, { role: "user" as const, content: text }];
     setMessages(next);
     setInput("");
@@ -79,7 +125,14 @@ function Assistant() {
     try {
       const r = await ask({ data: { messages: next, style, length, subject, conversationId } });
       if (r.ok) {
-        setMessages([...next, { role: "assistant", content: r.text }]);
+        const full = r.text;
+        const msgIdx = next.length;
+        if (full.length <= 80) {
+          setMessages([...next, { role: "assistant", content: full }]);
+        } else {
+          setMessages([...next, { role: "assistant", content: "" }]);
+          startTyping(full, msgIdx);
+        }
         if (r.conversationId) setConversationId(r.conversationId);
         await refreshConversations();
       } else setError(r.message);
@@ -288,6 +341,9 @@ function Assistant() {
                     >
                       {m.content}
                     </ReactMarkdown>
+                    {isTyping && i === messages.length - 1 && (
+                      <span className="animate-pulse text-primary">▋</span>
+                    )}
                   </div>
                 </div>
               ),
