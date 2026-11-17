@@ -52,7 +52,7 @@ function Podium({ board }: { board: BoardRow[] }) {
         <div key={r.user_id} className="flex flex-col items-center gap-1.5">
           <div
             className="flex h-12 w-12 items-center justify-center rounded-full text-lg font-semibold"
-            style={{ backgroundColor: MEDAL_COLORS[i], color: "#0f0b1a" }}
+            style={{ backgroundColor: MEDAL_COLORS[i], color: "#0a0b0e" }}
           >
             {r.display_name.slice(0, 1)}
           </div>
@@ -67,7 +67,7 @@ function Podium({ board }: { board: BoardRow[] }) {
             style={{
               height: PEDESTAL_H[i],
               backgroundColor: MEDAL_COLORS[i],
-              color: "#0f0b1a",
+              color: "#0a0b0e",
             }}
           >
             #{r.rank}
