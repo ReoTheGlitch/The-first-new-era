@@ -7,9 +7,7 @@ import type { TutorResult } from "./types";
 export const getAiStatus = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async () => {
-    const { resolveProvider } = await import("./config.server");
-    const p = resolveProvider();
-    return { configured: p.kind !== "none", provider: p.kind };
+    return { configured: true, provider: "openrouter" };
   });
 
 const messageSchema = z.object({
@@ -95,19 +93,12 @@ export const askTutor = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => req.parse(d))
   .handler(async ({ data, context }): Promise<TutorResult & { conversationId?: string }> => {
-    const { resolveProvider, AI_LIMITS } = await import("./config.server");
+    const { AI_LIMITS, getModel } = await import("./config.server");
     const { AiProviderError } = await import("./provider-error");
-    const { createGeminiProvider } = await import("./gemini-adapter.server");
+    const { generateText } = await import("./provider.server");
     const { getStudentAdaptiveSummary } = await import("./student-context.server");
     const { hasSupabaseAdminEnv, supabaseAdmin } =
       await import("@/integrations/supabase/client.server");
-    const choice = resolveProvider();
-    if (choice.kind === "none")
-      return {
-        ok: false,
-        code: "not_configured",
-        message: "المساعد الذكي يحتاج إلى إعداد GEMINI_API_KEY أولًا.",
-      };
     const last = data.messages[data.messages.length - 1]!;
     if (last.role !== "user" || last.content.length > AI_LIMITS.maxMessageChars)
       return {
@@ -161,7 +152,7 @@ export const askTutor = createServerFn({ method: "POST" })
       .filter(Boolean)
       .join("\n");
 
-    const provider = createGeminiProvider(choice);
+    const provider = { name: "openrouter", model: getModel() };
     const history = data.messages.slice(-AI_LIMITS.maxHistoryMessages);
     let conversationId = data.conversationId ?? undefined;
     try {
@@ -194,7 +185,13 @@ export const askTutor = createServerFn({ method: "POST" })
         });
       if (userSaveError) throw new Error("تعذّر حفظ رسالتك.");
 
-      const text = await provider.generate(system, history, AI_LIMITS.maxOutputTokens);
+      // Gemini (via OpenRouter) requires the conversation to start with a user turn.
+      const firstUser = history.findIndex((m) => m.role === "user");
+      const turns = firstUser >= 0 ? history.slice(firstUser) : history;
+      const { text } = await generateText({
+        messages: [{ role: "system", content: system }, ...turns],
+        maxTokens: AI_LIMITS.maxOutputTokens,
+      });
       const { error: assistantSaveError } = await (context.supabase as any)
         .from("ai_chat_messages")
         .insert({
@@ -242,13 +239,14 @@ export const askTutor = createServerFn({ method: "POST" })
         return {
           ok: false,
           code: "rate_limited",
-          message: "Gemini مشغول حاليًا. انتظر قليلًا ثم حاول مجددًا.",
+          message: "المساعد مشغول حاليًا. انتظر قليلًا ثم حاول مجددًا.",
         };
       if (status === 401 || status === 403 || status === 400)
         return {
           ok: false,
           code: "denied",
-          message: "تعذّر الوصول إلى Gemini. راجع قيمة GEMINI_API_KEY في إعدادات Vercel.",
+          message:
+            "تعذّر الوصول إلى خدمة الذكاء الاصطناعي. راجع قيمة OPENROUTER_API_KEY في أسرار الـ Worker.",
         };
       return {
         ok: false,

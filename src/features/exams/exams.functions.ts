@@ -21,20 +21,38 @@ const generateExamSchema = z.object({
   topic: z.string().max(120).optional(),
 });
 
+const EXAM_JSON_SCHEMA = {
+  type: "object",
+  additionalProperties: false,
+  required: ["examTitle", "questions"],
+  properties: {
+    examTitle: { type: "string" },
+    questions: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["id", "prompt", "options", "correctIndex", "explanation", "svgDiagram"],
+        properties: {
+          id: { type: "string" },
+          prompt: { type: "string" },
+          options: { type: "array", items: { type: "string" } },
+          correctIndex: { type: "integer" },
+          explanation: { type: "string" },
+          svgDiagram: { type: "string" },
+        },
+      },
+    },
+  },
+};
+
 export const generateAiExam = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => generateExamSchema.parse(d))
   .handler(async ({ data, context }): Promise<GenerateExamResult> => {
-    const { resolveProvider } = await import("@/lib/ai/config.server");
     const { AiProviderError } = await import("@/lib/ai/provider-error");
-    const { createGeminiProvider } = await import("@/lib/ai/gemini-adapter.server");
+    const { generateJson, getModel } = await import("@/lib/ai/provider.server");
     const { getStudentAdaptiveSummary } = await import("@/lib/ai/student-context.server");
-    const choice = resolveProvider();
-    if (choice.kind === "none")
-      return {
-        ok: false,
-        message: "توليد الامتحانات يحتاج إلى إعداد GEMINI_API_KEY في إعدادات السيرفر.",
-      };
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
     const { count: recentCount } = await (context.supabase as any)
       .from("ai_generated_exams")
@@ -63,26 +81,23 @@ export const generateAiExam = createServerFn({ method: "POST" })
       `أنت خبير وضع امتحانات ${subjectAr} للصف الثالث الثانوي في مصر.`,
       student.promptSummary,
       `أنشئ ${data.count} أسئلة اختيار من متعدد ${topicPart} بمستوى ${diffAr}.`,
-      `أرجع JSON صالحًا فقط بالشكل: {"examTitle":"عنوان","questions":[{"id":"q1","prompt":"السؤال","options":["أ","ب","ج","د"],"correctIndex":0,"explanation":"التفسير","svgDiagram":"<svg...> (اختياري)"}]}`,
+      `أرجع JSON صالحًا فقط بالشكل: {"examTitle":"عنوان","questions":[{"id":"q1","prompt":"السؤال","options":["أ","ب","ج","د"],"correctIndex":0,"explanation":"التفسير","svgDiagram":"<svg...> أو نص فارغ إن لم يلزم رسم"}]}`,
       "تأكد من وجود أربعة اختيارات وفهرس إجابة صحيح من 0 إلى 3 لكل سؤال.",
     ].join("\n");
-    const provider = createGeminiProvider(choice, { responseMimeType: "application/json" });
+    const provider = { name: "openrouter", model: getModel() };
     try {
-      const raw = await provider.generate(
-        systemPrompt,
-        [{ role: "user", content: `أنشئ امتحان ${subjectAr} من ${data.count} أسئلة الآن.` }],
-        4096,
-      );
-      const cleaned = raw
-        .replace(/^```json\s*/i, "")
-        .replace(/^```\s*/i, "")
-        .replace(/```\s*$/i, "")
-        .trim();
-      const match = cleaned.match(/\{[\s\S]*\}/);
-      const parsed = JSON.parse(match ? match[0] : cleaned) as {
+      const { data: parsed } = await generateJson<{
         examTitle?: string;
         questions?: AiExamQuestion[];
-      };
+      }>({
+        schemaName: "exam",
+        schema: EXAM_JSON_SCHEMA,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: `أنشئ امتحان ${subjectAr} من ${data.count} أسئلة الآن.` },
+        ],
+        maxTokens: 4096,
+      });
       if (
         !Array.isArray(parsed.questions) ||
         parsed.questions.length !== data.count ||
@@ -128,9 +143,12 @@ export const generateAiExam = createServerFn({ method: "POST" })
       const status = e instanceof AiProviderError ? e.status : 500;
       console.error("generateAiExam error", status, e instanceof Error ? e.message : e);
       if (status === 401 || status === 403 || status === 400)
-        return { ok: false, message: "تعذّر الاتصال بـ Gemini. راجع مفتاح GEMINI_API_KEY." };
+        return {
+          ok: false,
+          message: "تعذّر الاتصال بخدمة الذكاء الاصطناعي. راجع مفتاح OPENROUTER_API_KEY.",
+        };
       if (status === 429 || status === 503)
-        return { ok: false, message: "Gemini مشغول حاليًا. حاول بعد قليل." };
+        return { ok: false, message: "المساعد مشغول حاليًا. حاول بعد قليل." };
       return { ok: false, message: "حدث خطأ أثناء توليد الامتحان. حاول مرة أخرى." };
     }
   });
