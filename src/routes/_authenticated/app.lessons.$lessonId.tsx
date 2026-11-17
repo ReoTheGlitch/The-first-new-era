@@ -4,6 +4,7 @@ import React, { Suspense, useEffect, useState } from "react";
 import { lessonQuery } from "@/features/student/queries";
 import { Card, MathTex, PageHeader, SkeletonBlock, StatusBadge } from "@/components/common";
 import { AppIcon } from "@/components/icons/AppIcon";
+import { LessonNotes } from "@/components/LessonNotes";
 
 const LessonLab = React.lazy(() =>
   import("@/components/labs/LessonLab").then((m) => ({ default: m.LessonLab })),
@@ -186,6 +187,8 @@ function LessonPage() {
               </Link>
             </Card>
           ))}
+
+          <LessonNotes lessonId={lessonId} lessonTitle={l.title_ar} />
         </aside>
       </div>
 
