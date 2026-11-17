@@ -109,7 +109,7 @@ export function StudyTimer() {
         onClick={() => setExpanded(true)}
         aria-label="فتح مؤقت الدراسة"
         className={cn(
-          "press fixed bottom-20 right-4 z-30 flex h-10 w-10 items-center justify-center rounded-full border border-border bg-popover text-base shadow-lg md:bottom-8",
+          "press fixed bottom-20 right-4 z-30 flex h-10 w-10 items-center justify-center rounded-full border border-border bg-popover text-base shadow-md md:bottom-8",
           flash && "animate-pulse border-primary",
           phase === "running" && "border-primary/50 text-primary",
         )}
@@ -135,7 +135,7 @@ export function StudyTimer() {
   return (
     <div
       className={cn(
-        "fixed bottom-20 right-4 z-30 w-64 overflow-hidden rounded-2xl border border-border bg-popover shadow-xl md:bottom-8",
+        "fixed bottom-20 right-4 z-30 w-64 overflow-hidden rounded-md border border-border bg-popover shadow-md md:bottom-8",
         flash && "animate-pulse border-primary",
       )}
     >
@@ -199,7 +199,7 @@ export function StudyTimer() {
             />
           </svg>
           <div
-            className="absolute inset-0 flex items-center justify-center font-mono text-2xl font-bold tabular-nums"
+            className="absolute inset-0 flex items-center justify-center font-mono text-2xl font-semibold tabular-nums"
             style={{ fontVariantNumeric: "tabular-nums" }}
           >
             {fmt(remaining)}
@@ -212,7 +212,7 @@ export function StudyTimer() {
             <button
               type="button"
               onClick={start}
-              className="press rounded-xl bg-brand px-5 py-1.5 text-xs font-medium text-primary-foreground"
+              className="press rounded-md bg-brand px-5 py-1.5 text-xs font-medium text-primary-foreground"
             >
               ابدأ
             </button>
@@ -220,7 +220,7 @@ export function StudyTimer() {
             <button
               type="button"
               onClick={pause}
-              className="press rounded-xl border border-border px-5 py-1.5 text-xs font-medium"
+              className="press rounded-md border border-border px-5 py-1.5 text-xs font-medium"
             >
               إيقاف مؤقت
             </button>
@@ -228,7 +228,7 @@ export function StudyTimer() {
           <button
             type="button"
             onClick={reset}
-            className="press rounded-xl border border-border px-3 py-1.5 text-xs text-muted-foreground"
+            className="press rounded-md border border-border px-3 py-1.5 text-xs text-muted-foreground"
           >
             إعادة ضبط
           </button>

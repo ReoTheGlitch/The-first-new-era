@@ -59,7 +59,7 @@ function SubjectPage() {
                       <Link
                         to="/app/lessons/$lessonId"
                         params={{ lessonId: l.id }}
-                        className="press flex items-center justify-between gap-3 rounded-xl bg-muted/60 p-4 hover:bg-muted"
+                        className="press flex items-center justify-between gap-3 rounded-md bg-muted/60 p-4 hover:bg-muted"
                       >
                         <span className="min-w-0 truncate">{l.title_ar}</span>
                         <span className="shrink-0 text-sm text-primary">افتح الدرس</span>

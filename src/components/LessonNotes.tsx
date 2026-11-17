@@ -39,7 +39,7 @@ export function LessonNotes({ lessonId }: Props) {
   }
 
   return (
-    <div className="rounded-xl border border-border bg-muted/30">
+    <div className="rounded-md border border-border bg-muted/30">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
@@ -80,7 +80,7 @@ export function LessonNotes({ lessonId }: Props) {
             onChange={(e) => setText(e.target.value)}
             maxLength={1000}
             placeholder="اكتب ملاحظاتك هنا..."
-            className="w-full resize-none rounded-xl border border-input bg-background/60 px-3 py-2.5 text-sm outline-none focus:border-primary/60"
+            className="w-full resize-none rounded-md border border-input bg-background/60 px-3 py-2.5 text-sm outline-none focus:border-primary/60"
             style={{ minHeight: 80, maxHeight: 300 }}
           />
           <div className="mt-2 flex items-center justify-between gap-2">
@@ -88,7 +88,7 @@ export function LessonNotes({ lessonId }: Props) {
             <button
               type="button"
               onClick={save}
-              className="press rounded-xl bg-primary/10 px-4 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary/20"
+              className="press rounded-md bg-primary/10 px-4 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary/20"
             >
               {saved ? "✓ تم الحفظ" : "حفظ"}
             </button>

@@ -20,7 +20,7 @@ function Home() {
         </div>
         <Link
           to="/auth"
-          className="press inline-block rounded-xl bg-brand px-8 py-3 font-medium text-primary-foreground"
+          className="press inline-block rounded-md bg-brand px-8 py-3 font-medium text-primary-foreground"
         >
           ابدأ الآن
         </Link>

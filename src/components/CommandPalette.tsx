@@ -82,7 +82,7 @@ export function CommandPalette() {
       onClick={close}
     >
       <div
-        className="max-w-lg w-full bg-popover border border-primary/30 rounded-2xl shadow-2xl overflow-hidden"
+        className="max-w-lg w-full bg-popover border border-primary/30 rounded-md shadow-2xl overflow-hidden"
         style={{ boxShadow: "0 0 40px oklch(0.60 0.22 285 / 0.2), 0 8px 32px black" }}
         onClick={(e) => e.stopPropagation()}
       >

@@ -19,12 +19,12 @@ export const Route = createFileRoute("/_authenticated/app/")({
       context.queryClient.ensureQueryData(subjectsQuery),
     ]),
   errorComponent: ({ error }) => (
-    <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-6 text-center">
+    <div className="rounded-md border border-destructive/30 bg-destructive/10 p-6 text-center">
       <p className="font-medium text-destructive">حدث خطأ في تحميل الصفحة</p>
       <p className="mt-1 text-xs text-muted-foreground">{(error as Error)?.message}</p>
       <button
         onClick={() => window.location.reload()}
-        className="press mt-4 rounded-xl bg-brand px-4 py-2 text-sm text-primary-foreground"
+        className="press mt-4 rounded-md bg-brand px-4 py-2 text-sm text-primary-foreground"
       >
         تحديث
       </button>
@@ -108,13 +108,13 @@ function Dashboard() {
               <div className="mt-5 flex flex-wrap gap-2">
                 <Link
                   to="/app/subjects"
-                  className="press rounded-xl bg-brand px-5 py-2.5 text-sm font-medium text-primary-foreground glow-edge"
+                  className="press rounded-md bg-brand px-5 py-2.5 text-sm font-medium text-primary-foreground glow-edge"
                 >
                   {fresh ? "ابدأ التعلم" : "تابع التعلم"}
                 </Link>
                 <Link
                   to="/app/assistant"
-                  className="press flex items-center gap-2 rounded-xl border border-input px-4 py-2.5 text-sm"
+                  className="press flex items-center gap-2 rounded-md border border-input px-4 py-2.5 text-sm"
                 >
                   <AppIcon name="assistant" size={18} /> اسأل المساعد
                 </Link>
@@ -199,7 +199,7 @@ function Dashboard() {
                 <Link
                   to="/app/practice/$conceptId"
                   params={{ conceptId: lastAttempt.concept_id }}
-                  className="press flex items-center justify-between gap-3 rounded-xl bg-muted/60 p-4 hover:bg-muted"
+                  className="press flex items-center justify-between gap-3 rounded-md bg-muted/60 p-4 hover:bg-muted"
                 >
                   <div className="min-w-0">
                     <p className="truncate font-medium">{lastAttempt.concepts.title_ar}</p>
@@ -259,7 +259,7 @@ function Dashboard() {
                         <Link
                           to="/app/practice/$conceptId"
                           params={{ conceptId: a.concept_id }}
-                          className="press block rounded-xl bg-muted/60 p-3 text-sm hover:bg-muted"
+                          className="press block rounded-md bg-muted/60 p-3 text-sm hover:bg-muted"
                         >
                           راجع: {a.concepts?.title_ar}
                         </Link>

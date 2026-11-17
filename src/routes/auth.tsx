@@ -48,7 +48,7 @@ function AuthPage() {
     }
   }
 
-  const input = "w-full rounded-xl border border-input bg-muted/60 px-3 py-3 text-sm";
+  const input = "w-full rounded-md border border-input bg-muted/60 px-3 py-3 text-sm";
   return (
     <div className="relative grid min-h-screen place-items-center px-4">
       <div className="ambient" aria-hidden />
@@ -95,7 +95,7 @@ function AuthPage() {
             />
             <button
               disabled={busy}
-              className="press w-full rounded-xl bg-brand py-3 font-medium text-primary-foreground disabled:opacity-50"
+              className="press w-full rounded-md bg-brand py-3 font-medium text-primary-foreground disabled:opacity-50"
             >
               {mode === "in" ? "دخول" : "إنشاء الحساب"}
             </button>

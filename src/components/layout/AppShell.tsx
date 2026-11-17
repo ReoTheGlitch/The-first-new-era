@@ -36,7 +36,7 @@ function NavLink({
       activeOptions={{ exact: item.exact ?? false }}
       aria-label={item.label}
       className={cn(
-        "press group relative flex items-center rounded-xl text-sidebar-foreground/75 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground data-[status=active]:bg-sidebar-accent data-[status=active]:text-sidebar-accent-foreground",
+        "press group relative flex items-center rounded-md text-sidebar-foreground/75 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground data-[status=active]:bg-sidebar-accent data-[status=active]:text-sidebar-accent-foreground",
         variant === "full" && "gap-3 px-3 py-2.5 text-sm",
         variant === "sheet" && "gap-3 px-3 py-3 text-base",
         variant === "rail" && "h-12 w-12 justify-center",
@@ -75,7 +75,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 new KeyboardEvent("keydown", { key: "k", ctrlKey: true, bubbles: true }),
               )
             }
-            className="press mb-4 flex w-full items-center justify-between rounded-xl border border-border bg-muted/40 px-3 py-2 text-xs text-muted-foreground hover:border-primary/30 hover:text-foreground"
+            className="press mb-4 flex w-full items-center justify-between rounded-md border border-border bg-muted/40 px-3 py-2 text-xs text-muted-foreground hover:border-primary/30 hover:text-foreground"
             aria-label="فتح البحث السريع"
           >
             <span className="flex items-center gap-2">
@@ -105,7 +105,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             ))}
             <button
               onClick={signOut}
-              className="press rounded-xl px-3 py-2.5 text-start text-sm text-muted-foreground hover:bg-sidebar-accent/60"
+              className="press rounded-md px-3 py-2.5 text-start text-sm text-muted-foreground hover:bg-sidebar-accent/60"
             >
               تسجيل الخروج
             </button>
@@ -145,7 +145,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   )
                 }
                 aria-label="البحث السريع"
-                className="press hidden items-center gap-1.5 rounded-xl border border-border px-2.5 py-1.5 text-[11px] text-muted-foreground sm:flex"
+                className="press hidden items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-[11px] text-muted-foreground sm:flex"
               >
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden>
                   <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
@@ -162,7 +162,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <Link
                 to="/app/profile"
                 aria-label="الملف الشخصي"
-                className="press grid h-10 w-10 place-items-center rounded-xl"
+                className="press grid h-10 w-10 place-items-center rounded-md"
               >
                 <AppIcon name="profile" size={22} />
               </Link>
@@ -191,7 +191,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </button>
       </nav>
       <Sheet open={moreOpen} onOpenChange={setMoreOpen}>
-        <SheetContent side="bottom" className="rounded-t-3xl border-border bg-popover">
+        <SheetContent side="bottom" className="rounded-t-lg border-border bg-popover">
           <SheetHeader>
             <SheetTitle className="text-start">المزيد</SheetTitle>
           </SheetHeader>
@@ -202,7 +202,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             ))}
             <button
               onClick={signOut}
-              className="press rounded-xl px-3 py-3 text-start text-base text-muted-foreground"
+              className="press rounded-md px-3 py-3 text-start text-base text-muted-foreground"
             >
               تسجيل الخروج
             </button>
