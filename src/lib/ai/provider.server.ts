@@ -34,10 +34,10 @@ export function isAiConfigured(): boolean {
 }
 
 const isNode =
-  typeof (globalThis as Record<string, unknown>).EdgeRuntime === "undefined" &&
+  typeof (globalThis as Record<string, unknown>)["EdgeRuntime"] === "undefined" &&
   typeof process !== "undefined" &&
   process.release?.name === "node" &&
-  typeof (globalThis as Record<string, unknown>).WebSocketPair === "undefined" &&
+  typeof (globalThis as Record<string, unknown>)["WebSocketPair"] === "undefined" &&
   !(typeof navigator !== "undefined" && navigator.userAgent === "Cloudflare-Workers");
 
 async function nodeDispatcher(): Promise<unknown> {
