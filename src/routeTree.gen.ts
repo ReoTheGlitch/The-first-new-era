@@ -18,6 +18,7 @@ import { Route as AuthenticatedAppAssistantRouteImport } from './routes/_authent
 import { Route as AuthenticatedAppCommunityRouteImport } from './routes/_authenticated/app.community'
 import { Route as AuthenticatedAppCompetitionRouteImport } from './routes/_authenticated/app.competition'
 import { Route as AuthenticatedAppDuelRouteImport } from './routes/_authenticated/app.duel'
+import { Route as AuthenticatedAppExamsRouteImport } from './routes/_authenticated/app.exams'
 import { Route as AuthenticatedAppMistakesRouteImport } from './routes/_authenticated/app.mistakes'
 import { Route as AuthenticatedAppProfileRouteImport } from './routes/_authenticated/app.profile'
 import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenticated/app.settings'
@@ -73,6 +74,11 @@ const AuthenticatedAppDuelRoute = AuthenticatedAppDuelRouteImport.update({
   path: '/duel',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
+const AuthenticatedAppExamsRoute = AuthenticatedAppExamsRouteImport.update({
+  id: '/exams',
+  path: '/exams',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
 const AuthenticatedAppMistakesRoute =
   AuthenticatedAppMistakesRouteImport.update({
     id: '/mistakes',
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/app/community': typeof AuthenticatedAppCommunityRoute
   '/app/competition': typeof AuthenticatedAppCompetitionRoute
   '/app/duel': typeof AuthenticatedAppDuelRoute
+  '/app/exams': typeof AuthenticatedAppExamsRoute
   '/app/mistakes': typeof AuthenticatedAppMistakesRoute
   '/app/profile': typeof AuthenticatedAppProfileRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
@@ -139,6 +146,7 @@ export interface FileRoutesByTo {
   '/app/community': typeof AuthenticatedAppCommunityRoute
   '/app/competition': typeof AuthenticatedAppCompetitionRoute
   '/app/duel': typeof AuthenticatedAppDuelRoute
+  '/app/exams': typeof AuthenticatedAppExamsRoute
   '/app/mistakes': typeof AuthenticatedAppMistakesRoute
   '/app/profile': typeof AuthenticatedAppProfileRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
@@ -158,6 +166,7 @@ export interface FileRoutesById {
   '/_authenticated/app/community': typeof AuthenticatedAppCommunityRoute
   '/_authenticated/app/competition': typeof AuthenticatedAppCompetitionRoute
   '/_authenticated/app/duel': typeof AuthenticatedAppDuelRoute
+  '/_authenticated/app/exams': typeof AuthenticatedAppExamsRoute
   '/_authenticated/app/mistakes': typeof AuthenticatedAppMistakesRoute
   '/_authenticated/app/profile': typeof AuthenticatedAppProfileRoute
   '/_authenticated/app/settings': typeof AuthenticatedAppSettingsRoute
@@ -177,6 +186,7 @@ export interface FileRouteTypes {
     | '/app/community'
     | '/app/competition'
     | '/app/duel'
+    | '/app/exams'
     | '/app/mistakes'
     | '/app/profile'
     | '/app/settings'
@@ -193,6 +203,7 @@ export interface FileRouteTypes {
     | '/app/community'
     | '/app/competition'
     | '/app/duel'
+    | '/app/exams'
     | '/app/mistakes'
     | '/app/profile'
     | '/app/settings'
@@ -211,6 +222,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/community'
     | '/_authenticated/app/competition'
     | '/_authenticated/app/duel'
+    | '/_authenticated/app/exams'
     | '/_authenticated/app/mistakes'
     | '/_authenticated/app/profile'
     | '/_authenticated/app/settings'
@@ -292,6 +304,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppDuelRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/app/exams': {
+      id: '/_authenticated/app/exams'
+      path: '/exams'
+      fullPath: '/app/exams'
+      preLoaderRoute: typeof AuthenticatedAppExamsRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
     '/_authenticated/app/mistakes': {
       id: '/_authenticated/app/mistakes'
       path: '/mistakes'
@@ -349,6 +368,7 @@ interface AuthenticatedAppRouteChildren {
   AuthenticatedAppCommunityRoute: typeof AuthenticatedAppCommunityRoute
   AuthenticatedAppCompetitionRoute: typeof AuthenticatedAppCompetitionRoute
   AuthenticatedAppDuelRoute: typeof AuthenticatedAppDuelRoute
+  AuthenticatedAppExamsRoute: typeof AuthenticatedAppExamsRoute
   AuthenticatedAppMistakesRoute: typeof AuthenticatedAppMistakesRoute
   AuthenticatedAppProfileRoute: typeof AuthenticatedAppProfileRoute
   AuthenticatedAppSettingsRoute: typeof AuthenticatedAppSettingsRoute
@@ -364,6 +384,7 @@ const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppCommunityRoute: AuthenticatedAppCommunityRoute,
   AuthenticatedAppCompetitionRoute: AuthenticatedAppCompetitionRoute,
   AuthenticatedAppDuelRoute: AuthenticatedAppDuelRoute,
+  AuthenticatedAppExamsRoute: AuthenticatedAppExamsRoute,
   AuthenticatedAppMistakesRoute: AuthenticatedAppMistakesRoute,
   AuthenticatedAppProfileRoute: AuthenticatedAppProfileRoute,
   AuthenticatedAppSettingsRoute: AuthenticatedAppSettingsRoute,
@@ -398,13 +419,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

@@ -9,12 +9,12 @@ export const Route = createFileRoute("/_authenticated/app/lessons/$lessonId")({
   head: ({ loaderData }) => ({
     meta: [
       {
-        title: `${loaderData?.titleAr ?? "الدرس"} — العصر الجديد الأول`,
+        title: `${(loaderData as { titleAr?: string } | undefined)?.titleAr ?? "الدرس"} — العصر الجديد الأول`,
       },
       { name: "description", content: "شرح الدرس ومفاهيمه والتدريب عليها." },
     ],
   }),
-  loader: async ({ context, params }) => {
+  loader: async ({ context, params }): Promise<{ titleAr: string }> => {
     const l = await context.queryClient.ensureQueryData(lessonQuery(params.lessonId));
     if (!l) throw notFound();
     return { titleAr: l.title_ar };

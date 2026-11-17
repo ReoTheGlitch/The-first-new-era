@@ -7,12 +7,12 @@ export const Route = createFileRoute("/_authenticated/app/subjects/$subjectSlug"
   head: ({ loaderData }) => ({
     meta: [
       {
-        title: `${loaderData?.nameAr ?? "المادة"} — العصر الجديد الأول`,
+        title: `${(loaderData as { nameAr?: string } | undefined)?.nameAr ?? "المادة"} — العصر الجديد الأول`,
       },
       { name: "description", content: "وحدات ودروس المادة." },
     ],
   }),
-  loader: async ({ context, params }) => {
+  loader: async ({ context, params }): Promise<{ nameAr: string }> => {
     const s = await context.queryClient.ensureQueryData(subjectQuery(params.subjectSlug));
     if (!s) throw notFound();
     return { nameAr: s.name_ar };
