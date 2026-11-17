@@ -55,6 +55,62 @@ function WeeklySparkline({ days }: { days: number[] }) {
   );
 }
 
+const QUOTES = [
+  "العلم نور والجهل ظلام",
+  "من جدّ وجد، ومن زرع حصد",
+  "لا يكلّف الله نفساً إلا وسعها",
+  "النجاح ليس نهائياً والفشل ليس قاتلاً",
+  "كل يوم هو فرصة جديدة للتعلم",
+  "الوقت كالسيف إن لم تقطعه قطعك",
+  "اطلب العلم من المهد إلى اللحد",
+];
+
+type Me = Awaited<ReturnType<NonNullable<typeof studentOverviewQuery.queryFn>>>;
+
+function StatsGrid({ me }: { me: Me }) {
+  const totalCorrect = me.attempts.reduce((a: number, r) => a + (r.correct_count ?? 0), 0);
+  const totalAnswered = me.attempts.reduce((a: number, r) => a + (r.total_count ?? 0), 0);
+  const accuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : null;
+
+  const stats = [
+    { icon: "🎯", value: accuracy !== null ? `${accuracy}٪` : "—", label: "نسبة الدقة" },
+    { icon: "📝", value: String(me.attempts.length), label: "جلسات التدريب" },
+    { icon: "🔥", value: String(me.streak), label: "أيام متواصلة" },
+    { icon: "🏅", value: String(me.longestStreak), label: "أطول سلسلة" },
+  ];
+
+  return (
+    <Card className="mt-6">
+      <h2 className="mb-4 font-semibold">إحصائياتي</h2>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {stats.map((s) => (
+          <div
+            key={s.label}
+            className="flex flex-col items-center gap-1 rounded-xl bg-muted/50 px-3 py-4 text-center"
+          >
+            <span className="text-2xl" aria-hidden>
+              {s.icon}
+            </span>
+            <span className="text-xl font-bold tabular-nums">{s.value}</span>
+            <span className="text-xs text-muted-foreground">{s.label}</span>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
+
+function DailyQuote() {
+  const quote = QUOTES[new Date().getDay() % QUOTES.length];
+  return (
+    <Card className="mt-6 py-6 text-center">
+      <p className="text-xs text-muted-foreground">✦</p>
+      <p className="mt-2 text-sm italic text-muted-foreground">{quote}</p>
+      <p className="mt-2 text-xs text-muted-foreground">✦</p>
+    </Card>
+  );
+}
+
 function Profile() {
   const { data: me } = useSuspenseQuery(studentOverviewQuery);
   const { data: weekly } = useQuery(weeklyXpQuery);
@@ -131,6 +187,9 @@ function Profile() {
           )}
         </Card>
       )}
+
+      <StatsGrid me={me} />
+      <DailyQuote />
     </div>
   );
 }
