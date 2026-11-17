@@ -62,7 +62,6 @@ npx tsc --noEmit     # strict type check
 │   │   ├── ai/              # OpenRouter provider + tutor & exam server fns
 │   │   ├── engagement/      # streak + weekly competition
 │   │   └── time/            # Cairo-local date math
-│   ├── integrations/supabase/  # retired — nothing imports it, slated for deletion
 │   ├── server.ts            # Cloudflare fetch handler (SSR entry)
 │   └── styles.css           # Tailwind v4 + OKLCH tokens
 ├── scripts/cf/              # deploy.sh, apply-migrations.mjs, cf-entry.mjs, kv-payload.mjs
