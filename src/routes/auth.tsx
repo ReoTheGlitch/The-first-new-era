@@ -37,7 +37,19 @@ function AuthPage() {
           ? await signIn({ data: { email, password } })
           : await signUp({ data: { email, password, name: name.trim() } });
       if ("error" in res) {
-        toast.error(res.error);
+        if (res.error === "too_many_requests") {
+          const wait =
+            "retryAfterSec" in res && typeof res.retryAfterSec === "number"
+              ? Math.max(1, Math.ceil(res.retryAfterSec / 60))
+              : null;
+          toast.error(
+            wait
+              ? `عدد محاولات كبير. حاول بعد ${wait} دقيقة.`
+              : "عدد محاولات كبير. حاول لاحقًا.",
+          );
+        } else {
+          toast.error(res.error);
+        }
         return;
       }
       navigate({ to: "/app" });
