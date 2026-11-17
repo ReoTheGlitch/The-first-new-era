@@ -5,6 +5,7 @@ import {
   getLesson,
   getStudentOverview,
   getSubject,
+  getWeeklyCompetition,
   getWeeklyXp,
   listSubjects,
 } from "./student.functions";
@@ -48,5 +49,11 @@ export const leaderboardQuery = queryOptions({
   queryKey: ["competition", "leaderboard"],
   queryFn: () => getLeaderboard(),
   // Replaces the old realtime feel: refresh while the page is open.
+  refetchInterval: 30_000,
+});
+
+export const weeklyCompetitionQuery = queryOptions({
+  queryKey: ["competition", "weekly"],
+  queryFn: () => getWeeklyCompetition(),
   refetchInterval: 30_000,
 });

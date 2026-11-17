@@ -1,21 +1,27 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { leaderboardQuery, studentOverviewQuery } from "@/features/student/queries";
-import { Card, EmptyState, PageHeader, SkeletonBlock, StatusBadge } from "@/components/common";
+import {
+  leaderboardQuery,
+  studentOverviewQuery,
+  weeklyCompetitionQuery,
+} from "@/features/student/queries";
+import { Card, EmptyState, PageHeader, SkeletonBlock } from "@/components/common";
 import { AppIcon } from "@/components/icons/AppIcon";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { WeeklyCountdown } from "@/features/engagement/WeeklyCountdown";
 
 export const Route = createFileRoute("/_authenticated/app/competition")({
   head: () => ({
     meta: [
-      { title: "المنافسة — العصر الجديد الأول" },
-      { name: "description", content: "لوحة الترتيب والتحديات والمواسم." },
+      { title: "المنافسة — The first" },
+      { name: "description", content: "لوحة الترتيب الأسبوعية والمواسم." },
     ],
   }),
   loader: ({ context }) =>
     Promise.all([
       context.queryClient.ensureQueryData(leaderboardQuery),
       context.queryClient.ensureQueryData(studentOverviewQuery),
+      context.queryClient.ensureQueryData(weeklyCompetitionQuery),
     ]),
   pendingComponent: LeaderboardSkeleton,
   component: Competition,
@@ -142,16 +148,21 @@ function LeaderboardSkeleton() {
 function Competition() {
   const { data: board } = useSuspenseQuery(leaderboardQuery);
   const { data: me } = useSuspenseQuery(studentOverviewQuery);
+  const { data: weekly } = useSuspenseQuery(weeklyCompetitionQuery);
+  const myWeekly = weekly.rows.find((r) => r.is_me);
   return (
     <div>
-      <PageHeader
-        title="المنافسة"
-        subtitle="الترتيب مبني على نقاط خبرة حقيقية يمنحها الخادم فقط."
-        icon="competition"
-      />
+      <PageHeader title="المنافسة" icon="competition" />
+      <Card className="mb-6 flex flex-wrap items-center justify-between gap-4 p-5">
+        <WeeklyCountdown endsAt={weekly.round.endsAt} />
+        <div className="text-end">
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">نقاطك هذا الأسبوع</p>
+          <p className="mt-1 text-2xl font-semibold tabular-nums">{myWeekly?.points ?? 0}</p>
+        </div>
+      </Card>
       <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-3">
         <Card className="p-4">
-          <p className="text-xs text-muted-foreground">نقاطك</p>
+          <p className="text-xs text-muted-foreground">نقاطك الإجمالية</p>
           <p className="text-2xl font-semibold">{me.totalXp}</p>
         </Card>
         <Card className="p-4">
@@ -159,16 +170,55 @@ function Competition() {
           <p className="text-2xl font-semibold">{me.level.level}</p>
         </Card>
         <Card className="col-span-2 p-4 sm:col-span-1">
-          <p className="text-xs text-muted-foreground">ترتيبك</p>
+          <p className="text-xs text-muted-foreground">ترتيبك العام</p>
           <p className="text-2xl font-semibold">{board.find((r) => r.is_me)?.rank ?? "—"}</p>
         </Card>
       </div>
-      <Tabs defaultValue="leaderboard" dir="rtl">
+      <Tabs defaultValue="weekly" dir="rtl">
         <TabsList className="mb-4">
-          <TabsTrigger value="leaderboard">لوحة الترتيب</TabsTrigger>
+          <TabsTrigger value="weekly">المسابقة الأسبوعية</TabsTrigger>
+          <TabsTrigger value="leaderboard">الترتيب العام</TabsTrigger>
           <TabsTrigger value="challenges">التحديات</TabsTrigger>
-          <TabsTrigger value="seasons">المواسم</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="weekly">
+          <Card className="p-2 sm:p-4">
+            <div className="mb-2 flex items-center justify-between px-2">
+              <h2 className="flex items-center gap-2 font-semibold">
+                <AppIcon name="leaderboard" size={20} /> هذا الأسبوع
+              </h2>
+              <span className="text-xs text-muted-foreground">تُجدَّد كل يوم إثنين 00:00</span>
+            </div>
+            {weekly.rows.length === 0 ? (
+              <EmptyState
+                icon="leaderboard"
+                title="لم يبدأ أحد بعد"
+                body="أكمل جلسة تدريب أو امتحانًا لتكون أول اسم هذا الأسبوع."
+              />
+            ) : (
+              <ol aria-label="لوحة الترتيب الأسبوعية" className="divide-y divide-border">
+                {weekly.rows.map((r) => (
+                  <li
+                    key={r.user_id}
+                    aria-current={r.is_me ? "true" : undefined}
+                    className={`flex items-center gap-3 px-2 py-3 ${r.is_me ? "rounded-xl border border-primary/40 bg-primary/5" : ""}`}
+                  >
+                    <RankCell rank={r.rank} />
+                    <span className="min-w-0 flex-1 truncate">
+                      {r.display_name}
+                      {r.is_me && (
+                        <span className="ms-2 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                          أنت
+                        </span>
+                      )}
+                    </span>
+                    <span className="font-medium tabular-nums">{r.points}</span>
+                  </li>
+                ))}
+              </ol>
+            )}
+          </Card>
+        </TabsContent>
 
         <TabsContent value="leaderboard">
           <Card className="p-2 sm:p-4">
@@ -209,38 +259,6 @@ function Competition() {
             >
               ادخل التحدي
             </Link>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="seasons">
-          <Card className="p-2 sm:p-4">
-            <div className="mb-3 flex flex-wrap items-center justify-between gap-2 px-2">
-              <div>
-                <h2 className="flex items-center gap-2 font-semibold">
-                  <AppIcon name="achievements" size={20} /> السكور بورد الأسبوعية
-                </h2>
-                <p className="text-xs text-muted-foreground">
-                  أفضل الطلاب نشاطًا وتقدمًا خلال هذا الأسبوع
-                </p>
-              </div>
-              <StatusBadge tone="verified">تحدي الأسبوع</StatusBadge>
-            </div>
-            {board.length === 0 ? (
-              <EmptyState
-                icon="achievements"
-                title="لا توجد نقاط أسبوعية بعد"
-                body="ابدأ التدريب أو الامتحانات لتتصدر قائمة هذا الأسبوع."
-              />
-            ) : (
-              <ol
-                aria-label="السكور بورد الأسبوعية"
-                className="space-y-2 md:divide-y md:divide-border md:space-y-0"
-              >
-                {(board as BoardRow[]).slice(0, 15).map((r) => (
-                  <BoardRow key={r.user_id} r={r} />
-                ))}
-              </ol>
-            )}
           </Card>
         </TabsContent>
       </Tabs>

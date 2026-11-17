@@ -225,6 +225,12 @@ export const askTutor = createServerFn({ method: "POST" })
       } catch {
         throw new Error("تعذّر حفظ رسالتك.");
       }
+      try {
+        const { tryTouchStreak } = await import("@/lib/engagement/streak.server");
+        await tryTouchStreak(db, context.userId as string);
+      } catch (err) {
+        console.error("[streak] tutor", err);
+      }
 
       // Gemini (via OpenRouter) requires the conversation to start with a user turn.
       const firstUser = history.findIndex((m) => m.role === "user");

@@ -108,13 +108,20 @@ export const completePracticeSession = createServerFn({ method: "POST" })
     let streak = 0;
     const newAchievements: string[] = [];
     if (qualifying) {
-      if (xp > 0)
+      if (xp > 0) {
         await db
           .prepare(
             "INSERT INTO xp_transactions (id, user_id, amount, reason, ref_id, created_at) VALUES (?, ?, ?, 'practice_session', ?, ?)",
           )
           .bind(crypto.randomUUID(), userId, xp, attemptId, now)
           .run();
+        try {
+          const { awardCompetitionPoints } = await import("@/lib/engagement/competition.server");
+          await awardCompetitionPoints(db, userId, xp);
+        } catch (err) {
+          console.error("[competition] practice points failed", err);
+        }
+      }
 
       const s = await db
         .prepare(

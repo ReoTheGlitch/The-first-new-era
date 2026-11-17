@@ -289,6 +289,12 @@ export const getLesson = createServerFn({ method: "GET" })
       )
       .bind(l.id)
       .all<{ id: string; concept_id: string }>();
+    try {
+      const { tryTouchStreak } = await import("@/lib/engagement/streak.server");
+      await tryTouchStreak(db, context.userId as string);
+    } catch (err) {
+      console.error("[streak] lesson", err);
+    }
     return {
       id: l.id as string,
       title_ar: l.title_ar as string,
@@ -458,6 +464,18 @@ const prefsInput = z.object({
     show_on_leaderboard: z.boolean(),
   }),
 });
+
+export const getWeeklyCompetition = createServerFn({ method: "GET" })
+  .middleware([requireAuth])
+  .handler(async ({ context }) => {
+    const { getActiveLeaderboard } = await import("@/lib/engagement/competition.server");
+    const db = context.db as import("@/lib/db/index.server").Db;
+    const { round, rows } = await getActiveLeaderboard(db, context.userId as string, 50);
+    return {
+      round: { id: round.id, startsAt: round.starts_at, endsAt: round.ends_at },
+      rows,
+    };
+  });
 
 export const saveSettings = createServerFn({ method: "POST" })
   .middleware([requireAuth])

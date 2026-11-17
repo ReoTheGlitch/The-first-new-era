@@ -201,6 +201,20 @@ export const saveExamResult = createServerFn({ method: "POST" })
     } catch {
       throw new Error("تعذّر حفظ نتيجة الامتحان.");
     }
+    try {
+      const { tryTouchStreak } = await import("@/lib/engagement/streak.server");
+      await tryTouchStreak(db, context.userId as string);
+    } catch (err) {
+      console.error("[streak] exam", err);
+    }
+    if (data.score > 0) {
+      try {
+        const { awardCompetitionPoints } = await import("@/lib/engagement/competition.server");
+        await awardCompetitionPoints(db, context.userId as string, data.score * 5);
+      } catch (err) {
+        console.error("[competition] exam points failed", err);
+      }
+    }
     return { ok: true };
   });
 
