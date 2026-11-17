@@ -5,7 +5,7 @@ import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import { toast } from "sonner";
-import { Card, PageHeader } from "@/components/common";
+import { Card, PageHeader, SkeletonBlock } from "@/components/common";
 import {
   generateAiExam,
   saveExamResult,
@@ -24,6 +24,13 @@ export const Route = createFileRoute("/_authenticated/app/exams")({
       },
     ],
   }),
+  pendingComponent: () => (
+    <div className="space-y-4">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <SkeletonBlock key={i} className="h-24" />
+      ))}
+    </div>
+  ),
   component: ExamsPage,
 });
 

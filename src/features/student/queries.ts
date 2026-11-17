@@ -114,7 +114,7 @@ export const conceptPracticeQuery = (conceptId: string) =>
       const { data, error } = await supabase
         .from("concepts")
         .select(
-          "id, title_ar, formula_tex, origin, lesson_id, lessons(title_ar), questions(id, prompt_ar, origin, question_options(id, label_ar, sort_order))",
+          "id, title_ar, formula_tex, origin, lesson_id, lessons(title_ar), questions(id, prompt_ar, explanation_ar, origin, question_options(id, label_ar, sort_order, is_correct))",
         )
         .eq("id", conceptId)
         .maybeSingle();

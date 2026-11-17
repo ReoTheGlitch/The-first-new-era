@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useRef, useState } from "react";
-import ReactMarkdown from "react-markdown";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+
+const ReactMarkdown = React.lazy(() => import("react-markdown"));
 import {
   askTutor,
   getAiStatus,
@@ -311,36 +312,38 @@ function Assistant() {
                     <StatusBadge tone="ai" />
                   </div>
                   <div className="prose-sm max-w-none leading-8 [&_ol]:list-decimal [&_ol]:ps-5 [&_p]:my-2 [&_ul]:list-disc [&_ul]:ps-5">
-                    <ReactMarkdown
-                      remarkPlugins={[remarkMath]}
-                      rehypePlugins={[rehypeKatex]}
-                      components={{
-                        code({ className, children, ...props }) {
-                          const raw = String(children ?? "");
-                          const isSvgBlock =
-                            className?.includes("language-svg") ||
-                            raw.trim().toLowerCase().startsWith("<svg");
-                          if (isSvgBlock) {
-                            const safe = sanitizeSvg(raw);
-                            if (safe) {
-                              return (
-                                <div
-                                  className="my-3 overflow-x-auto rounded-2xl border border-border bg-surface/80 p-4 [&_svg]:mx-auto [&_svg]:max-h-72 [&_svg]:w-full"
-                                  dangerouslySetInnerHTML={{ __html: safe }}
-                                />
-                              );
+                    <Suspense fallback={<div className="h-4 w-3/4 animate-pulse rounded bg-muted" />}>
+                      <ReactMarkdown
+                        remarkPlugins={[remarkMath]}
+                        rehypePlugins={[rehypeKatex]}
+                        components={{
+                          code({ className, children, ...props }) {
+                            const raw = String(children ?? "");
+                            const isSvgBlock =
+                              className?.includes("language-svg") ||
+                              raw.trim().toLowerCase().startsWith("<svg");
+                            if (isSvgBlock) {
+                              const safe = sanitizeSvg(raw);
+                              if (safe) {
+                                return (
+                                  <div
+                                    className="my-3 overflow-x-auto rounded-2xl border border-border bg-surface/80 p-4 [&_svg]:mx-auto [&_svg]:max-h-72 [&_svg]:w-full"
+                                    dangerouslySetInnerHTML={{ __html: safe }}
+                                  />
+                                );
+                              }
                             }
-                          }
-                          return (
-                            <code className={className} {...props}>
-                              {children}
-                            </code>
-                          );
-                        },
-                      }}
-                    >
-                      {m.content}
-                    </ReactMarkdown>
+                            return (
+                              <code className={className} {...props}>
+                                {children}
+                              </code>
+                            );
+                          },
+                        }}
+                      >
+                        {m.content}
+                      </ReactMarkdown>
+                    </Suspense>
                     {isTyping && i === messages.length - 1 && (
                       <span className="animate-pulse text-primary">▋</span>
                     )}

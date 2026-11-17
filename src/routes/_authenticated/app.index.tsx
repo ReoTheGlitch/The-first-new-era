@@ -106,6 +106,16 @@ function Dashboard() {
                 >
                   <AppIcon name="assistant" size={18} /> اسأل المساعد
                 </Link>
+                {subjects.slice(0, 3).map((s) => (
+                  <Link
+                    key={s.id}
+                    to="/app/subjects/$subjectSlug"
+                    params={{ subjectSlug: s.slug }}
+                    className="press rounded-full border border-input px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground"
+                  >
+                    {s.name_ar}
+                  </Link>
+                ))}
               </div>
             </div>
             <div className="flex items-center gap-4">
@@ -120,18 +130,47 @@ function Dashboard() {
         </section>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <Stat
-            icon="streak"
-            label="سلسلة التعلم"
-            value={`${me.streak} يوم`}
-            hint={`أطول سلسلة: ${me.longestStreak}`}
-          />
-          <Stat
-            icon="achievements"
-            label="نقاط الخبرة"
-            value={me.totalXp.toLocaleString("ar-EG")}
-            hint={`المستوى ${me.level.level}`}
-          />
+          {/* Streak card with flame icon */}
+          <Card className="flex items-center gap-4 p-4">
+            <svg
+              viewBox="0 0 24 24"
+              width="44"
+              height="44"
+              fill="oklch(0.75 0.18 50)"
+              aria-hidden="true"
+              className="shrink-0"
+            >
+              <path d="M12 2C9.5 5 8 7.5 9 10.5c-1.5-1-2-2.5-1.5-4C5 8.5 4 11.5 5 14c-.5 0-1-.1-1.5-.3C4 16.5 7 20 12 20s8-3.5 8.5-6.3c-.5.2-1 .3-1.5.3 1-2.5 0-5.5-2.5-7.5.5 1.5 0 3-1.5 4C15.5 7.5 14 5 12 2Z" />
+            </svg>
+            <div className="min-w-0">
+              <p className="text-xs text-muted-foreground">سلسلة التعلم</p>
+              <p className="text-xl font-semibold">
+                {me.streak > 0 ? `${me.streak} يوم` : "لا يوجد نشاط اليوم"}
+              </p>
+              <p className="truncate text-[11px] text-muted-foreground">
+                أطول سلسلة: {me.longestStreak}
+              </p>
+            </div>
+          </Card>
+
+          {/* XP card with level progress bar */}
+          <Card className="flex items-center gap-4 p-4">
+            <AppIcon name="achievements" tile size={44} className="shrink-0" />
+            <div className="min-w-0 flex-1">
+              <p className="text-xs text-muted-foreground">نقاط الخبرة</p>
+              <p className="text-xl font-semibold">{me.totalXp.toLocaleString("ar-EG")}</p>
+              <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full rounded-full bg-brand transition-all"
+                  style={{ width: `${Math.round(me.level.progress * 100)}%` }}
+                />
+              </div>
+              <p className="mt-0.5 text-[11px] text-muted-foreground">
+                {me.level.into} / {me.level.needed} XP • المستوى {me.level.level}
+              </p>
+            </div>
+          </Card>
+
           <Stat
             icon="practice"
             label="جلسات التدريب"
