@@ -123,6 +123,42 @@ export const conceptPracticeQuery = (conceptId: string) =>
     },
   });
 
+export const weeklyXpQuery = queryOptions({
+  queryKey: ["student", "weekly-xp"],
+  queryFn: async () => {
+    const user = await uid();
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+    const { data } = await supabase
+      .from("xp_transactions")
+      .select("amount, created_at")
+      .eq("user_id", user.id)
+      .gte("created_at", sevenDaysAgo.toISOString());
+    const days: number[] = Array(7).fill(0);
+    const todayMidnight = new Date();
+    todayMidnight.setHours(0, 0, 0, 0);
+    for (const row of data ?? []) {
+      const d = new Date(row.created_at);
+      d.setHours(0, 0, 0, 0);
+      const diff = Math.round((todayMidnight.getTime() - d.getTime()) / 86_400_000);
+      if (diff >= 0 && diff < 7) days[6 - diff] = (days[6 - diff] ?? 0) + (row.amount ?? 0);
+    }
+    const bestIdx = days.reduce((best, v, i) => (v > (days[best] ?? 0) ? i : best), 0);
+    const bestDate = new Date(todayMidnight);
+    bestDate.setDate(bestDate.getDate() - (6 - bestIdx));
+    const bestDayName = new Intl.DateTimeFormat("ar-EG", {
+      timeZone: "Africa/Cairo",
+      weekday: "long",
+    }).format(bestDate);
+    return {
+      days,
+      total: days.reduce((a, b) => a + b, 0),
+      bestDayName: (days[bestIdx] ?? 0) > 0 ? bestDayName : null,
+    };
+  },
+});
+
 export const leaderboardQuery = queryOptions({
   queryKey: ["competition", "leaderboard"],
   queryFn: async () => {

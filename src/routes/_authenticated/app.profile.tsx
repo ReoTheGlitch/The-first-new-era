@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { studentOverviewQuery } from "@/features/student/queries";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { studentOverviewQuery, weeklyXpQuery } from "@/features/student/queries";
 import { Card, EmptyState, PageHeader, ProgressRing } from "@/components/common";
 import { AppIcon } from "@/components/icons/AppIcon";
 
@@ -15,8 +15,49 @@ export const Route = createFileRoute("/_authenticated/app/profile")({
   component: Profile,
 });
 
+function WeeklySparkline({ days }: { days: number[] }) {
+  const W = 200,
+    H = 40,
+    padX = 8,
+    padY = 4;
+  const max = Math.max(...days, 1);
+  const xs = days.map((_, i) => padX + (i * (W - 2 * padX)) / 6);
+  const ys = days.map((v) => H - padY - (v / max) * (H - 2 * padY));
+  const pts = xs.map((x, i) => `${x},${ys[i]}`).join(" ");
+  const fillPts = `${xs[0]},${H} ${pts} ${xs[xs.length - 1]},${H}`;
+  return (
+    <svg
+      viewBox={`0 0 ${W} ${H}`}
+      width="100%"
+      preserveAspectRatio="none"
+      className="text-primary"
+      aria-hidden
+    >
+      <defs>
+        <linearGradient id="xp-week-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="currentColor" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <polygon points={fillPts} fill="url(#xp-week-grad)" />
+      <polyline
+        points={pts}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      />
+      {xs.map((x, i) => (
+        <circle key={i} cx={x} cy={ys[i]} r="2" fill="currentColor" />
+      ))}
+    </svg>
+  );
+}
+
 function Profile() {
   const { data: me } = useSuspenseQuery(studentOverviewQuery);
+  const { data: weekly } = useQuery(weeklyXpQuery);
   return (
     <div>
       <PageHeader
@@ -74,6 +115,19 @@ function Profile() {
           )}
         </Card>
       </div>
+
+      {weekly && (
+        <Card className="mt-6">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="font-semibold">نشاط الأسبوع</h2>
+            <span className="text-sm font-medium text-primary">+{weekly.total} XP</span>
+          </div>
+          <WeeklySparkline days={weekly.days} />
+          {weekly.bestDayName && (
+            <p className="mt-2 text-xs text-muted-foreground">أفضل يوم: {weekly.bestDayName}</p>
+          )}
+        </Card>
+      )}
     </div>
   );
 }
