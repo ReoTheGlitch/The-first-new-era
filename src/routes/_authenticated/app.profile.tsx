@@ -154,10 +154,10 @@ function StatsGrid({ me }: { me: Me }) {
         {stats.map((s) => (
           <div
             key={s.label}
-            className="flex flex-col items-center gap-1 rounded-md bg-muted/50 px-3 py-4 text-center"
+            className="flex flex-col items-center gap-1 rounded-md border border-border p-4 text-center"
           >
             <span className="text-primary/70">{s.icon}</span>
-            <span className="text-xl font-semibold tabular-nums">{s.value}</span>
+            <span className="text-2xl font-semibold tabular-nums">{s.value}</span>
             <span className="text-xs text-muted-foreground">{s.label}</span>
           </div>
         ))}
@@ -191,11 +191,11 @@ function Profile() {
             {me.level.into}/{me.level.needed} نقطة للمستوى التالي
           </p>
           <div className="grid w-full grid-cols-2 gap-2 pt-2 text-sm">
-            <div className="rounded-md bg-muted/60 p-3">
+            <div className="rounded-md border border-border p-4">
               <AppIcon name="streak" size={18} />
               <p className="mt-1">{me.streak} يوم</p>
             </div>
-            <div className="rounded-md bg-muted/60 p-3">
+            <div className="rounded-md border border-border p-4">
               <AppIcon name="achievements" size={18} />
               <p className="mt-1">{me.totalXp} XP</p>
             </div>
@@ -204,9 +204,9 @@ function Profile() {
         <Card>
           <h2 className="mb-4 font-semibold">الإنجازات</h2>
           {me.achievements.length ? (
-            <ul className="grid gap-3 sm:grid-cols-2">
+            <ul className="divide-y divide-border">
               {me.achievements.map((a, i) => (
-                <li key={i} className="flex items-center gap-3 rounded-md bg-muted/60 p-3">
+                <li key={i} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
                   <AppIcon name="achievements" tile size={40} />
                   <div className="min-w-0">
                     <p className="truncate font-medium">{a.achievements?.title_ar}</p>

@@ -52,7 +52,7 @@ function AuthPage() {
   return (
     <div className="relative grid min-h-screen place-items-center px-4">
       <div className="ambient" aria-hidden />
-      <div className="surface-card relative z-10 w-full max-w-sm space-y-5 p-6">
+      <div className="relative z-10 w-full max-w-sm space-y-5 rounded-lg border border-border bg-card p-6">
         <Logo />
         <h1 className="text-2xl font-semibold">{mode === "in" ? "تسجيل الدخول" : "إنشاء حساب"}</h1>
 

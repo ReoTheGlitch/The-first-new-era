@@ -49,7 +49,7 @@ function Stat({
       <AppIcon name={icon} tile size={44} />
       <div className="min-w-0">
         <p className="text-xs text-muted-foreground">{label}</p>
-        <p className="text-xl font-semibold">{value}</p>
+        <p className="text-2xl font-semibold tabular-nums">{value}</p>
         {hint && <p className="truncate text-[11px] text-muted-foreground">{hint}</p>}
       </div>
     </Card>
@@ -98,17 +98,17 @@ function Dashboard() {
         <section className="surface-card relative overflow-hidden p-6 animate-rise sm:p-8">
           <div className="grid items-center gap-6 sm:grid-cols-[minmax(0,1fr)_auto]">
             <div className="min-w-0">
-              <p className="text-sm text-muted-foreground">أهلًا بك،</p>
+              <p className="text-xs text-muted-foreground">لوحة الطالب</p>
               <h1 className="mt-1 truncate text-3xl font-semibold sm:text-4xl">{me.displayName}</h1>
               <p className="mt-3 max-w-lg text-sm text-muted-foreground">
                 {fresh
-                  ? "ابدأ أول جلسة تدريب لتبدأ سلسلة تعلمك وتكسب نقاط الخبرة."
-                  : `المستوى ${me.level.level} — باقي ${me.level.needed - me.level.into} نقطة للمستوى التالي.`}
+                  ? "لم تبدأ أي جلسة بعد. اختر مفهومًا وابدأ التدريب."
+                  : `المستوى ${me.level.level}. المتبقي للمستوى التالي: ${me.level.needed - me.level.into} نقطة.`}
               </p>
               <div className="mt-5 flex flex-wrap gap-2">
                 <Link
                   to="/app/subjects"
-                  className="press rounded-md bg-brand px-5 py-2.5 text-sm font-medium text-primary-foreground glow-edge"
+                  className="press rounded-md bg-brand px-5 py-2.5 text-sm font-medium text-primary-foreground"
                 >
                   {fresh ? "ابدأ التعلم" : "تابع التعلم"}
                 </Link>
@@ -156,7 +156,7 @@ function Dashboard() {
             </svg>
             <div className="min-w-0">
               <p className="text-xs text-muted-foreground">سلسلة التعلم</p>
-              <p className="text-xl font-semibold">
+              <p className="text-2xl font-semibold tabular-nums">
                 {me.streak > 0 ? `${me.streak} يوم` : "لا يوجد نشاط اليوم"}
               </p>
               <p className="truncate text-[11px] text-muted-foreground">
@@ -170,7 +170,9 @@ function Dashboard() {
             <AppIcon name="achievements" tile size={44} className="shrink-0" />
             <div className="min-w-0 flex-1">
               <p className="text-xs text-muted-foreground">نقاط الخبرة</p>
-              <p className="text-xl font-semibold">{me.totalXp.toLocaleString("ar-EG")}</p>
+              <p className="text-2xl font-semibold tabular-nums">
+                {me.totalXp.toLocaleString("ar-EG")}
+              </p>
               <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div
                   className="h-full rounded-full bg-brand transition-all"
@@ -227,7 +229,7 @@ function Dashboard() {
                     key={s.id}
                     to="/app/subjects/$subjectSlug"
                     params={{ subjectSlug: s.slug }}
-                    className="press surface-card group flex flex-col gap-3 p-5 hover:glow-edge"
+                    className="press surface-card group flex flex-col gap-3 p-5 hover:border-primary/40"
                   >
                     <div className="flex items-center justify-between">
                       <AppIcon
@@ -239,7 +241,7 @@ function Dashboard() {
                     </div>
                     <h3 className="text-lg font-semibold">{s.name_ar}</h3>
                     <p className="line-clamp-2 text-sm text-muted-foreground">{s.description_ar}</p>
-                    <p className="text-xs text-muted-foreground">{lessons} درس تجريبي متاح</p>
+                    <p className="text-xs text-muted-foreground">{lessons} درس تجريبي</p>
                   </Link>
                 );
               })}
