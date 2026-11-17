@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { CommandPalette } from "@/components/CommandPalette";
+import { StudyTimer } from "@/components/StudyTimer";
 
 function useSignOut() {
   const qc = useQueryClient();
@@ -202,6 +203,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </SheetContent>
       </Sheet>
+      <StudyTimer />
       <CommandPalette />
     </div>
   );
