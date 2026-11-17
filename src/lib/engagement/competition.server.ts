@@ -46,9 +46,7 @@ export async function getOrCreateActiveRound(db: Db): Promise<CompetitionRound> 
 
   const id = crypto.randomUUID();
   await db
-    .prepare(
-      "INSERT INTO competition_rounds (id, starts_at, ends_at, active) VALUES (?, ?, ?, 1)",
-    )
+    .prepare("INSERT INTO competition_rounds (id, starts_at, ends_at, active) VALUES (?, ?, ?, 1)")
     .bind(id, startIso, endIso)
     .run();
   return {
