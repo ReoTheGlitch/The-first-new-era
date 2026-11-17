@@ -11,6 +11,8 @@
   "dir": "rtl",
   "orientation": "portrait-primary",
   "categories": ["education"],
+  "prefer_related_applications": false,
+  "screenshots": [],
   "icons": [
     {
       "src": "/favicon.png",

@@ -13,23 +13,38 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-gradient">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">الصفحة غير موجودة</h2>
+      <div className="max-w-sm text-center">
+        <div
+          aria-hidden
+          className="pointer-events-none select-none text-[7rem] font-black leading-none text-muted-foreground/20"
+        >
+          ٤٠٤
+        </div>
+        <div className="mt-2 flex justify-center gap-2 text-2xl" aria-hidden>
+          ✦ ✧ ✦
+        </div>
+        <h1 className="mt-4 text-xl font-semibold text-foreground">الصفحة غير موجودة</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           الصفحة التي تبحث عنها غير موجودة أو تم نقلها.
         </p>
-        <div className="mt-6">
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Link
-            to="/"
+            to="/app"
             className="press inline-flex items-center justify-center rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground"
           >
-            العودة للرئيسية
+            الرئيسية
           </Link>
+          <button
+            onClick={() => window.history.back()}
+            className="press inline-flex items-center justify-center rounded-xl border border-input px-5 py-2.5 text-sm font-medium text-foreground"
+          >
+            رجوع
+          </button>
         </div>
       </div>
     </div>
@@ -122,6 +137,12 @@ function RootComponent() {
   const router = useRouter();
 
   useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => {});
+    }
+  }, []);
+
+  useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
       router.invalidate();
@@ -132,7 +153,9 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <ErrorBoundary>
+        <Outlet />
+      </ErrorBoundary>
       <Toaster position="top-center" richColors />
     </QueryClientProvider>
   );
