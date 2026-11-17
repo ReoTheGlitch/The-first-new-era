@@ -12,7 +12,9 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "e2e": "playwright test --trace off"
+    "e2e": "playwright test --trace off",
+    "build:cf": "CF_BUILD=1 vite build",
+    "deploy:cf": "npm run build:cf && wrangler deploy"
   },
   "overrides": {
     "rolldown": "1.2.1"
@@ -99,6 +101,7 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.56.1",
     "vite": "8.1.5",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.10",
+    "wrangler": "^4.164.0"
   }
 }

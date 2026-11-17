@@ -25,7 +25,15 @@ export default defineConfig(({ command, mode }) => {
       viteReact(),
       tailwindcss(),
       // نيترو مطلوب عند البناء فقط
-      ...(command === "build" ? [nitro()] : []),
+      ...(command === "build"
+        ? [
+            nitro(
+              process.env["CF_BUILD"] === "1"
+                ? { preset: "cloudflare_module" }
+                : {},
+            ),
+          ]
+        : []),
     ],
   };
 });
