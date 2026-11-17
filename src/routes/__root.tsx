@@ -25,9 +25,6 @@ function NotFoundComponent() {
         >
           ٤٠٤
         </div>
-        <div className="mt-2 flex justify-center gap-2 text-2xl" aria-hidden>
-          ✦ ✧ ✦
-        </div>
         <h1 className="mt-4 text-xl font-semibold text-foreground">الصفحة غير موجودة</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           الصفحة التي تبحث عنها غير موجودة أو تم نقلها.

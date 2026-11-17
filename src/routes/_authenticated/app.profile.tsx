@@ -73,10 +73,88 @@ function StatsGrid({ me }: { me: Me }) {
   const accuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : null;
 
   const stats = [
-    { icon: "🎯", value: accuracy !== null ? `${accuracy}٪` : "—", label: "نسبة الدقة" },
-    { icon: "📝", value: String(me.attempts.length), label: "جلسات التدريب" },
-    { icon: "🔥", value: String(me.streak), label: "أيام متواصلة" },
-    { icon: "🏅", value: String(me.longestStreak), label: "أطول سلسلة" },
+    {
+      icon: (
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <circle cx="12" cy="12" r="6" />
+          <circle cx="12" cy="12" r="2" />
+        </svg>
+      ),
+      value: accuracy !== null ? `${accuracy}٪` : "—",
+      label: "نسبة الدقة",
+    },
+    {
+      icon: (
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M12 20h9" />
+          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+        </svg>
+      ),
+      value: String(me.attempts.length),
+      label: "جلسات التدريب",
+    },
+    {
+      icon: (
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+        </svg>
+      ),
+      value: String(me.streak),
+      label: "أيام متواصلة",
+    },
+    {
+      icon: (
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.11" />
+          <path d="M15 7a3 3 0 1 0-6 0" />
+          <path d="M18 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+          <path d="M6 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+        </svg>
+      ),
+      value: String(me.longestStreak),
+      label: "أطول سلسلة",
+    },
   ];
 
   return (
@@ -88,9 +166,7 @@ function StatsGrid({ me }: { me: Me }) {
             key={s.label}
             className="flex flex-col items-center gap-1 rounded-xl bg-muted/50 px-3 py-4 text-center"
           >
-            <span className="text-2xl" aria-hidden>
-              {s.icon}
-            </span>
+            <span className="text-primary/70">{s.icon}</span>
             <span className="text-xl font-bold tabular-nums">{s.value}</span>
             <span className="text-xs text-muted-foreground">{s.label}</span>
           </div>
@@ -104,9 +180,7 @@ function DailyQuote() {
   const quote = QUOTES[new Date().getDay() % QUOTES.length];
   return (
     <Card className="mt-6 py-6 text-center">
-      <p className="text-xs text-muted-foreground">✦</p>
       <p className="mt-2 text-sm italic text-muted-foreground">{quote}</p>
-      <p className="mt-2 text-xs text-muted-foreground">✦</p>
     </Card>
   );
 }

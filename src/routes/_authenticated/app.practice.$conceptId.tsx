@@ -168,7 +168,7 @@ function Practice() {
             <div aria-live="polite" className="relative mt-4 space-y-3 animate-rise">
               {showXpBadge && (
                 <div className="xp-pop-fade pointer-events-none absolute -top-6 end-0 flex items-center gap-1 rounded-full bg-green-500/20 px-3 py-1 text-sm font-semibold text-green-400">
-                  ✦ +XP
+                  +XP
                 </div>
               )}
               <div

@@ -33,7 +33,24 @@ export default class ErrorBoundary extends Component<Props, State> {
     return (
       <div className="flex min-h-[40vh] items-center justify-center px-4">
         <div className="w-full max-w-sm rounded-2xl border border-destructive/30 bg-destructive/5 p-8 text-center">
-          <div className="mb-4 text-5xl">🔧</div>
+          <div className="mb-4 flex justify-center">
+            <svg
+              width="40"
+              height="40"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-destructive/70"
+              aria-hidden="true"
+            >
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+              <line x1="12" y1="9" x2="12" y2="13" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+          </div>
           <h2 className="text-lg font-semibold text-foreground">حدث خطأ غير متوقع</h2>
           <p className="mt-1 text-sm text-muted-foreground">حاول تحديث الصفحة أو العودة للرئيسية</p>
           {msg && (
