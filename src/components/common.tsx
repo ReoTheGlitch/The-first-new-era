@@ -1,5 +1,4 @@
-import type { ReactNode } from "react";
-import katex from "katex";
+import { lazy, Suspense, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { AppIcon, type AppIconName } from "@/components/icons/AppIcon";
 
@@ -108,16 +107,19 @@ export function EmptyState({
   );
 }
 
+// KaTeX is heavy; load it only when a page actually renders math.
+const MathTexImpl = lazy(() => import("./MathTexImpl").then((m) => ({ default: m.MathTexImpl })));
+
 export function MathTex({ tex, block = false }: { tex: string; block?: boolean }) {
-  const html = katex.renderToString(tex, { throwOnError: false, displayMode: block });
-  return block ? (
-    <div
-      dir="ltr"
-      className="overflow-x-auto rounded-md bg-muted/60 px-4 py-3 text-center"
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
+  const fallback = block ? (
+    <div className="h-14 rounded-md bg-muted/60" />
   ) : (
-    <span dangerouslySetInnerHTML={{ __html: html }} />
+    <span className="inline-block min-w-6 rounded-sm bg-muted/30" style={{ height: "1.1em" }} />
+  );
+  return (
+    <Suspense fallback={fallback}>
+      <MathTexImpl tex={tex} block={block} />
+    </Suspense>
   );
 }
 
