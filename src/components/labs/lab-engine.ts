@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 
 // رسومات الفيزياء التفاعلية: دوال ترسم SVG كنص من أرقام فقط (لا مدخلات نصية من المستخدم)
