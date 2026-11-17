@@ -86,6 +86,10 @@ See `docs/deploy.md`. Live site: `https://thefirst.mrwinter.org`. The
 worker needs one real secret: `OPENROUTER_API_KEY` set in the Cloudflare
 dashboard.
 
+## Security
+
+Auth endpoints are rate-limited via D1 (`src/lib/security/rate-limit.server.ts`) and the Worker adds CSP/HSTS and other security headers to every response (`scripts/cf/cf-entry.mjs`). See `docs/security.md`.
+
 ## Patterns that aren't bugs
 
 - Every server function that touches `context.db` begins with
