@@ -1,7 +1,7 @@
 {
-  "name": "العصر الجديد الأول",
-  "short_name": "New Era",
-  "description": "منصة تعليمية لطلاب الثانوية العامة في مصر: فيزياء وكيمياء.",
+  "name": "The first",
+  "short_name": "The first",
+  "description": "منصة تعليمية لطلاب الثانوية العامة في مصر.",
   "start_url": "/app",
   "scope": "/",
   "display": "standalone",

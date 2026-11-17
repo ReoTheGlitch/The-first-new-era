@@ -86,7 +86,7 @@ function LessonPage() {
       {/* Reading progress bar */}
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-x-0 top-0 z-50 h-[3px] origin-left bg-gradient-to-r from-violet-500 to-indigo-500 transition-transform duration-100"
+        className="pointer-events-none fixed inset-x-0 top-0 z-50 h-[3px] origin-left bg-brand transition-transform duration-100"
         style={{ transform: `scaleX(${scrollProgress / 100})` }}
       />
 
