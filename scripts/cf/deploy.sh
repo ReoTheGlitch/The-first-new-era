@@ -11,6 +11,9 @@ KV_NS=3ada463be94644d8ba169751b0e04d66
 : "${CLOUDFLARE_API_TOKEN:=proxy-injected}"
 export CLOUDFLARE_API_TOKEN
 
+echo "==> Apply pending D1 migrations"
+node scripts/cf/apply-migrations.mjs
+
 echo "==> Build (Cloudflare preset)"
 CF_BUILD=1 npm run build
 
