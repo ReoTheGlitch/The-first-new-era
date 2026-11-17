@@ -35,6 +35,17 @@ export const generateAiExam = createServerFn({ method: "POST" })
         ok: false,
         message: "توليد الامتحانات يحتاج إلى إعداد GEMINI_API_KEY في إعدادات السيرفر.",
       };
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const { count: recentCount } = await (context.supabase as any)
+      .from("ai_generated_exams")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", context.userId)
+      .gte("created_at", oneHourAgo);
+    if ((recentCount ?? 0) >= 5)
+      return {
+        ok: false,
+        message: "وصلت الحد الأقصى لعدد الامتحانات في الساعة (5 امتحانات). حاول بعد قليل.",
+      };
     const student = await getStudentAdaptiveSummary(context.userId);
     const subjectAr = data.subject === "physics" ? "الفيزياء" : "الكيمياء";
     const diffAr =
