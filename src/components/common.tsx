@@ -153,5 +153,11 @@ export function ProgressRing({
 }
 
 export function SkeletonBlock({ className }: { className?: string }) {
-  return <div className={cn("animate-pulse rounded-xl bg-muted", className)} />;
+  return (
+    <div
+      role="status"
+      aria-label="جاري التحميل..."
+      className={cn("animate-pulse rounded-xl bg-muted", className)}
+    />
+  );
 }

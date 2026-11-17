@@ -142,14 +142,15 @@ function Practice() {
           <p className="mb-5 text-lg leading-8">{q.prompt_ar}</p>
 
           {/* Options */}
-          <div role="radiogroup" className="grid gap-3">
+          <div role="radiogroup" aria-label="خيارات الإجابة" className="grid gap-3">
             {[...q.question_options]
               .sort((a, b) => a.sort_order - b.sort_order)
-              .map((o) => (
+              .map((o, optIdx) => (
                 <button
                   key={o.id}
                   role="radio"
                   aria-checked={selectedId === o.id}
+                  aria-label={`الخيار ${optIdx + 1}: ${o.label_ar}`}
                   disabled={revealed}
                   onClick={() => !revealed && setAnswers((p) => ({ ...p, [q.id]: o.id }))}
                   className={cn(
@@ -164,7 +165,7 @@ function Practice() {
 
           {/* Explanation + XP badge after reveal */}
           {revealed && (
-            <div className="relative mt-4 space-y-3 animate-rise">
+            <div aria-live="polite" className="relative mt-4 space-y-3 animate-rise">
               {showXpBadge && (
                 <div className="xp-pop-fade pointer-events-none absolute -top-6 end-0 flex items-center gap-1 rounded-full bg-green-500/20 px-3 py-1 text-sm font-semibold text-green-400">
                   ✦ +XP

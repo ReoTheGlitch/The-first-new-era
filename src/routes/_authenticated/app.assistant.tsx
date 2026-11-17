@@ -301,7 +301,11 @@ function Assistant() {
         </Card>
       ) : (
         <>
-          <div className="min-h-[40vh] space-y-4 pb-4" aria-live="polite" aria-label="رسائل المحادثة">
+          <div
+            className="min-h-[40vh] space-y-4 pb-4"
+            aria-live="polite"
+            aria-label="رسائل المحادثة"
+          >
             {messages.length === 0 && (
               <div className="flex flex-col items-center gap-3 py-10 text-center text-muted-foreground">
                 <AppIcon name="assistant" tile size={64} className="animate-float" />

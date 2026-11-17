@@ -87,7 +87,10 @@ function BoardRow({ r }: { r: BoardRow }) {
   return (
     <>
       {/* Desktop row */}
-      <li className={`hidden items-center gap-3 px-2 py-3 md:flex ${meClass}`}>
+      <li
+        aria-current={r.is_me ? "true" : undefined}
+        className={`hidden items-center gap-3 px-2 py-3 md:flex ${meClass}`}
+      >
         <RankCell rank={r.rank} />
         <span className="min-w-0 flex-1 truncate">
           {r.display_name}
@@ -102,6 +105,7 @@ function BoardRow({ r }: { r: BoardRow }) {
 
       {/* Mobile card */}
       <li
+        aria-current={r.is_me ? "true" : undefined}
         className={`flex items-center gap-3 rounded-xl border border-border p-3 md:hidden ${r.is_me ? "border-primary/40 bg-primary/5" : "bg-background/40"}`}
       >
         <RankCell rank={r.rank} />
@@ -183,7 +187,7 @@ function Competition() {
             ) : (
               <>
                 <Podium board={board as BoardRow[]} />
-                <ol className="divide-y divide-border md:divide-y">
+                <ol aria-label="لوحة الترتيب" className="divide-y divide-border md:divide-y">
                   {(board as BoardRow[]).map((r) => (
                     <BoardRow key={r.user_id} r={r} />
                   ))}
@@ -228,7 +232,10 @@ function Competition() {
                 body="ابدأ التدريب أو الامتحانات لتتصدر قائمة هذا الأسبوع."
               />
             ) : (
-              <ol className="space-y-2 md:divide-y md:divide-border md:space-y-0">
+              <ol
+                aria-label="السكور بورد الأسبوعية"
+                className="space-y-2 md:divide-y md:divide-border md:space-y-0"
+              >
                 {(board as BoardRow[]).slice(0, 15).map((r) => (
                   <BoardRow key={r.user_id} r={r} />
                 ))}
