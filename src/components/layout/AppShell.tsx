@@ -147,7 +147,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   )
                 }
                 aria-label="البحث السريع"
-                className="press hidden items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-[11px] text-muted-foreground sm:flex"
+                className="press hidden min-h-11 items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-[11px] text-muted-foreground sm:flex"
               >
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden>
                   <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
@@ -164,7 +164,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <Link
                 to="/app/profile"
                 aria-label="الملف الشخصي"
-                className="press grid h-10 w-10 place-items-center rounded-md"
+                className="press grid h-11 w-11 place-items-center rounded-md"
               >
                 <AppIcon name="profile" size={22} />
               </Link>
