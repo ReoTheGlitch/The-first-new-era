@@ -9,7 +9,7 @@ import { AchievementUnlock } from "@/components/achievements";
 export const Route = createFileRoute("/_authenticated/app/")({
   head: () => ({
     meta: [
-      { title: "لوحة الطالب — العصر الجديد الأول" },
+      { title: "لوحة الطالب — The first" },
       { name: "description", content: "تقدمك وسلسلة تعلمك ونقاط الخبرة." },
     ],
   }),

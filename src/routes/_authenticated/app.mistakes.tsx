@@ -9,7 +9,7 @@ import { getMistakes } from "@/features/mistakes/mistakes.functions";
 export const Route = createFileRoute("/_authenticated/app/mistakes")({
   head: () => ({
     meta: [
-      { title: "دفتر الأخطاء — العصر الجديد الأول" },
+      { title: "دفتر الأخطاء — The first" },
       { name: "description", content: "أخطاؤك مصنّفة بأسبابها مع طريقة علاج كل خطأ." },
     ],
   }),

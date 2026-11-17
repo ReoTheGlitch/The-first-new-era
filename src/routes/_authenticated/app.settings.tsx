@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 export const Route = createFileRoute("/_authenticated/app/settings")({
   head: () => ({
     meta: [
-      { title: "الإعدادات — العصر الجديد الأول" },
+      { title: "الإعدادات — The first" },
       { name: "description", content: "الحساب وتفضيلات التعلم والخصوصية." },
     ],
   }),

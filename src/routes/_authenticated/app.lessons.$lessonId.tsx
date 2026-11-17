@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_authenticated/app/lessons/$lessonId")({
   head: ({ loaderData }) => ({
     meta: [
       {
-        title: `${(loaderData as { titleAr?: string } | undefined)?.titleAr ?? "الدرس"} — العصر الجديد الأول`,
+        title: `${(loaderData as { titleAr?: string } | undefined)?.titleAr ?? "الدرس"} — The first`,
       },
       { name: "description", content: "شرح الدرس ومفاهيمه والتدريب عليها." },
     ],

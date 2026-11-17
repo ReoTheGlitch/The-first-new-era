@@ -7,7 +7,7 @@ import { AppIcon } from "@/components/icons/AppIcon";
 export const Route = createFileRoute("/_authenticated/app/profile")({
   head: () => ({
     meta: [
-      { title: "الملف الشخصي — العصر الجديد الأول" },
+      { title: "الملف الشخصي — The first" },
       { name: "description", content: "تقدمك وإنجازاتك." },
     ],
   }),

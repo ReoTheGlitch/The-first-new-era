@@ -17,7 +17,7 @@ import { sanitizeSvg } from "@/lib/sanitize-svg";
 export const Route = createFileRoute("/_authenticated/app/exams")({
   head: () => ({
     meta: [
-      { title: "الامتحانات — العصر الجديد الأول" },
+      { title: "الامتحانات — The first" },
       {
         name: "description",
         content: "اختبر نفسك بامتحانات متجددة يولّدها الذكاء الاصطناعي حسب مستواك.",

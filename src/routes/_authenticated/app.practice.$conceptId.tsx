@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/app/practice/$conceptId")({
   head: () => ({
     meta: [
-      { title: "تدريب — العصر الجديد الأول" },
+      { title: "تدريب — The first" },
       { name: "description", content: "تدريب مركّز على مفهوم واحد." },
     ],
   }),

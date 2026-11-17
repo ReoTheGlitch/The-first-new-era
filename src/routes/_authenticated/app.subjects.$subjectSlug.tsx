@@ -7,7 +7,7 @@ export const Route = createFileRoute("/_authenticated/app/subjects/$subjectSlug"
   head: ({ loaderData }) => ({
     meta: [
       {
-        title: `${(loaderData as { nameAr?: string } | undefined)?.nameAr ?? "المادة"} — العصر الجديد الأول`,
+        title: `${(loaderData as { nameAr?: string } | undefined)?.nameAr ?? "المادة"} — The first`,
       },
       { name: "description", content: "وحدات ودروس المادة." },
     ],

@@ -30,7 +30,7 @@ import {
 export const Route = createFileRoute("/_authenticated/app/duel")({
   head: () => ({
     meta: [
-      { title: "تحدٍّ مباشر — العصر الجديد الأول" },
+      { title: "تحدٍّ مباشر — The first" },
       { name: "description", content: "تنافس مع طالب آخر في أوضاع النقاط والسرعة وضربات الجزاء." },
     ],
   }),

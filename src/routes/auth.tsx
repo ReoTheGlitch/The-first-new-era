@@ -7,9 +7,9 @@ import { Logo } from "@/components/brand/Logo";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "تسجيل الدخول — العصر الجديد الأول" },
+      { title: "تسجيل الدخول — The first" },
       { name: "description", content: "سجّل الدخول أو أنشئ حسابًا لبدء التعلم." },
-      { property: "og:title", content: "تسجيل الدخول — العصر الجديد الأول" },
+      { property: "og:title", content: "تسجيل الدخول — The first" },
       { property: "og:description", content: "سجّل الدخول أو أنشئ حسابًا لبدء التعلم." },
     ],
   }),

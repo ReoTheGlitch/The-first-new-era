@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/app/assistant")({
   head: () => ({
     meta: [
-      { title: "المساعد الذكي — العصر الجديد الأول" },
+      { title: "المساعد الذكي — The first" },
       { name: "description", content: "مساعد تعلم يشرح المفاهيم بأساليب مختلفة." },
     ],
   }),
