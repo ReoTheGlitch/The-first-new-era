@@ -26,13 +26,7 @@ export default defineConfig(({ command, mode }) => {
       tailwindcss(),
       // نيترو مطلوب عند البناء فقط
       ...(command === "build"
-        ? [
-            nitro(
-              process.env["CF_BUILD"] === "1"
-                ? { preset: "cloudflare_module" }
-                : {},
-            ),
-          ]
+        ? [nitro(process.env["CF_BUILD"] === "1" ? { preset: "cloudflare_module" } : {})]
         : []),
     ],
   };
