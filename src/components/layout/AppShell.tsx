@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { CommandPalette } from "@/components/CommandPalette";
+import { PageTransition } from "@/components/PageTransition";
 import { StudyTimer } from "@/components/StudyTimer";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -168,7 +169,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
           </header>
           <main className="mx-auto w-full max-w-7xl flex-1 px-4 pb-28 pt-6 sm:px-6 md:pb-10 lg:px-10 lg:pt-10">
-            {children}
+            <PageTransition>{children}</PageTransition>
           </main>
         </div>
       </div>
