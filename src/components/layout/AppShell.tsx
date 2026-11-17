@@ -9,6 +9,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { cn } from "@/lib/utils";
 import { CommandPalette } from "@/components/CommandPalette";
 import { StudyTimer } from "@/components/StudyTimer";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 function useSignOut() {
   const qc = useQueryClient();
@@ -107,6 +108,9 @@ export function AppShell({ children }: { children: ReactNode }) {
             >
               تسجيل الخروج
             </button>
+            <div className="flex items-center gap-2 px-2 pt-1">
+              <ThemeToggle />
+            </div>
           </div>
         </aside>
 
@@ -153,6 +157,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 </svg>
                 <kbd className="font-sans">⌘K</kbd>
               </button>
+              <ThemeToggle />
               <Link
                 to="/app/profile"
                 aria-label="الملف الشخصي"

@@ -295,6 +295,65 @@
   transition: none !important;
 }
 
+/* ===== Light mode tokens ===== */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --background: oklch(0.98 0.005 285);
+    --foreground: oklch(0.12 0.02 285);
+    --surface: oklch(1 0 0);
+    --surface-raised: oklch(0.95 0.008 285);
+    --card: oklch(1 0 0 / 0.92);
+    --card-foreground: oklch(0.12 0.02 285);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.12 0.02 285);
+    --secondary: oklch(0.92 0.015 285);
+    --secondary-foreground: oklch(0.2 0.03 285);
+    --muted: oklch(0.94 0.01 285);
+    --muted-foreground: oklch(0.45 0.02 285);
+    --accent: oklch(0.92 0.015 285);
+    --accent-foreground: oklch(0.2 0.03 285);
+    --border: oklch(0.88 0.015 285);
+    --input: oklch(0.88 0.015 285);
+    --sidebar: oklch(0.96 0.008 285 / 0.95);
+    --sidebar-foreground: oklch(0.2 0.03 285);
+    --sidebar-accent: oklch(0.9 0.015 285);
+    --sidebar-accent-foreground: oklch(0.15 0.03 285);
+    --sidebar-border: oklch(0.88 0.015 285);
+    --gradient-tile: linear-gradient(160deg, oklch(0.92 0.02 285), oklch(0.95 0.01 290));
+    --shadow-card: 0 1px 0 0 oklch(1 0 0 / 0.6) inset, 0 4px 16px -6px oklch(0 0 0 / 0.1);
+    --shadow-glow: 0 0 0 1px oklch(0.68 0.2 290 / 0.2), 0 8px 24px -8px oklch(0.6 0.22 285 / 0.25);
+  }
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --background: oklch(0.98 0.005 285);
+  --foreground: oklch(0.12 0.02 285);
+  --surface: oklch(1 0 0);
+  --surface-raised: oklch(0.95 0.008 285);
+  --card: oklch(1 0 0 / 0.92);
+  --card-foreground: oklch(0.12 0.02 285);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.12 0.02 285);
+  --secondary: oklch(0.92 0.015 285);
+  --secondary-foreground: oklch(0.2 0.03 285);
+  --muted: oklch(0.94 0.01 285);
+  --muted-foreground: oklch(0.45 0.02 285);
+  --accent: oklch(0.92 0.015 285);
+  --accent-foreground: oklch(0.2 0.03 285);
+  --border: oklch(0.88 0.015 285);
+  --input: oklch(0.88 0.015 285);
+  --sidebar: oklch(0.96 0.008 285 / 0.95);
+  --sidebar-foreground: oklch(0.2 0.03 285);
+  --sidebar-accent: oklch(0.9 0.015 285);
+  --sidebar-accent-foreground: oklch(0.15 0.03 285);
+  --sidebar-border: oklch(0.88 0.015 285);
+  --gradient-tile: linear-gradient(160deg, oklch(0.92 0.02 285), oklch(0.95 0.01 290));
+  --shadow-card: 0 1px 0 0 oklch(1 0 0 / 0.6) inset, 0 4px 16px -6px oklch(0 0 0 / 0.1);
+  --shadow-glow: 0 0 0 1px oklch(0.68 0.2 290 / 0.2), 0 8px 24px -8px oklch(0.6 0.22 285 / 0.25);
+}
+
 /* الرسومات التفاعلية للدروس */
 .lab {
   --tx: var(--foreground);
