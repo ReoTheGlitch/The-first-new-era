@@ -13,8 +13,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "e2e": "playwright test --trace off",
-    "build:cf": "CF_BUILD=1 vite build",
-    "deploy:cf": "npm run build:cf && wrangler deploy"
+    "deploy:cf": "bash scripts/cf/deploy.sh"
   },
   "overrides": {
     "rolldown": "1.2.1"
