@@ -62,6 +62,8 @@ export default {
     const bound = Object.assign(Object.create(null), env, {
       ASSETS: { fetch: (req) => serveStatic(req, env.STATIC_KV) },
     });
+    // App code reads bindings (DB, AI, STATIC_KV) through this global.
+    globalThis.__CF_ENV__ = bound;
     return worker.fetch(request, bound, ctx);
   },
 };
