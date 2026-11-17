@@ -11,5 +11,5 @@ directory = ".output/public"
 command = "CF_BUILD=1 npm run build"
 
 [[routes]]
-pattern = "thefirst.mrwinter.org/*"
-zone_name = "mrwinter.org"
+pattern = "thefirst.mrwinter.org"
+custom_domain = true
