@@ -4,15 +4,18 @@ import { subjectQuery } from "@/features/student/queries";
 import { Card, PageHeader, StatusBadge } from "@/components/common";
 
 export const Route = createFileRoute("/_authenticated/app/subjects/$subjectSlug")({
-  head: () => ({
+  head: ({ loaderData }) => ({
     meta: [
-      { title: "المادة — العصر الجديد الأول" },
+      {
+        title: `${loaderData?.nameAr ?? "المادة"} — العصر الجديد الأول`,
+      },
       { name: "description", content: "وحدات ودروس المادة." },
     ],
   }),
   loader: async ({ context, params }) => {
     const s = await context.queryClient.ensureQueryData(subjectQuery(params.subjectSlug));
     if (!s) throw notFound();
+    return { nameAr: s.name_ar };
   },
   component: SubjectPage,
 });

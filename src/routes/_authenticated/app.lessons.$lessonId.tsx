@@ -6,15 +6,18 @@ import { AppIcon } from "@/components/icons/AppIcon";
 import { LessonLab } from "@/components/labs/LessonLab";
 
 export const Route = createFileRoute("/_authenticated/app/lessons/$lessonId")({
-  head: () => ({
+  head: ({ loaderData }) => ({
     meta: [
-      { title: "الدرس — العصر الجديد الأول" },
+      {
+        title: `${loaderData?.titleAr ?? "الدرس"} — العصر الجديد الأول`,
+      },
       { name: "description", content: "شرح الدرس ومفاهيمه والتدريب عليها." },
     ],
   }),
   loader: async ({ context, params }) => {
     const l = await context.queryClient.ensureQueryData(lessonQuery(params.lessonId));
     if (!l) throw notFound();
+    return { titleAr: l.title_ar };
   },
   component: LessonPage,
 });

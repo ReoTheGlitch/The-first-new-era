@@ -55,10 +55,17 @@ function Assistant() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   useEffect(
     () => endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" }),
     [messages, busy],
   );
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
+  }, [input]);
 
   async function send(e: React.FormEvent) {
     e.preventDefault();
@@ -304,6 +311,7 @@ function Assistant() {
               سؤالك
             </label>
             <textarea
+              ref={textareaRef}
               id="q"
               rows={1}
               maxLength={2000}

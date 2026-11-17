@@ -61,9 +61,9 @@ function ExamsPage() {
       /* history remains optional */
     }
   }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     void refreshHistory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function startExam(e: React.FormEvent) {

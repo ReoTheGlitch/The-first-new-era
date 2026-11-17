@@ -3,7 +3,7 @@ import type { AiTutorProvider, ChatMessage } from "./types";
 import type { ProviderChoice } from "./config.server";
 import { AiProviderError } from "./provider-error";
 
-const FALLBACK_MODELS = ["gemini-3.5-flash-lite"];
+const FALLBACK_MODELS = ["gemini-2.0-flash-lite"];
 function isModelUnavailableError(err: unknown): boolean {
   const status =
     (err as { status?: number; statusCode?: number })?.status ??
