@@ -1,138 +1,100 @@
-# CLAUDE.md — AI Session Context
+# CLAUDE.md — session orientation
 
-This file gives Claude Code sessions fast orientation on the project without reading every file.
+Fast context for a Claude Code session. Full detail lives in `docs/`.
 
-## Project
+## The product
 
-**Egyptian Grade 12 learning platform** — Physics & Chemistry. Arabic-first (RTL), dark-only design (OKLCH tokens). Students practice concepts, take AI-generated exams, chat with an AI tutor, and track XP/streaks/achievements.
+**The first** — an Egyptian Grade-12 learning platform (Physics,
+Chemistry). Arabic-first (RTL), dark-only design on OKLCH tokens.
+Students practice concepts, take AI-generated exams, chat with a tutor,
+and track streaks + weekly competition points.
 
-## Dev Branch
+## The stack
 
-```
-ccr-52216415-px8xos
-```
+- **TanStack Start v1.168** on **Cloudflare Workers** (one worker, one
+  origin).
+- **Cloudflare D1** for data (binding `DB`), **Workers KV** for static
+  assets (binding `STATIC_KV`).
+- **OpenRouter** → Gemini 2.5 Flash for AI.
+- **Self-hosted auth** (PBKDF2 WebCrypto + session cookie). No Supabase.
 
-Always develop on this branch. Never push directly to `main`.
+See `docs/architecture.md` for the full picture.
 
-## Run Commands
+## Dev branch
+
+Always work on `ccr-52216415-px8xos`. Never push to `main`.
+
+## Commands
 
 ```bash
-npm run dev          # dev server → http://localhost:3000
+npm run dev          # http://localhost:3000, better-sqlite3 .data/dev.db
 npm run build        # production build
-npm run lint         # ESLint + Prettier (must be 0 errors before committing)
-npm run format       # auto-fix Prettier
-npm run test         # Vitest unit tests (9 tests, all must pass)
-npm run e2e          # Playwright smoke tests (needs dev server running)
-npx tsc --noEmit     # TypeScript check (must be 0 errors before committing)
+npm run build:cf     # same, with Cloudflare preset
+npm run deploy:cf    # apply D1 migrations → build → upload KV → wrangler deploy
+npm run lint         # 0 errors expected
+npm run test         # vitest
+npx tsc --noEmit     # 0 errors expected
 ```
 
-## Framework
+## Patterns that aren't bugs
 
-- **TanStack Start v1.168** + **TanStack Router v1.170** — file-based routing, SSR
-- **React 19**, **Tailwind CSS v4** (OKLCH color space, dark-first)
-- **Vite 8** build
+- Every file that accesses `context.db` disables
+  `@typescript-eslint/no-explicit-any` and casts row types. TanStack
+  Start v1 does not propagate D1's typed interface through the
+  middleware chain — this is a framework limit.
+- `head: ({ loaderData }) => …` needs `loaderData as { … } | undefined`
+  because v1 Router doesn't propagate loader types into `head()`.
+- `bg-brand`, `bg-tile`, `text-gradient` utilities are kept for backward
+  compatibility but now resolve to **solid** colors. See
+  `docs/ai-slop-notes.md` for the rule set.
 
-## Key Architectural Decisions
+## Routes
 
-### Server Functions
-All AI calls, DB mutations, and auth-gated reads use `createServerFn` from `@tanstack/react-start`. These never run in the browser.
+See `docs/architecture.md` → "Routing layout". Regenerate the type
+registry when files are added or removed:
 
-### Auth Middleware
-`src/integrations/supabase/auth-middleware.ts` exports `requireSupabaseAuth`. It injects `{ supabase, userId, claims }` into the server function context. **Every server function that touches the DB uses this middleware.**
-
-### `context.supabase as any`
-TanStack Start v1 does not fully type the Supabase client through the middleware context chain. Every server function does `context.supabase as any` — this is correct and intentional, not a bug. Each file has `/* eslint-disable @typescript-eslint/no-explicit-any */` at the top.
-
-### `loaderData` typing in `head()`
-TanStack Router v1 does not propagate loader return types into the `head()` function — `loaderData` infers as `never`. The workaround is an explicit type cast:
-```ts
-head: ({ loaderData }) => ({
-  meta: [{ title: `${(loaderData as { titleAr?: string } | undefined)?.titleAr ?? "fallback"}` }]
-})
-```
-
-### AI
-- Provider: OpenRouter (OpenAI-compatible `chat/completions`, plain `fetch`, no SDK) — `src/lib/ai/provider.server.ts` (`generateText`, `generateJson`)
-- Default model: `google/gemini-2.5-flash` (env `AI_MODEL` to override)
-- Fallback (one retry on 5xx/429/model-unavailable): `google/gemini-2.5-flash-lite` (`gemini-2.0-flash-lite-001` is no longer listed on OpenRouter)
-- Exams use `response_format: json_schema` (strict) with `max_tokens: 4096`; parse failure retries once with a "return ONLY valid JSON" amendment
-- Env: `OPENROUTER_API_KEY` (Worker secret in prod). In dev it can stay blank: the agent proxy injects the key (code sends `Bearer proxy-injected`). In Node dev the module builds an undici `ProxyAgent` from `HTTPS_PROXY`/`NODE_EXTRA_CA_CERTS`; in the Worker plain `fetch` is used.
-- Config: `src/lib/ai/config.server.ts`
-- Rate limits: 30 req/hr (tutor), 5 exams/hr — enforced by Supabase row count in server functions
-
-### Styling
-- **Dark-only** design. Light mode tokens added in `src/styles.css` for the theme toggle, but the default brand is dark violet-indigo-blue.
-- OKLCH color space throughout — no hex literals in component code.
-- Key utilities: `press` (active scale), `glow-edge`, `ambient`, `text-gradient`
-- CSS file: `src/styles.css` — Tailwind v4 `@theme`, custom `@keyframes`, `@utility` blocks
-
-### Route Structure
-```
-src/routes/
-  __root.tsx              ← root layout, QueryClientProvider, ErrorBoundary, SW registration
-  auth.tsx                ← login/signup/reset (no auth required)
-  index.tsx               ← public landing → redirects to /app
-  _authenticated/
-    route.tsx             ← Supabase auth guard
-    app.tsx               ← AppShell wrapper
-    app.index.tsx         ← /app dashboard
-    app.assistant.tsx     ← /app/assistant AI chat
-    app.exams.tsx         ← /app/exams AI exam builder
-    app.competition.tsx   ← /app/competition leaderboard
-    app.mistakes.tsx      ← /app/mistakes mistake notebook
-    app.profile.tsx       ← /app/profile stats + achievements
-    app.subjects.*.tsx    ← /app/subjects subject pages
-    app.lessons.$lessonId.tsx     ← lesson reader
-    app.practice.$conceptId.tsx   ← MCQ practice
-```
-
-### Route Tree
-If you add or remove route files, regenerate the type registry:
 ```bash
 npx @tanstack/router-cli generate
 ```
 
-## Database
+## Data
 
-Supabase Postgres with RLS. Key tables: `profiles`, `subjects`, `courses`, `units`, `lessons`, `concepts`, `questions`, `quiz_attempts`, `xp_transactions`, `streaks`, `achievements`, `user_achievements`, `ai_chat_conversations`, `ai_chat_messages`, `ai_generated_exams`, `ai_interactions`, `learning_preferences`.
+See `docs/architecture.md` → "Database" and `docs/content.md` for how to
+add lessons. Migrations in `migrations/*.sql`, auto-applied in dev, and
+applied by `scripts/cf/deploy.sh` on every deploy.
 
-Client: `src/integrations/supabase/client.ts` (browser) — used in `src/features/student/queries.ts`.
-Server: injected via `requireSupabaseAuth` middleware into `createServerFn` context.
+## AI
 
-## Components
+`src/lib/ai/provider.server.ts` — OpenRouter, OpenAI-compatible API.
+Model override: env `AI_MODEL`. Key: env `OPENROUTER_API_KEY`
+(worker secret in prod; in this cloud container the proxy accepts the
+placeholder `proxy-injected`).
 
-- `src/components/common/` — `Card`, `PageHeader`, `SkeletonBlock` (`role="status"`), `StatusBadge`, `MathTex`
-- `src/components/layout/AppShell.tsx` — sidebar + mobile nav + `<StudyTimer />` + `<CommandPalette />`
-- `src/components/CommandPalette.tsx` — Ctrl+K / ⌘K overlay
-- `src/components/StudyTimer.tsx` — floating Pomodoro (25/5/15 min)
-- `src/components/LessonNotes.tsx` — collapsible per-lesson notepad
-- `src/components/ThemeToggle.tsx` — dark/light/system cycle
-- `src/components/ErrorBoundary.tsx` — React class error boundary wrapping `<Outlet />`
-- `src/components/achievements/AchievementUnlock.tsx` — spring-pop popup
+## Deploy
 
-## PWA
+```bash
+npm run deploy:cf
+```
 
-- Manifest: `public/manifest.json`
-- Service worker: `public/sw.js` — vanilla JS, cache-first for static, network-only for Supabase/OpenRouter
-- Registration: `useEffect` in `src/routes/__root.tsx` root component
+See `docs/deploy.md`. The worker needs one real secret:
+`OPENROUTER_API_KEY` set in the Cloudflare dashboard.
 
-## ESLint / Prettier
-
-Config: `eslint.config.js`. Ignores: `dist`, `.output`, `.vinxi`, `e2e/`, `playwright.config.ts`.
-Prettier is enforced via `eslint-plugin-prettier` — run `npm run format` to fix.
-
-## Git Commit Convention
+## Commit convention
 
 ```
 feat: short description
 fix: short description
-docs: short description
-perf: short description
 refactor: short description
+docs: short description
+chore: short description
 ```
 
-End every commit message with:
+End each commit message with:
+
 ```
-Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+Co-Authored-By: Claude <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_01LoCBXy2BNS8Xqhaxm3GZYf
 ```
+
+(The `Claude` token is replaced with the specific model variant by the
+session reminders on each turn.)
