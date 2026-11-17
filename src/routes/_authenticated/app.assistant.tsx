@@ -308,7 +308,7 @@ function Assistant() {
           >
             {messages.length === 0 && (
               <div className="flex flex-col items-center gap-3 py-10 text-center text-muted-foreground">
-                <AppIcon name="assistant" tile size={64} className="animate-float" />
+                <AppIcon name="assistant" tile size={64} />
                 <p className="text-sm">
                   اسأل عن أي مفهوم في الفيزياء أو الكيمياء، أو اطلب رسمًا توضيحيًا أو أسئلة تدريبية.
                 </p>

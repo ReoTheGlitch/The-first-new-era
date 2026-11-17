@@ -98,10 +98,7 @@ function MistakesPage() {
             <Card className="flex flex-col items-center gap-4 py-12 text-center">
               <CelebrationIcon />
               <div>
-                <p className="text-lg font-semibold text-foreground">ممتاز!</p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  لا توجد أخطاء مسجّلة بعد. استمر في التدريب.
-                </p>
+                <p className="text-lg font-semibold text-foreground">لا أخطاء مسجّلة</p>
               </div>
             </Card>
           ) : (

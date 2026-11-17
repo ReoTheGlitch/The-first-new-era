@@ -55,16 +55,6 @@ function WeeklySparkline({ days }: { days: number[] }) {
   );
 }
 
-const QUOTES = [
-  "العلم نور والجهل ظلام",
-  "من جدّ وجد، ومن زرع حصد",
-  "لا يكلّف الله نفساً إلا وسعها",
-  "النجاح ليس نهائياً والفشل ليس قاتلاً",
-  "كل يوم هو فرصة جديدة للتعلم",
-  "الوقت كالسيف إن لم تقطعه قطعك",
-  "اطلب العلم من المهد إلى اللحد",
-];
-
 type Me = Awaited<ReturnType<NonNullable<typeof studentOverviewQuery.queryFn>>>;
 
 function StatsGrid({ me }: { me: Me }) {
@@ -176,15 +166,6 @@ function StatsGrid({ me }: { me: Me }) {
   );
 }
 
-function DailyQuote() {
-  const quote = QUOTES[new Date().getDay() % QUOTES.length];
-  return (
-    <Card className="mt-6 py-6 text-center">
-      <p className="mt-2 text-sm italic text-muted-foreground">{quote}</p>
-    </Card>
-  );
-}
-
 function Profile() {
   const { data: me } = useSuspenseQuery(studentOverviewQuery);
   const { data: weekly } = useQuery(weeklyXpQuery);
@@ -225,10 +206,7 @@ function Profile() {
           {me.achievements.length ? (
             <ul className="grid gap-3 sm:grid-cols-2">
               {me.achievements.map((a, i) => (
-                <li
-                  key={i}
-                  className="flex items-center gap-3 rounded-xl bg-muted/60 p-3 glow-pulse"
-                >
+                <li key={i} className="flex items-center gap-3 rounded-xl bg-muted/60 p-3">
                   <AppIcon name="achievements" tile size={40} />
                   <div className="min-w-0">
                     <p className="truncate font-medium">{a.achievements?.title_ar}</p>
@@ -263,7 +241,6 @@ function Profile() {
       )}
 
       <StatsGrid me={me} />
-      <DailyQuote />
     </div>
   );
 }

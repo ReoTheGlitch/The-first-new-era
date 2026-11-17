@@ -112,11 +112,7 @@ function ExamsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="الامتحانات"
-        subtitle="اختبر نفسك بامتحان يولّده الذكاء الاصطناعي بأسئلة جديدة في كل مرة."
-        icon="exams"
-      />
+      <PageHeader title="الامتحانات" subtitle="أسئلة جديدة في كل مرة." icon="exams" />
 
       <Card className="p-5">
         <form onSubmit={startExam} className="grid gap-4 sm:grid-cols-4">

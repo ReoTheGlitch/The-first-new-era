@@ -30,11 +30,11 @@ export function PageHeader({
 
 type Tone = "demo" | "soon" | "unverified" | "ai" | "verified" | "setup";
 const toneText: Record<Tone, string> = {
-  demo: "بيانات تجريبية",
+  demo: "تجريبي",
   soon: "قريبًا",
-  unverified: "في انتظار مصدر معتمد",
-  ai: "مولَّد بالذكاء الاصطناعي — غير رسمي",
-  verified: "محتوى معتمد",
+  unverified: "قيد المراجعة",
+  ai: "مساعد ذكي",
+  verified: "معتمد",
   setup: "يحتاج إعداد",
 };
 const toneClass: Record<Tone, string> = {
@@ -84,7 +84,7 @@ export function EmptyState({
 }) {
   return (
     <div className="flex flex-col items-center gap-3 px-4 py-10 text-center">
-      <AppIcon name={icon} tile size={56} className="animate-float" />
+      <AppIcon name={icon} tile size={56} />
       <h3 className="text-lg font-semibold">{title}</h3>
       <p className="max-w-sm text-sm text-muted-foreground">{body}</p>
       {action}

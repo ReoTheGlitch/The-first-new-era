@@ -179,7 +179,7 @@ function Practice() {
                     : "bg-destructive/10 text-destructive",
                 )}
               >
-                {isCorrect ? "✓ إجابة صحيحة!" : "✗ إجابة خاطئة"}
+                {isCorrect ? "إجابة صحيحة" : "إجابة خاطئة"}
               </div>
               {!isCorrect && (q as { explanation_ar?: string }).explanation_ar && (
                 <div className="rounded-xl bg-muted/60 p-3 text-sm text-muted-foreground">
@@ -239,9 +239,9 @@ function Practice() {
             <div className="space-y-1">
               <p className="text-lg font-semibold">
                 {result.correct === result.total
-                  ? "ممتاز! كل الإجابات صحيحة 🎉"
+                  ? "كل الإجابات صحيحة"
                   : result.correct >= result.total / 2
-                    ? "أحسنت — راجع الأخطاء وكرر التدريب"
+                    ? "راجع الأخطاء وكرر التدريب"
                     : "راجع المفهوم ثم أعد التدريب"}
               </p>
               <p className="text-sm text-muted-foreground">

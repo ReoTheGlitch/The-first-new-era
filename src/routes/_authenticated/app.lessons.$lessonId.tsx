@@ -151,7 +151,7 @@ function LessonPage() {
 
           {allChecked && (
             <p className="rounded-xl border border-green-500/30 bg-green-500/10 p-3 text-sm font-medium text-green-400">
-              أحسنت! أكملت جميع مفاهيم الدرس ✓
+              أكملت جميع مفاهيم الدرس
             </p>
           )}
 
