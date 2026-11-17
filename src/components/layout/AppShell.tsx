@@ -4,7 +4,7 @@ import { useState, type ReactNode } from "react";
 import { AppIcon } from "@/components/icons/AppIcon";
 import { Logo } from "@/components/brand/Logo";
 import { mobileNav, primaryNav, secondaryNav, type NavItem } from "@/config/navigation";
-import { supabase } from "@/integrations/supabase/client";
+import { signOut } from "@/features/auth/auth.functions";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { CommandPalette } from "@/components/CommandPalette";
@@ -18,7 +18,7 @@ function useSignOut() {
   return async () => {
     await qc.cancelQueries();
     qc.clear();
-    await supabase.auth.signOut();
+    await signOut();
     navigate({ to: "/auth", replace: true });
   };
 }

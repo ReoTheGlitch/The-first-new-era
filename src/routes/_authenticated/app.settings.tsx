@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { saveSettings } from "@/features/student/student.functions";
 import { studentOverviewQuery } from "@/features/student/queries";
 import { Card, PageHeader } from "@/components/common";
 import { Switch } from "@/components/ui/switch";
@@ -71,20 +71,14 @@ function Settings() {
       return;
     }
     setSaving(true);
-    const [a, b] = await Promise.all([
-      supabase
-        .from("profiles")
-        .update({ display_name: trimmed, updated_at: new Date().toISOString() })
-        .eq("id", me.userId),
-      supabase
-        .from("learning_preferences")
-        .upsert({ user_id: me.userId, ...prefs, updated_at: new Date().toISOString() }),
-    ]);
-    setSaving(false);
-    if (a.error || b.error) {
+    try {
+      await saveSettings({ data: { displayName: trimmed, prefs } });
+    } catch {
+      setSaving(false);
       toast.error("تعذّر حفظ الإعدادات");
       return;
     }
+    setSaving(false);
     toast.success("تم حفظ الإعدادات");
     qc.invalidateQueries({ queryKey: ["student"] });
   }
