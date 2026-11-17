@@ -104,7 +104,7 @@ function Practice() {
     if (isThisCorrect) return "border-green-500/60 bg-green-500/10 text-green-300";
     if (isThisSelected && !isCorrect)
       return "border-destructive bg-destructive/10 text-destructive";
-    return "border-input opacity-50";
+    return "border-border opacity-60";
   }
 
   return (
@@ -122,7 +122,7 @@ function Practice() {
       )}
 
       {!result && q && (
-        <Card className="animate-rise" key={`${q.id}-${idx}`}>
+        <Card key={`${q.id}-${idx}`}>
           {/* Progress header */}
           <div className="mb-5 space-y-2">
             <div className="flex items-center justify-between text-sm text-muted-foreground">
@@ -145,16 +145,15 @@ function Practice() {
           <div role="radiogroup" aria-label="خيارات الإجابة" className="grid gap-3">
             {[...q.question_options]
               .sort((a, b) => a.sort_order - b.sort_order)
-              .map((o, optIdx) => (
+              .map((o) => (
                 <button
                   key={o.id}
                   role="radio"
                   aria-checked={selectedId === o.id}
-                  aria-label={`الخيار ${optIdx + 1}: ${o.label_ar}`}
                   disabled={revealed}
                   onClick={() => !revealed && setAnswers((p) => ({ ...p, [q.id]: o.id }))}
                   className={cn(
-                    "press min-h-12 rounded-xl border px-4 py-3 text-start transition-colors duration-200",
+                    "press min-h-12 rounded-md border px-4 py-3 text-start transition-colors duration-200",
                     optionStyle(o.id),
                   )}
                 >
@@ -173,7 +172,7 @@ function Practice() {
               )}
               <div
                 className={cn(
-                  "flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium",
+                  "flex items-center gap-2 rounded-md px-4 py-3 text-sm font-medium",
                   isCorrect
                     ? "bg-green-500/10 text-green-300"
                     : "bg-destructive/10 text-destructive",
@@ -182,7 +181,7 @@ function Practice() {
                 {isCorrect ? "إجابة صحيحة" : "إجابة خاطئة"}
               </div>
               {!isCorrect && (q as { explanation_ar?: string }).explanation_ar && (
-                <div className="rounded-xl bg-muted/60 p-3 text-sm text-muted-foreground">
+                <div className="rounded-md bg-muted/60 p-3 text-sm text-muted-foreground">
                   {(q as { explanation_ar?: string }).explanation_ar}
                 </div>
               )}
@@ -194,7 +193,7 @@ function Practice() {
             <button
               disabled={idx === 0 || revealed}
               onClick={() => setIdx(idx - 1)}
-              className="press rounded-xl border border-input px-4 py-2.5 text-sm disabled:opacity-40"
+              className="press rounded-md border border-input px-4 py-2.5 text-sm disabled:opacity-40"
             >
               السابق
             </button>
@@ -203,7 +202,7 @@ function Practice() {
               <button
                 disabled={!selectedId}
                 onClick={reveal}
-                className="press rounded-xl bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground disabled:opacity-40"
+                className="press rounded-lg bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground disabled:opacity-40"
               >
                 تحقق
               </button>
@@ -212,7 +211,7 @@ function Practice() {
                 disabled={busy}
                 onClick={advance}
                 className={cn(
-                  "press rounded-xl px-6 py-2.5 text-sm font-medium text-primary-foreground disabled:opacity-40",
+                  "press rounded-md px-6 py-2.5 text-sm font-medium text-primary-foreground disabled:opacity-40",
                   isCorrect ? "bg-brand" : "bg-primary",
                 )}
               >
@@ -286,7 +285,7 @@ function Practice() {
                   </p>
                 )}
                 {r?.explanation && (
-                  <p className="mt-2 rounded-xl bg-muted/60 p-3 text-sm text-muted-foreground">
+                  <p className="mt-2 rounded-md bg-muted/60 p-3 text-sm text-muted-foreground">
                     {r.explanation}
                   </p>
                 )}
@@ -297,14 +296,14 @@ function Practice() {
           <div className="flex flex-wrap gap-3">
             <button
               onClick={restart}
-              className="press rounded-xl bg-primary px-5 py-2.5 text-sm text-primary-foreground"
+              className="press rounded-lg bg-primary px-5 py-2.5 text-sm text-primary-foreground"
             >
               أعد التدريب
             </button>
             <Link
               to="/app/lessons/$lessonId"
               params={{ lessonId: c.lesson_id }}
-              className="press rounded-xl border border-input px-5 py-2.5 text-sm"
+              className="press rounded-md border border-input px-5 py-2.5 text-sm"
             >
               العودة للدرس
             </Link>

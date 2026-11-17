@@ -28,7 +28,7 @@ export function AchievementUnlock({ titleAr, descriptionAr, onDismiss }: Props) 
         opacity: fading ? 0 : 1,
       }}
     >
-      <div className="flex items-center gap-3 rounded-md border border-primary/40 bg-popover px-5 py-3.5 shadow-2xl">
+      <div className="flex items-center gap-3 rounded-md border border-primary/40 bg-popover px-5 py-3.5 shadow-md">
         <svg
           width="20"
           height="20"

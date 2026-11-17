@@ -35,7 +35,11 @@ function Row({
         <span className="block text-sm">{label}</span>
         {hint && <span className="block text-xs text-muted-foreground">{hint}</span>}
       </span>
-      <Switch checked={checked} onCheckedChange={onChange} />
+      <Switch
+        checked={checked}
+        onCheckedChange={onChange}
+        className="h-5 w-9 shadow-none data-[state=checked]:bg-primary data-[state=unchecked]:bg-muted [&>span]:size-4 [&>span]:shadow-none"
+      />
     </label>
   );
 }
@@ -83,7 +87,7 @@ function Settings() {
     qc.invalidateQueries({ queryKey: ["student"] });
   }
 
-  const select = "w-full rounded-xl border border-input bg-muted/60 px-3 py-2.5 text-sm";
+  const select = "w-full rounded-md border border-input bg-muted/60 px-3 py-2.5 text-sm";
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <PageHeader title="الإعدادات" icon="settings" />
@@ -179,7 +183,7 @@ function Settings() {
       <button
         onClick={save}
         disabled={saving}
-        className="press w-full rounded-xl bg-brand px-6 py-3 font-medium text-primary-foreground disabled:opacity-50 sm:w-auto"
+        className="press w-full rounded-lg bg-brand px-6 py-3 font-medium text-primary-foreground disabled:opacity-50 sm:w-auto"
       >
         {saving ? "جارٍ الحفظ…" : "حفظ الإعدادات"}
       </button>

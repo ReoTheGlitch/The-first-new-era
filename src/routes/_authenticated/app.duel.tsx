@@ -84,7 +84,7 @@ function DuelPage() {
             aria-selected={tab === key}
             onClick={() => setTab(key)}
             className={cn(
-              "rounded-xl border px-4 py-2 text-sm transition-colors",
+              "rounded-md border px-4 py-2 text-sm transition-colors",
               tab === key
                 ? "border-primary bg-primary/15 text-foreground"
                 : "border-border text-muted-foreground hover:text-foreground",
@@ -221,7 +221,7 @@ function LiveDuel({
             <button
               disabled={busy || !enough}
               onClick={() => begin(() => quick({ data: payload }) as Promise<DuelState>)}
-              className="press w-full rounded-xl bg-brand py-3 font-medium text-primary-foreground disabled:opacity-50"
+              className="press w-full rounded-lg bg-brand py-3 font-medium text-primary-foreground disabled:opacity-50"
             >
               ابدأ البحث
             </button>
@@ -232,7 +232,7 @@ function LiveDuel({
             <button
               disabled={busy || !enough}
               onClick={() => begin(() => create({ data: payload }) as Promise<DuelState>)}
-              className="press w-full rounded-xl border border-border py-3 font-medium disabled:opacity-50"
+              className="press w-full rounded-md border border-border py-3 font-medium disabled:opacity-50"
             >
               إنشاء تحدٍّ
             </button>
@@ -248,12 +248,12 @@ function LiveDuel({
               maxLength={6}
               dir="ltr"
               placeholder="ABC123"
-              className="min-w-0 flex-1 rounded-xl border border-input bg-muted/60 px-3 py-3 text-center tracking-widest"
+              className="min-w-0 flex-1 rounded-md border border-input bg-muted/60 px-3 py-3 text-center tracking-widest"
             />
             <button
               disabled={busy || code.length < 4}
               onClick={() => begin(() => join({ data: { code } }) as Promise<DuelState>)}
-              className="press rounded-xl bg-brand px-6 font-medium text-primary-foreground disabled:opacity-50"
+              className="press rounded-lg bg-brand px-6 font-medium text-primary-foreground disabled:opacity-50"
             >
               انضمام
             </button>
@@ -271,7 +271,7 @@ function LiveDuel({
         <p className="text-sm text-muted-foreground">
           وضع {modeLabel}. شارك الكود مع صديقك، أو انتظر حتى ينضم منافس.
         </p>
-        <p dir="ltr" className="font-display text-5xl font-bold tracking-[0.3em]">
+        <p dir="ltr" className="font-display text-5xl font-semibold tracking-[0.3em]">
           {state.code}
         </p>
         <button
@@ -282,7 +282,20 @@ function LiveDuel({
         >
           نسخ الكود
         </button>
-        <p className="animate-pulse text-sm">في انتظار المنافس...</p>
+        <p className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+          <svg
+            className="size-3.5 animate-spin"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            aria-hidden="true"
+          >
+            <path d="M12 3a9 9 0 1 0 9 9" />
+          </svg>
+          في انتظار المنافس…
+        </p>
         <button onClick={reset} className="block w-full text-sm text-muted-foreground">
           إلغاء
         </button>
@@ -309,7 +322,7 @@ function LiveDuel({
           </p>
           <button
             onClick={reset}
-            className="press rounded-xl bg-brand px-8 py-3 font-medium text-primary-foreground"
+            className="press rounded-lg bg-brand px-8 py-3 font-medium text-primary-foreground"
           >
             تحدٍّ جديد
           </button>
@@ -339,7 +352,7 @@ function LiveDuel({
           <p className="text-sm text-muted-foreground">
             {state.index === 0 ? `يبدأ تحدي ${modeLabel} خلال` : "الجولة التالية خلال"}
           </p>
-          <p className="font-display text-6xl font-bold">{Math.ceil(-elapsed)}</p>
+          <p className="font-display text-6xl font-semibold">{Math.ceil(-elapsed)}</p>
           {state.prev && !speed && (
             <Reveal
               prev={state.prev}
@@ -351,13 +364,13 @@ function LiveDuel({
       ) : speed && state.me_answered ? (
         <Card className="space-y-2 text-center">
           <p className="text-lg font-semibold">أنهيت الأسئلة</p>
-          <p className="animate-pulse text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             في انتظار المنافس ({state.opp_count} من {state.total})...
           </p>
         </Card>
       ) : (
         q && (
-          <Card className="animate-rise" key={q.id}>
+          <Card key={q.id}>
             <div className="mb-4 flex items-center justify-between text-sm text-muted-foreground">
               <span>{header}</span>
               <span dir="ltr">{Math.ceil(left)}s</span>
@@ -389,7 +402,7 @@ function LiveDuel({
                   disabled={state.me_answered || !!picked}
                   onClick={() => pick(o.id)}
                   className={cn(
-                    "rounded-xl border px-4 py-3 text-start transition-colors disabled:cursor-default",
+                    "rounded-md border px-4 py-3 text-start transition-colors disabled:cursor-default",
                     picked === o.id
                       ? "border-primary bg-primary/15"
                       : "border-border hover:border-primary/60",
@@ -458,7 +471,7 @@ function Reveal({ prev, mode, title }: { prev: Round; mode: DuelMode; title: str
       ? "ركلة المنافس خارج"
       : "المنافس لم يصب";
   return (
-    <div className="space-y-1 rounded-xl border border-border bg-muted/40 p-3 text-start text-sm">
+    <div className="space-y-1 rounded-md border border-border bg-muted/40 p-3 text-start text-sm">
       <p className="font-medium">{title}</p>
       <p>
         الإجابة الصحيحة: <b dir="auto">{prev.correct_label}</b>

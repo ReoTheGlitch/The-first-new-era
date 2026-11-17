@@ -51,7 +51,7 @@ function Podium({ board }: { board: BoardRow[] }) {
       {order.map((r, i) => (
         <div key={r.user_id} className="flex flex-col items-center gap-1.5">
           <div
-            className="flex h-12 w-12 items-center justify-center rounded-full text-lg font-bold"
+            className="flex h-12 w-12 items-center justify-center rounded-full text-lg font-semibold"
             style={{ backgroundColor: MEDAL_COLORS[i], color: "#0f0b1a" }}
           >
             {r.display_name.slice(0, 1)}
@@ -63,7 +63,7 @@ function Podium({ board }: { board: BoardRow[] }) {
           </p>
           <p className="text-xs text-muted-foreground">{r.total_xp} XP</p>
           <div
-            className="flex w-20 items-center justify-center rounded-t-xl font-bold"
+            className="flex w-20 items-center justify-center rounded-t-md font-semibold"
             style={{
               height: PEDESTAL_H[i],
               backgroundColor: MEDAL_COLORS[i],
@@ -89,7 +89,7 @@ function RankCell({ rank }: { rank: number }) {
 }
 
 function BoardRow({ r }: { r: BoardRow }) {
-  const meClass = r.is_me ? "rounded-xl border border-primary/40 bg-primary/5" : "";
+  const meClass = r.is_me ? "rounded-md border border-primary/40 bg-primary/5" : "";
   return (
     <>
       {/* Desktop row */}
@@ -112,7 +112,7 @@ function BoardRow({ r }: { r: BoardRow }) {
       {/* Mobile card */}
       <li
         aria-current={r.is_me ? "true" : undefined}
-        className={`flex items-center gap-3 rounded-xl border border-border p-3 md:hidden ${r.is_me ? "border-primary/40 bg-primary/5" : "bg-background/40"}`}
+        className={`flex items-center gap-3 rounded-md border border-border p-3 md:hidden ${r.is_me ? "border-primary/40 bg-primary/5" : "bg-background/40"}`}
       >
         <RankCell rank={r.rank} />
         <div className="min-w-0 flex-1">
@@ -175,10 +175,25 @@ function Competition() {
         </Card>
       </div>
       <Tabs defaultValue="weekly" dir="rtl">
-        <TabsList className="mb-4">
-          <TabsTrigger value="weekly">المسابقة الأسبوعية</TabsTrigger>
-          <TabsTrigger value="leaderboard">الترتيب العام</TabsTrigger>
-          <TabsTrigger value="challenges">التحديات</TabsTrigger>
+        <TabsList className="mb-4 h-9 gap-1 rounded-md border border-border bg-muted/40 p-1">
+          <TabsTrigger
+            className="rounded-sm px-3 text-sm font-medium text-muted-foreground shadow-none data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs"
+            value="weekly"
+          >
+            المسابقة الأسبوعية
+          </TabsTrigger>
+          <TabsTrigger
+            className="rounded-sm px-3 text-sm font-medium text-muted-foreground shadow-none data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs"
+            value="leaderboard"
+          >
+            الترتيب العام
+          </TabsTrigger>
+          <TabsTrigger
+            className="rounded-sm px-3 text-sm font-medium text-muted-foreground shadow-none data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs"
+            value="challenges"
+          >
+            التحديات
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="weekly">
@@ -201,7 +216,7 @@ function Competition() {
                   <li
                     key={r.user_id}
                     aria-current={r.is_me ? "true" : undefined}
-                    className={`flex items-center gap-3 px-2 py-3 ${r.is_me ? "rounded-xl border border-primary/40 bg-primary/5" : ""}`}
+                    className={`flex items-center gap-3 px-2 py-3 ${r.is_me ? "rounded-md border border-primary/40 bg-primary/5" : ""}`}
                   >
                     <RankCell rank={r.rank} />
                     <span className="min-w-0 flex-1 truncate">
@@ -255,7 +270,7 @@ function Competition() {
             </p>
             <Link
               to="/app/duel"
-              className="press inline-flex rounded-xl bg-brand px-5 py-2.5 font-medium text-primary-foreground"
+              className="press inline-flex rounded-lg bg-brand px-5 py-2.5 font-medium text-primary-foreground"
             >
               ادخل التحدي
             </Link>

@@ -127,7 +127,7 @@ function LessonPage() {
               ) : b.type === "note" ? (
                 <p
                   key={i}
-                  className="rounded-xl border border-warning/30 bg-warning/10 p-3 text-sm text-warning"
+                  className="rounded-md border border-warning/30 bg-warning/10 p-3 text-sm text-warning"
                 >
                   {b.text}
                 </p>
@@ -150,7 +150,7 @@ function LessonPage() {
           </div>
 
           {allChecked && (
-            <p className="rounded-xl border border-green-500/30 bg-green-500/10 p-3 text-sm font-medium text-green-400">
+            <p className="rounded-md border border-green-500/30 bg-green-500/10 p-3 text-sm font-medium text-green-400">
               أكملت جميع مفاهيم الدرس
             </p>
           )}
@@ -181,7 +181,7 @@ function LessonPage() {
               <Link
                 to="/app/practice/$conceptId"
                 params={{ conceptId: c.id }}
-                className="press mt-3 flex items-center justify-center gap-2 rounded-xl bg-brand px-4 py-2 text-sm font-medium text-primary-foreground"
+                className="press mt-3 flex items-center justify-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-medium text-primary-foreground"
               >
                 <AppIcon name="practice" size={18} /> تدرّب على هذا المفهوم
               </Link>

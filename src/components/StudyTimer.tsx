@@ -110,7 +110,7 @@ export function StudyTimer() {
         aria-label="فتح مؤقت الدراسة"
         className={cn(
           "press fixed bottom-20 right-4 z-30 flex h-10 w-10 items-center justify-center rounded-full border border-border bg-popover text-base shadow-md md:bottom-8",
-          flash && "animate-pulse border-primary",
+          flash && "animate-in fade-in duration-1000 border-primary",
           phase === "running" && "border-primary/50 text-primary",
         )}
       >
@@ -136,7 +136,7 @@ export function StudyTimer() {
     <div
       className={cn(
         "fixed bottom-20 right-4 z-30 w-64 overflow-hidden rounded-md border border-border bg-popover shadow-md md:bottom-8",
-        flash && "animate-pulse border-primary",
+        flash && "animate-in fade-in duration-1000 border-primary",
       )}
     >
       {/* Header */}

@@ -194,18 +194,18 @@ function MistakesPage() {
                           onClick={() => dismiss(m.questionId)}
                           className="press rounded-full border border-green-500/40 bg-green-500/10 px-3 py-1 text-green-500"
                         >
-                          تم المراجعة ✓
+                          تم المراجعة
                         </button>
                       </div>
                       <p className="leading-8">{m.prompt}</p>
                       <div className="grid gap-2 text-sm sm:grid-cols-2">
-                        <p className="rounded-xl border border-border px-3 py-2">
+                        <p className="rounded-md border border-border px-3 py-2">
                           إجابتك:{" "}
                           <b dir="auto" className="text-destructive">
                             {m.chosenLabel ?? "لم تجب"}
                           </b>
                         </p>
-                        <p className="rounded-xl border border-border px-3 py-2">
+                        <p className="rounded-md border border-border px-3 py-2">
                           الصحيحة:{" "}
                           <b dir="auto" className="text-success">
                             {m.correctLabel}
@@ -220,7 +220,7 @@ function MistakesPage() {
                         <Link
                           to="/app/practice/$conceptId"
                           params={{ conceptId: m.conceptId }}
-                          className="press rounded-xl bg-brand px-4 py-2 font-medium text-primary-foreground"
+                          className="press rounded-lg bg-brand px-4 py-2 font-medium text-primary-foreground"
                         >
                           تدرّب على المفهوم
                         </Link>
@@ -228,7 +228,7 @@ function MistakesPage() {
                           <Link
                             to="/app/lessons/$lessonId"
                             params={{ lessonId: m.lessonId }}
-                            className="rounded-xl border border-border px-4 py-2"
+                            className="rounded-md border border-border px-4 py-2"
                           >
                             راجع الدرس
                           </Link>

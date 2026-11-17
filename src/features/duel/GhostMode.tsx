@@ -152,7 +152,7 @@ export function GhostMode({ picker, mode, scope, pack, enough }: Props) {
                 aria-checked={level === l.key}
                 onClick={() => setLevel(l.key)}
                 className={cn(
-                  "rounded-xl border px-2 py-3 text-sm",
+                  "rounded-md border px-2 py-3 text-sm",
                   level === l.key
                     ? "border-primary bg-primary/15"
                     : "border-border text-muted-foreground",
@@ -170,7 +170,7 @@ export function GhostMode({ picker, mode, scope, pack, enough }: Props) {
           <button
             disabled={busy || !enough}
             onClick={begin}
-            className="press rounded-xl bg-brand px-8 py-3 font-medium text-primary-foreground disabled:opacity-50"
+            className="press rounded-lg bg-brand px-8 py-3 font-medium text-primary-foreground disabled:opacity-50"
           >
             ابدأ ضد الشبح
           </button>
@@ -238,7 +238,7 @@ export function GhostMode({ picker, mode, scope, pack, enough }: Props) {
           </h2>
           <button
             onClick={() => setGhost(null)}
-            className="press rounded-xl bg-brand px-8 py-3 font-medium text-primary-foreground"
+            className="press rounded-lg bg-brand px-8 py-3 font-medium text-primary-foreground"
           >
             العب مرة أخرى
           </button>
@@ -260,7 +260,7 @@ export function GhostMode({ picker, mode, scope, pack, enough }: Props) {
   return (
     <div>
       {board}
-      <Card className="animate-rise" key={q.id}>
+      <Card key={q.id}>
         <div className="mb-4 flex items-center justify-between text-sm text-muted-foreground">
           <span>{heading}</span>
           <span dir="ltr">{feedback ? "" : `${Math.ceil(leftMs / 1000)}s`}</span>
@@ -274,7 +274,7 @@ export function GhostMode({ picker, mode, scope, pack, enough }: Props) {
               aria-checked={false}
               disabled={!!feedback}
               onClick={() => settle(o.id)}
-              className="rounded-xl border border-border px-4 py-3 text-start transition-colors hover:border-primary/60 disabled:cursor-default"
+              className="rounded-md border border-border px-4 py-3 text-start transition-colors hover:border-primary/60 disabled:cursor-default"
               dir="auto"
             >
               {o.label}
@@ -285,7 +285,7 @@ export function GhostMode({ picker, mode, scope, pack, enough }: Props) {
           {ghostAnswered ? "الشبح أجاب قبلك" : ""}
         </p>
         {feedback && (
-          <div className="mt-2 space-y-2 rounded-xl border border-border bg-muted/40 p-3 text-sm">
+          <div className="mt-2 space-y-2 rounded-md border border-border bg-muted/40 p-3 text-sm">
             {!feedback.ready ? (
               <p>جارٍ التصحيح...</p>
             ) : feedback.timedOut ? (
@@ -322,7 +322,7 @@ export function GhostMode({ picker, mode, scope, pack, enough }: Props) {
             {feedback.ready && (
               <button
                 onClick={next}
-                className="press rounded-xl bg-brand px-6 py-2 font-medium text-primary-foreground"
+                className="press rounded-lg bg-brand px-6 py-2 font-medium text-primary-foreground"
               >
                 {idx + 1 >= total ? "النتيجة" : "التالي"}
               </button>

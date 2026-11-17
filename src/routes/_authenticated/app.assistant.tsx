@@ -27,12 +27,12 @@ export const Route = createFileRoute("/_authenticated/app/assistant")({
     ],
   }),
   errorComponent: ({ error }) => (
-    <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-6 text-center">
+    <div className="rounded-md border border-destructive/30 bg-destructive/10 p-6 text-center">
       <p className="font-medium text-destructive">حدث خطأ في تحميل الصفحة</p>
       <p className="mt-1 text-xs text-muted-foreground">{(error as Error)?.message}</p>
       <button
         onClick={() => window.location.reload()}
-        className="press mt-4 rounded-xl bg-brand px-4 py-2 text-sm text-primary-foreground"
+        className="press mt-4 rounded-lg bg-brand px-4 py-2 text-sm text-primary-foreground"
       >
         تحديث
       </button>
@@ -203,7 +203,7 @@ function Assistant() {
           <button
             type="button"
             onClick={newConversation}
-            className="press rounded-xl border border-primary/40 bg-primary/10 px-4 py-2 text-xs font-medium text-primary"
+            className="press rounded-md border border-primary/40 bg-primary/10 px-4 py-2 text-xs font-medium text-primary"
           >
             + محادثة جديدة
           </button>
@@ -213,7 +213,7 @@ function Assistant() {
             {conversations.map((c) => (
               <div
                 key={c.id}
-                className={`flex min-w-44 items-center gap-2 rounded-xl border p-2 ${conversationId === c.id ? "border-primary bg-primary/10" : "border-border bg-background/40"}`}
+                className={`flex min-w-44 items-center gap-2 rounded-md border p-2 ${conversationId === c.id ? "border-primary bg-primary/10" : "border-border bg-background/40"}`}
               >
                 <button
                   type="button"
@@ -317,7 +317,7 @@ function Assistant() {
             {messages.map((m, i) =>
               m.role === "user" ? (
                 <div key={i} className="flex justify-start">
-                  <div className="max-w-[85%] rounded-2xl rounded-ss-sm bg-primary px-4 py-3 text-primary-foreground">
+                  <div className="max-w-[85%] rounded-lg rounded-ss-sm bg-primary px-4 py-3 text-primary-foreground">
                     {m.content}
                   </div>
                 </div>
@@ -345,7 +345,7 @@ function Assistant() {
                               if (safe) {
                                 return (
                                   <div
-                                    className="my-3 overflow-x-auto rounded-2xl border border-border bg-surface/80 p-4 [&_svg]:mx-auto [&_svg]:max-h-72 [&_svg]:w-full"
+                                    className="my-3 overflow-x-auto rounded-lg border border-border bg-surface/80 p-4 [&_svg]:mx-auto [&_svg]:max-h-72 [&_svg]:w-full"
                                     dangerouslySetInnerHTML={{ __html: safe }}
                                   />
                                 );
@@ -363,7 +363,10 @@ function Assistant() {
                       </ReactMarkdown>
                     </Suspense>
                     {isTyping && i === messages.length - 1 && (
-                      <span className="animate-pulse text-primary">▋</span>
+                      <span
+                        className="inline-block h-4 w-[2px] bg-primary align-middle animate-pulse"
+                        aria-hidden="true"
+                      />
                     )}
                   </div>
                 </div>
@@ -373,7 +376,7 @@ function Assistant() {
             {error && (
               <p
                 role="alert"
-                className="rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
+                className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
               >
                 {error}
               </p>
@@ -382,7 +385,7 @@ function Assistant() {
           </div>
           <form
             onSubmit={send}
-            className="sticky bottom-20 flex items-end gap-2 rounded-2xl border border-input bg-popover p-2 md:bottom-4"
+            className="sticky bottom-20 flex items-end gap-2 rounded-lg border border-input bg-popover p-2 md:bottom-4"
           >
             <label htmlFor="q" className="sr-only">
               سؤالك
@@ -406,7 +409,7 @@ function Assistant() {
             <button
               type="submit"
               disabled={busy || !input.trim()}
-              className="press h-11 shrink-0 rounded-xl bg-brand px-5 text-sm font-medium text-primary-foreground disabled:opacity-40"
+              className="press h-11 shrink-0 rounded-lg bg-brand px-5 text-sm font-medium text-primary-foreground disabled:opacity-40"
             >
               إرسال
             </button>

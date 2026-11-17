@@ -78,12 +78,11 @@ export function CommandPalette() {
   return (
     <div
       className="fixed inset-0 z-50 flex items-start justify-center px-4 pt-24"
-      style={{ background: "oklch(0 0 0 / 0.6)", backdropFilter: "blur(4px)" }}
+      style={{ background: "oklch(0 0 0 / 0.5)" }}
       onClick={close}
     >
       <div
-        className="max-w-lg w-full bg-popover border border-primary/30 rounded-md shadow-2xl overflow-hidden"
-        style={{ boxShadow: "0 0 40px oklch(0.60 0.22 285 / 0.2), 0 8px 32px black" }}
+        className="w-full max-w-lg overflow-hidden rounded-md border border-border bg-popover/95 shadow-md backdrop-blur-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-3 border-b border-border px-4 py-3">
@@ -107,12 +106,12 @@ export function CommandPalette() {
             className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
             aria-label="بحث سريع"
           />
-          <kbd className="hidden rounded border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground sm:inline">
+          <kbd className="hidden rounded-xs border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground sm:inline">
             Esc
           </kbd>
         </div>
 
-        <ul role="listbox" aria-label="نتائج البحث" className="max-h-72 overflow-y-auto py-2">
+        <ul role="listbox" aria-label="نتائج البحث" className="max-h-72 overflow-y-auto p-1.5">
           {filtered.length === 0 && (
             <li className="px-4 py-6 text-center text-sm text-muted-foreground">لا توجد نتائج</li>
           )}
@@ -120,8 +119,8 @@ export function CommandPalette() {
             <li key={item.href} role="option" aria-selected={i === active}>
               <button
                 type="button"
-                className={`flex w-full items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
-                  i === active ? "bg-primary/10 text-primary" : "text-foreground hover:bg-muted/60"
+                className={`flex w-full items-center gap-3 rounded-sm px-3 py-2 text-sm transition-colors ${
+                  i === active ? "bg-muted text-foreground" : "text-foreground hover:bg-muted/60"
                 }`}
                 onMouseEnter={() => setActive(i)}
                 onClick={() => go(item.href)}
@@ -135,15 +134,15 @@ export function CommandPalette() {
 
         <div className="flex items-center justify-between border-t border-border px-4 py-2 text-[11px] text-muted-foreground">
           <span>
-            <kbd className="rounded border border-border px-1 py-0.5">↑</kbd>
-            <kbd className="ms-1 rounded border border-border px-1 py-0.5">↓</kbd>
+            <kbd className="rounded-xs border border-border px-1 py-0.5">↑</kbd>
+            <kbd className="ms-1 rounded-xs border border-border px-1 py-0.5">↓</kbd>
             {" للتنقل · "}
-            <kbd className="rounded border border-border px-1 py-0.5">Enter</kbd>
+            <kbd className="rounded-xs border border-border px-1 py-0.5">Enter</kbd>
             {" للانتقال"}
           </span>
           <span>
-            <kbd className="rounded border border-border px-1 py-0.5">Ctrl</kbd>{" "}
-            <kbd className="rounded border border-border px-1 py-0.5">K</kbd>
+            <kbd className="rounded-xs border border-border px-1 py-0.5">Ctrl</kbd>{" "}
+            <kbd className="rounded-xs border border-border px-1 py-0.5">K</kbd>
           </span>
         </div>
       </div>

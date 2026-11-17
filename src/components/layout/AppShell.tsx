@@ -34,7 +34,6 @@ function NavLink({
     <Link
       to={item.to}
       activeOptions={{ exact: item.exact ?? false }}
-      aria-label={item.label}
       className={cn(
         "press group relative flex items-center rounded-md text-sidebar-foreground/75 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground data-[status=active]:bg-sidebar-accent data-[status=active]:text-sidebar-accent-foreground",
         variant === "full" && "gap-3 px-3 py-2.5 text-sm",
@@ -44,10 +43,14 @@ function NavLink({
           "min-h-14 flex-1 flex-col justify-center gap-1 text-[11px] data-[status=active]:bg-transparent",
       )}
     >
-      <span className="transition-transform duration-300 group-hover:-translate-y-0.5 group-data-[status=active]:scale-110">
+      <span>
         <AppIcon name={item.icon} size={variant === "bottom" ? 22 : 22} />
       </span>
-      {variant !== "rail" && <span className="truncate">{item.label}</span>}
+      {variant !== "rail" ? (
+        <span className="truncate">{item.label}</span>
+      ) : (
+        <span className="sr-only">{item.label}</span>
+      )}
       {variant === "bottom" && (
         <span className="absolute top-0 h-0.5 w-8 rounded-full bg-brand opacity-0 group-data-[status=active]:opacity-100" />
       )}
@@ -76,7 +79,6 @@ export function AppShell({ children }: { children: ReactNode }) {
               )
             }
             className="press mb-4 flex w-full items-center justify-between rounded-md border border-border bg-muted/40 px-3 py-2 text-xs text-muted-foreground hover:border-primary/30 hover:text-foreground"
-            aria-label="فتح البحث السريع"
           >
             <span className="flex items-center gap-2">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden>

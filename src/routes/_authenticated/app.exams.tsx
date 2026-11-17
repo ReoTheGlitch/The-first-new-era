@@ -20,7 +20,7 @@ export const Route = createFileRoute("/_authenticated/app/exams")({
       { title: "الامتحانات — The first" },
       {
         name: "description",
-        content: "اختبر نفسك بامتحانات متجددة يولّدها الذكاء الاصطناعي حسب مستواك.",
+        content: "تدريب على الامتحان بأسئلة جديدة حسب مستواك.",
       },
     ],
   }),
@@ -121,7 +121,7 @@ function ExamsPage() {
             <select
               value={subject}
               onChange={(e) => setSubject(e.target.value as "physics" | "chemistry")}
-              className="w-full rounded-xl border border-input bg-muted/60 px-3 py-2.5 text-sm"
+              className="w-full rounded-md border border-input bg-muted/60 px-3 py-2.5 text-sm"
             >
               <option value="physics">الفيزياء</option>
               <option value="chemistry">الكيمياء</option>
@@ -133,7 +133,7 @@ function ExamsPage() {
             <select
               value={difficulty}
               onChange={(e) => setDifficulty(e.target.value as "easy" | "medium" | "hard")}
-              className="w-full rounded-xl border border-input bg-muted/60 px-3 py-2.5 text-sm"
+              className="w-full rounded-md border border-input bg-muted/60 px-3 py-2.5 text-sm"
             >
               <option value="easy">تمهيدي</option>
               <option value="medium">قياسي (ثانوية عامة)</option>
@@ -146,7 +146,7 @@ function ExamsPage() {
             <select
               value={count}
               onChange={(e) => setCount(Number(e.target.value))}
-              className="w-full rounded-xl border border-input bg-muted/60 px-3 py-2.5 text-sm"
+              className="w-full rounded-md border border-input bg-muted/60 px-3 py-2.5 text-sm"
             >
               <option value={3}>3 أسئلة</option>
               <option value={5}>5 أسئلة</option>
@@ -161,7 +161,7 @@ function ExamsPage() {
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
               placeholder="مثال: قانون أوم، الحث..."
-              className="w-full rounded-xl border border-input bg-muted/60 px-3 py-2.5 text-sm"
+              className="w-full rounded-md border border-input bg-muted/60 px-3 py-2.5 text-sm"
             />
           </label>
 
@@ -169,7 +169,7 @@ function ExamsPage() {
             <button
               type="submit"
               disabled={busy}
-              className="press rounded-xl bg-brand px-6 py-2.5 text-sm font-medium text-primary-foreground disabled:opacity-50"
+              className="press rounded-lg bg-brand px-6 py-2.5 text-sm font-medium text-primary-foreground disabled:opacity-50"
             >
               {busy ? "جاري توليد امتحان جديد..." : "إنشاء امتحان جديد"}
             </button>
@@ -187,7 +187,7 @@ function ExamsPage() {
             {history.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background/40 p-3"
+                className="flex items-center justify-between gap-3 rounded-md border border-border bg-background/40 p-3"
               >
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium">{item.exam_title}</p>
@@ -214,7 +214,7 @@ function ExamsPage() {
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="text-xl font-semibold">{examTitle}</h2>
             {submitted && (
-              <span className="rounded-xl bg-accent px-4 py-1.5 text-sm font-semibold">
+              <span className="rounded-md bg-accent px-4 py-1.5 text-sm font-semibold">
                 النتيجة: {score} / {questions.length}
               </span>
             )}
@@ -234,7 +234,7 @@ function ExamsPage() {
 
                 {safeDiagram && (
                   <div
-                    className="overflow-x-auto rounded-xl border border-border bg-background/60 p-3 [&_svg]:mx-auto [&_svg]:max-h-64 [&_svg]:w-full"
+                    className="overflow-x-auto rounded-md border border-border bg-background/60 p-3 [&_svg]:mx-auto [&_svg]:max-h-64 [&_svg]:w-full"
                     dangerouslySetInnerHTML={{ __html: safeDiagram }}
                   />
                 )}
@@ -258,7 +258,7 @@ function ExamsPage() {
                         type="button"
                         disabled={submitted}
                         onClick={() => setAnswers((prev) => ({ ...prev, [q.id]: optIdx }))}
-                        className={`rounded-xl border px-4 py-3 text-start text-sm transition-colors [&_p]:inline ${stateClass}`}
+                        className={`rounded-md border px-4 py-3 text-start text-sm transition-colors [&_p]:inline ${stateClass}`}
                       >
                         <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
                           {opt}
@@ -269,7 +269,7 @@ function ExamsPage() {
                 </div>
 
                 {submitted && (
-                  <div className="rounded-xl bg-muted/50 p-3 text-xs leading-relaxed text-muted-foreground [&_p]:inline">
+                  <div className="rounded-md bg-muted/50 p-3 text-xs leading-relaxed text-muted-foreground [&_p]:inline">
                     <strong className="text-foreground">التفسير: </strong>
                     <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
                       {q.explanation}
@@ -284,7 +284,7 @@ function ExamsPage() {
             <button
               type="button"
               onClick={submitExam}
-              className="press rounded-xl bg-brand px-6 py-3 font-medium text-primary-foreground"
+              className="press rounded-lg bg-brand px-6 py-3 font-medium text-primary-foreground"
             >
               تصحيح الامتحان
             </button>

@@ -90,7 +90,7 @@ export function LessonNotes({ lessonId }: Props) {
               onClick={save}
               className="press rounded-md bg-primary/10 px-4 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary/20"
             >
-              {saved ? "✓ تم الحفظ" : "حفظ"}
+              {saved ? "تم الحفظ" : "حفظ"}
             </button>
           </div>
         </div>
