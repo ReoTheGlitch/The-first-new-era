@@ -312,7 +312,9 @@ function Assistant() {
                     <StatusBadge tone="ai" />
                   </div>
                   <div className="prose-sm max-w-none leading-8 [&_ol]:list-decimal [&_ol]:ps-5 [&_p]:my-2 [&_ul]:list-disc [&_ul]:ps-5">
-                    <Suspense fallback={<div className="h-4 w-3/4 animate-pulse rounded bg-muted" />}>
+                    <Suspense
+                      fallback={<div className="h-4 w-3/4 animate-pulse rounded bg-muted" />}
+                    >
                       <ReactMarkdown
                         remarkPlugins={[remarkMath]}
                         rehypePlugins={[rehypeKatex]}
