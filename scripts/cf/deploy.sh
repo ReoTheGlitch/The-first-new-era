@@ -38,7 +38,6 @@ cat > .output/server/wrangler.deploy.json <<EOF
   "d1_databases": [
     { "binding": "DB", "database_name": "new-era-db", "database_id": "b8c72bd3-1dc5-44a7-89d5-c7ca261797b7" }
   ],
-  "ai": { "binding": "AI" },
   "workers_dev": true
 }
 EOF
