@@ -15,7 +15,32 @@ const signUpInput = z.object({
 });
 const signInInput = z.object({ email, password: z.string().min(1).max(200) });
 
-type AuthResult = { userId: string } | { error: string };
+type AuthResult = { userId: string } | { error: string; retryAfterSec?: number };
+
+const HOUR_MS = 3_600_000;
+const QUARTER_MS = 900_000;
+
+/** Run limiters in order; on the first block, set Retry-After and return the error result. */
+async function rateLimit(
+  checks: Array<[scope: string, key: string, limit: number, windowMs: number]>,
+): Promise<{ error: "too_many_requests"; retryAfterSec: number } | null> {
+  const { getDb } = await import("@/lib/db/index.server");
+  const { checkAndIncrement } = await import("@/lib/security/rate-limit.server");
+  const db = getDb();
+  let worst: number | null = null;
+  for (const [scope, key, limit, windowMs] of checks) {
+    const r = await checkAndIncrement(db, scope, key, limit, windowMs);
+    if (!r.allowed) worst = Math.max(worst ?? 0, r.retryAfterSec);
+  }
+  if (worst === null) return null;
+  setResponseHeader("Retry-After", String(worst));
+  return { error: "too_many_requests", retryAfterSec: worst };
+}
+
+async function requestIp(): Promise<string> {
+  const { clientIp } = await import("@/lib/security/rate-limit.server");
+  return clientIp(getRequest().headers);
+}
 
 async function startSession(userId: string): Promise<void> {
   const { getDb } = await import("@/lib/db/index.server");
@@ -32,6 +57,9 @@ export const signUp = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<AuthResult> => {
     const { getDb } = await import("@/lib/db/index.server");
     const { hashPassword } = await import("@/lib/auth/password.server");
+    const ip = await requestIp();
+    const limited = await rateLimit([["auth.signup", ip, 5, HOUR_MS]]);
+    if (limited) return limited;
     const db = getDb();
     const existing = await db
       .prepare("SELECT id FROM users WHERE email = ?")
@@ -76,6 +104,12 @@ export const signIn = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<AuthResult> => {
     const { getDb } = await import("@/lib/db/index.server");
     const { verifyPassword } = await import("@/lib/auth/password.server");
+    const ip = await requestIp();
+    const limited = await rateLimit([
+      ["auth.signin.ip", ip, 10, QUARTER_MS],
+      ["auth.signin.ip_email", `${ip}|${data.email}`, 5, QUARTER_MS],
+    ]);
+    if (limited) return limited;
     const user = await getDb()
       .prepare("SELECT id, password_hash FROM users WHERE email = ?")
       .bind(data.email)

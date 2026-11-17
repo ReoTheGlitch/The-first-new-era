@@ -57,13 +57,50 @@ async function serveStatic(request, kv) {
   return new Response(body, { headers });
 }
 
+// Keep in sync with src/lib/security/security-headers.ts (this file is copied verbatim into the
+// Worker bundle by deploy.sh, so it cannot import TypeScript; src/test/security-headers.test.ts
+// fails if the two drift).
+const SECURITY_HEADERS = {
+  "strict-transport-security": "max-age=31536000; includeSubDomains",
+  "x-content-type-options": "nosniff",
+  "x-frame-options": "DENY",
+  "referrer-policy": "strict-origin-when-cross-origin",
+  "permissions-policy":
+    "camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()",
+  "x-dns-prefetch-control": "on",
+  "content-security-policy": [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' https://fonts.gstatic.com data:",
+    "img-src 'self' data: blob:",
+    "connect-src 'self' https://openrouter.ai",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "object-src 'none'",
+    "upgrade-insecure-requests",
+  ].join("; "),
+};
+
+function applySecurityHeaders(response) {
+  if (response.status === 101) return response; // websocket upgrade
+  const headers = new Headers(response.headers);
+  for (const [k, v] of Object.entries(SECURITY_HEADERS)) headers.set(k, v);
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 export default {
-  fetch(request, env, ctx) {
+  async fetch(request, env, ctx) {
     const bound = Object.assign(Object.create(null), env, {
       ASSETS: { fetch: (req) => serveStatic(req, env.STATIC_KV) },
     });
     // App code reads bindings (DB, AI, STATIC_KV) through this global.
     globalThis.__CF_ENV__ = bound;
-    return worker.fetch(request, bound, ctx);
+    return applySecurityHeaders(await worker.fetch(request, bound, ctx));
   },
 };
