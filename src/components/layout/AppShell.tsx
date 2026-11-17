@@ -7,6 +7,7 @@ import { mobileNav, primaryNav, secondaryNav, type NavItem } from "@/config/navi
 import { supabase } from "@/integrations/supabase/client";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { CommandPalette } from "@/components/CommandPalette";
 
 function useSignOut() {
   const qc = useQueryClient();
@@ -61,9 +62,35 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className="relative z-10 flex min-h-screen">
         {/* Desktop sidebar */}
         <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-e border-sidebar-border bg-sidebar p-4 backdrop-blur-xl xl:flex">
-          <Link to="/app" className="mb-8 px-2 pt-2">
+          <Link to="/app" className="mb-4 px-2 pt-2">
             <Logo />
           </Link>
+          <button
+            type="button"
+            onClick={() =>
+              window.dispatchEvent(
+                new KeyboardEvent("keydown", { key: "k", ctrlKey: true, bubbles: true }),
+              )
+            }
+            className="press mb-4 flex w-full items-center justify-between rounded-xl border border-border bg-muted/40 px-3 py-2 text-xs text-muted-foreground hover:border-primary/30 hover:text-foreground"
+            aria-label="فتح البحث السريع"
+          >
+            <span className="flex items-center gap-2">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
+                <path d="M20 20l-3-3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+              بحث سريع...
+            </span>
+            <span className="flex gap-1">
+              <kbd className="rounded border border-border px-1 py-0.5 font-sans text-[10px]">
+                ⌘
+              </kbd>
+              <kbd className="rounded border border-border px-1 py-0.5 font-sans text-[10px]">
+                K
+              </kbd>
+            </span>
+          </button>
           <nav className="flex flex-col gap-1" aria-label="التنقل الرئيسي">
             {primaryNav.map((i) => (
               <NavLink key={i.to} item={i} variant="full" />
@@ -103,13 +130,36 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Link to="/app">
               <Logo />
             </Link>
-            <Link
-              to="/app/profile"
-              aria-label="الملف الشخصي"
-              className="press grid h-10 w-10 place-items-center rounded-xl"
-            >
-              <AppIcon name="profile" size={22} />
-            </Link>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() =>
+                  window.dispatchEvent(
+                    new KeyboardEvent("keydown", { key: "k", ctrlKey: true, bubbles: true }),
+                  )
+                }
+                aria-label="البحث السريع"
+                className="press hidden items-center gap-1.5 rounded-xl border border-border px-2.5 py-1.5 text-[11px] text-muted-foreground sm:flex"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden>
+                  <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
+                  <path
+                    d="M20 20l-3-3"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <kbd className="font-sans">⌘K</kbd>
+              </button>
+              <Link
+                to="/app/profile"
+                aria-label="الملف الشخصي"
+                className="press grid h-10 w-10 place-items-center rounded-xl"
+              >
+                <AppIcon name="profile" size={22} />
+              </Link>
+            </div>
           </header>
           <main className="mx-auto w-full max-w-7xl flex-1 px-4 pb-28 pt-6 sm:px-6 md:pb-10 lg:px-10 lg:pt-10">
             {children}
@@ -152,6 +202,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </SheetContent>
       </Sheet>
+      <CommandPalette />
     </div>
   );
 }

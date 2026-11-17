@@ -35,9 +35,7 @@ export default class ErrorBoundary extends Component<Props, State> {
         <div className="w-full max-w-sm rounded-2xl border border-destructive/30 bg-destructive/5 p-8 text-center">
           <div className="mb-4 text-5xl">🔧</div>
           <h2 className="text-lg font-semibold text-foreground">حدث خطأ غير متوقع</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            حاول تحديث الصفحة أو العودة للرئيسية
-          </p>
+          <p className="mt-1 text-sm text-muted-foreground">حاول تحديث الصفحة أو العودة للرئيسية</p>
           {msg && (
             <code className="mt-4 hidden rounded-lg bg-muted px-3 py-2 text-xs text-muted-foreground md:block">
               {msg}
