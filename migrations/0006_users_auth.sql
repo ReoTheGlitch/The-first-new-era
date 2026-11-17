@@ -1,4 +1,4 @@
--- Self-hosted auth (replaces Supabase auth.users).
+-- Self-hosted auth (replaces the old auth.users).
 
 CREATE TABLE IF NOT EXISTS users (
   id TEXT PRIMARY KEY,

@@ -1,4 +1,4 @@
--- AI persistence + learning preferences (supabase/schema.sql + supabase/ai-persistence.sql).
+-- AI persistence + learning preferences (legacy Postgres schema.sql + legacy Postgres ai-persistence.sql).
 
 CREATE TABLE IF NOT EXISTS learning_preferences (
   user_id TEXT PRIMARY KEY,

@@ -42,7 +42,7 @@ export const signUp = createServerFn({ method: "POST" })
     const now = new Date().toISOString();
     const hash = await hashPassword(data.password);
     try {
-      // Replaces the Supabase on_auth_user_created trigger.
+      // Replaces the legacy on_auth_user_created trigger.
       await db.batch([
         db
           .prepare("INSERT INTO users (id, email, password_hash, created_at) VALUES (?, ?, ?, ?)")

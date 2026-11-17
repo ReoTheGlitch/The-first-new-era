@@ -1,4 +1,4 @@
--- Seed content. Base rows (from supabase/schema.sql) then Physics ch.1-2 (supabase/content-physics.sql).
+-- Seed content. Base rows (from legacy Postgres schema.sql) then Physics ch.1-2 (legacy Postgres content-physics.sql).
 -- The Physics demo unit of schema.sql is not seeded (content-physics.sql deleted it). The Chemistry demo unit stays.
 -- Content is editorially written and needs teacher review before student launch.
 

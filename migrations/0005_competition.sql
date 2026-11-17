@@ -1,4 +1,4 @@
--- Competition modes + question packs (supabase/competition-modes.sql).
+-- Competition modes + question packs (legacy Postgres competition-modes.sql).
 -- Pack selection and mode rules moved to src/features/duel/duel.server.ts.
 
 ALTER TABLE duels ADD COLUMN mode TEXT NOT NULL DEFAULT 'points' CHECK (mode IN ('points','speed','penalties'));

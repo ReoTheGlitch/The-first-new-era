@@ -1,5 +1,5 @@
 -- Core identity + curriculum tables (SQLite / Cloudflare D1 dialect).
--- Ported from supabase/schema.sql. IDs are TEXT (crypto.randomUUID() in app code).
+-- Ported from legacy Postgres schema.sql. IDs are TEXT (crypto.randomUUID() in app code).
 -- Timestamps are ISO 8601 TEXT. Booleans are INTEGER 0/1. Arrays/jsonb are JSON TEXT.
 -- RLS, grants, functions and triggers are intentionally dropped: access control lives in server functions.
 

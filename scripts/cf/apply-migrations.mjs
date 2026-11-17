@@ -14,8 +14,14 @@ import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+const isMain = process.argv[1] === fileURLToPath(import.meta.url);
+
 // Node's fetch ignores HTTPS_PROXY unless NODE_USE_ENV_PROXY=1 (needed in the cloud container).
-if ((process.env.HTTPS_PROXY || process.env.https_proxy) && !process.env.NODE_USE_ENV_PROXY) {
+if (
+  isMain &&
+  (process.env.HTTPS_PROXY || process.env.https_proxy) &&
+  !process.env.NODE_USE_ENV_PROXY
+) {
   const r = spawnSync(process.execPath, [process.argv[1], ...process.argv.slice(2)], {
     stdio: "inherit",
     env: { ...process.env, NODE_USE_ENV_PROXY: "1", NODE_NO_WARNINGS: "1" },
@@ -135,7 +141,7 @@ async function main() {
   }
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+if (isMain) {
   main().catch((e) => {
     console.error(e.message);
     process.exit(1);

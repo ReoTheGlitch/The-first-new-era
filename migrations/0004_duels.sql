@@ -1,4 +1,4 @@
--- Live duels (supabase/duels.sql). The plpgsql game logic moved to src/features/duel/duel.server.ts.
+-- Live duels (legacy Postgres duels.sql). The plpgsql game logic moved to src/features/duel/duel.server.ts.
 
 CREATE TABLE IF NOT EXISTS duels (
   id TEXT PRIMARY KEY,

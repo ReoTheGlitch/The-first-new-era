@@ -3,7 +3,7 @@ import type { Db } from "@/lib/db/index.server";
 import { cairoDay } from "@/lib/gamification";
 import type { DuelMode, DuelState, PackScope } from "./types";
 
-// Duel game rules. These used to be plpgsql functions (supabase/duels.sql + competition-modes.sql);
+// Duel game rules. These used to be plpgsql functions (legacy Postgres duels.sql + competition-modes.sql);
 // they now run in TypeScript against D1. Where Postgres relied on `select ... for update`,
 // we use guarded UPDATEs / INSERT OR IGNORE so a race cannot double-apply a step.
 

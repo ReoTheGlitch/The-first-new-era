@@ -1,4 +1,4 @@
--- Practice attempts, XP ledger, streaks, achievements (ported from supabase/schema.sql).
+-- Practice attempts, XP ledger, streaks, achievements (ported from legacy Postgres schema.sql).
 
 CREATE TABLE IF NOT EXISTS quiz_attempts (
   id TEXT PRIMARY KEY,
