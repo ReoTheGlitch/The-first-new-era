@@ -43,9 +43,7 @@ function AuthPage() {
               ? Math.max(1, Math.ceil(res.retryAfterSec / 60))
               : null;
           toast.error(
-            wait
-              ? `عدد محاولات كبير. حاول بعد ${wait} دقيقة.`
-              : "عدد محاولات كبير. حاول لاحقًا.",
+            wait ? `عدد محاولات كبير. حاول بعد ${wait} دقيقة.` : "عدد محاولات كبير. حاول لاحقًا.",
           );
         } else {
           toast.error(res.error);
