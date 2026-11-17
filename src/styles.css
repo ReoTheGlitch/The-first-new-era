@@ -262,19 +262,6 @@
   animation: xp-pop-fade 1.6s ease-out forwards;
 }
 
-@keyframes glow-pulse-anim {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 oklch(from var(--primary) l c h / 0);
-  }
-  50% {
-    box-shadow: 0 0 12px 2px oklch(from var(--primary) l c h / 0.35);
-  }
-}
-@utility glow-pulse {
-  animation: glow-pulse-anim 2.5s ease-in-out infinite;
-}
-
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

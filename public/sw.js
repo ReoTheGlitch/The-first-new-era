@@ -22,10 +22,9 @@ self.addEventListener("activate", (event) => {
 });
 
 function isApiRequest(url) {
-  return (
-    url.hostname.endsWith(".supabase.co") ||
-    url.hostname.includes("generativelanguage.googleapis.com")
-  );
+  // Keep AI calls out of the cache. DB calls stay in-worker now (D1),
+  // so there's nothing extra to pass through for them.
+  return url.hostname === "openrouter.ai";
 }
 
 function isStaticAsset(url) {
