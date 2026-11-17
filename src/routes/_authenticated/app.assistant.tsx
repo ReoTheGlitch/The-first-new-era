@@ -26,6 +26,18 @@ export const Route = createFileRoute("/_authenticated/app/assistant")({
       { name: "description", content: "مساعد تعلم يشرح المفاهيم بأساليب مختلفة." },
     ],
   }),
+  errorComponent: ({ error }) => (
+    <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-6 text-center">
+      <p className="font-medium text-destructive">حدث خطأ في تحميل الصفحة</p>
+      <p className="mt-1 text-xs text-muted-foreground">{(error as Error)?.message}</p>
+      <button
+        onClick={() => window.location.reload()}
+        className="press mt-4 rounded-xl bg-brand px-4 py-2 text-sm text-primary-foreground"
+      >
+        تحديث
+      </button>
+    </div>
+  ),
   component: Assistant,
 });
 
@@ -289,7 +301,7 @@ function Assistant() {
         </Card>
       ) : (
         <>
-          <div className="min-h-[40vh] space-y-4 pb-4" aria-live="polite">
+          <div className="min-h-[40vh] space-y-4 pb-4" aria-live="polite" aria-label="رسائل المحادثة">
             {messages.length === 0 && (
               <div className="flex flex-col items-center gap-3 py-10 text-center text-muted-foreground">
                 <AppIcon name="assistant" tile size={64} className="animate-float" />

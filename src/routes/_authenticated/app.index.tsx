@@ -18,6 +18,18 @@ export const Route = createFileRoute("/_authenticated/app/")({
       context.queryClient.ensureQueryData(studentOverviewQuery),
       context.queryClient.ensureQueryData(subjectsQuery),
     ]),
+  errorComponent: ({ error }) => (
+    <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-6 text-center">
+      <p className="font-medium text-destructive">حدث خطأ في تحميل الصفحة</p>
+      <p className="mt-1 text-xs text-muted-foreground">{(error as Error)?.message}</p>
+      <button
+        onClick={() => window.location.reload()}
+        className="press mt-4 rounded-xl bg-brand px-4 py-2 text-sm text-primary-foreground"
+      >
+        تحديث
+      </button>
+    </div>
+  ),
   component: Dashboard,
 });
 
