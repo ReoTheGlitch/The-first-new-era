@@ -37,9 +37,8 @@
 | UI | React 19, Tailwind CSS v4 (OKLCH design tokens, dark-first) |
 | Components | shadcn/ui (Radix UI primitives) |
 | Database | [Supabase](https://supabase.com) — Postgres + Auth + Row Level Security |
-| AI | Google Gemini via `@google/genai` SDK (`gemini-2.5-flash`, fallback `gemini-2.0-flash-lite`) |
+| AI | Gemini via OpenRouter (`google/gemini-2.5-flash`, fallback `google/gemini-2.5-flash-lite`) |
 | Math | KaTeX via `rehype-katex` + `remark-math` |
-| Analytics | `@vercel/analytics` |
 | Deployment | [Vercel](https://vercel.com) + Nitro adapter |
 | Testing | Vitest (unit) + Playwright (E2E smoke) |
 
@@ -51,7 +50,7 @@
 
 - Node.js 20+
 - A [Supabase](https://supabase.com) project
-- A [Google AI Studio](https://aistudio.google.com) API key
+- An [OpenRouter](https://openrouter.ai) API key
 
 ### Environment Variables
 
@@ -61,12 +60,11 @@ Create `.env.local` at the project root:
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
 
-# AI — either key name works
-GEMINI_API_KEY=your-gemini-key
-# GOOGLE_GENERATIVE_AI_API_KEY=your-gemini-key  # alternative
+# AI
+OPENROUTER_API_KEY=your-openrouter-key
 
 # Optional — override the default model
-# GEMINI_MODEL=gemini-2.5-flash
+# AI_MODEL=google/gemini-2.5-flash
 ```
 
 ### Install & Run
@@ -116,7 +114,7 @@ src/
 ├── lib/
 │   ├── ai/
 │   │   ├── config.server.ts       # AI limits, provider resolution
-│   │   ├── gemini-adapter.server.ts # Gemini API adapter
+│   │   ├── provider.server.ts     # OpenRouter client
 │   │   └── tutor.functions.ts     # createServerFn: askTutor, rate limit
 │   ├── gamification.ts            # XP → level, streak logic
 │   └── utils.ts                   # cn(), misc helpers
@@ -143,13 +141,13 @@ src/
 
 ## 🤖 AI Architecture
 
-All AI calls go through **TanStack Start server functions** (`createServerFn`) — Gemini API keys never reach the browser.
+All AI calls go through **TanStack Start server functions** (`createServerFn`) — API keys never reach the browser.
 
 ```
 Browser → createServerFn → requireSupabaseAuth middleware
                          → resolveProvider() checks GEMINI_API_KEY
                          → rate-limit check (Supabase row count)
-                         → @google/genai SDK → Gemini API
+                         → provider.server.ts → OpenRouter API
                          → response streamed back to client
 ```
 
@@ -158,8 +156,8 @@ Browser → createServerFn → requireSupabaseAuth middleware
 - AI Exams: 5 generated exams / hour / user
 
 **Model config (`src/lib/ai/config.server.ts`):**
-- Default: `gemini-2.5-flash` (or `GEMINI_MODEL` env var)
-- Fallback: `gemini-2.0-flash-lite`
+- Default: `google/gemini-2.5-flash` (or `AI_MODEL` env var)
+- Fallback: `google/gemini-2.5-flash-lite`
 - Max output tokens: 2 500
 - Max conversation history: 12 messages
 - Max input chars: 2 000

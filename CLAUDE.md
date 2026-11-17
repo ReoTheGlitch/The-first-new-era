@@ -52,9 +52,11 @@ head: ({ loaderData }) => ({
 ```
 
 ### AI
-- Provider: Google Gemini only (`@google/genai` SDK)
-- Default model: `gemini-2.5-flash` (env `GEMINI_MODEL` to override)
-- Fallback: `gemini-2.0-flash-lite`
+- Provider: OpenRouter (OpenAI-compatible `chat/completions`, plain `fetch`, no SDK) — `src/lib/ai/provider.server.ts` (`generateText`, `generateJson`)
+- Default model: `google/gemini-2.5-flash` (env `AI_MODEL` to override)
+- Fallback (one retry on 5xx/429/model-unavailable): `google/gemini-2.5-flash-lite` (`gemini-2.0-flash-lite-001` is no longer listed on OpenRouter)
+- Exams use `response_format: json_schema` (strict) with `max_tokens: 4096`; parse failure retries once with a "return ONLY valid JSON" amendment
+- Env: `OPENROUTER_API_KEY` (Worker secret in prod). In dev it can stay blank: the agent proxy injects the key (code sends `Bearer proxy-injected`). In Node dev the module builds an undici `ProxyAgent` from `HTTPS_PROXY`/`NODE_EXTRA_CA_CERTS`; in the Worker plain `fetch` is used.
 - Config: `src/lib/ai/config.server.ts`
 - Rate limits: 30 req/hr (tutor), 5 exams/hr — enforced by Supabase row count in server functions
 
@@ -111,7 +113,7 @@ Server: injected via `requireSupabaseAuth` middleware into `createServerFn` cont
 ## PWA
 
 - Manifest: `public/manifest.json`
-- Service worker: `public/sw.js` — vanilla JS, cache-first for static, network-only for Supabase/Gemini
+- Service worker: `public/sw.js` — vanilla JS, cache-first for static, network-only for Supabase/OpenRouter
 - Registration: `useEffect` in `src/routes/__root.tsx` root component
 
 ## ESLint / Prettier
