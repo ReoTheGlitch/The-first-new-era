@@ -285,7 +285,29 @@ function Assistant() {
                 </div>
               ),
             )}
-            {busy && <SkeletonBlock className="h-16 w-2/3" />}
+            {busy && (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <AppIcon name="assistant" size={18} />
+                  <StatusBadge tone="ai" />
+                </div>
+                <div className="flex items-center gap-1.5 px-1 text-muted-foreground" role="status">
+                  <span
+                    className="h-2 w-2 animate-pulse rounded-full bg-current"
+                    style={{ animationDelay: "0ms" }}
+                  />
+                  <span
+                    className="h-2 w-2 animate-pulse rounded-full bg-current"
+                    style={{ animationDelay: "150ms" }}
+                  />
+                  <span
+                    className="h-2 w-2 animate-pulse rounded-full bg-current"
+                    style={{ animationDelay: "300ms" }}
+                  />
+                  <span className="sr-only">يكتب المساعد…</span>
+                </div>
+              </div>
+            )}
             {error && (
               <p
                 role="alert"
