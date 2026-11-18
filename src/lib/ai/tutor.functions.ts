@@ -96,7 +96,7 @@ export const askTutor = createServerFn({ method: "POST" })
   .handler(async ({ data, context }): Promise<TutorResult & { conversationId?: string }> => {
     const { resolveProvider, AI_LIMITS } = await import("./config.server");
     const { AiProviderError } = await import("./provider-error");
-    const { createGeminiProvider } = await import("./gemini-adapter.server");
+    const { createProvider } = await import("./provider.server");
     const { getStudentAdaptiveSummary } = await import("./student-context.server");
     const { hasSupabaseAdminEnv, supabaseAdmin } =
       await import("@/integrations/supabase/client.server");
@@ -105,7 +105,7 @@ export const askTutor = createServerFn({ method: "POST" })
       return {
         ok: false,
         code: "not_configured",
-        message: "المساعد الذكي يحتاج إلى إعداد GEMINI_API_KEY أولًا.",
+        message: "المساعد الذكي يحتاج إلى إعداد مفتاح OpenRouter (OPENROUTER_API_KEY) أولًا.",
       };
     const last = data.messages[data.messages.length - 1]!;
     if (last.role !== "user" || last.content.length > AI_LIMITS.maxMessageChars)
@@ -160,7 +160,7 @@ export const askTutor = createServerFn({ method: "POST" })
       .filter(Boolean)
       .join("\n");
 
-    const provider = createGeminiProvider(choice);
+    const provider = createProvider(choice);
     const history = data.messages.slice(-AI_LIMITS.maxHistoryMessages);
     let conversationId = data.conversationId ?? undefined;
     try {
@@ -243,7 +243,8 @@ export const askTutor = createServerFn({ method: "POST" })
         return {
           ok: false,
           code: "denied",
-          message: "تعذّر الوصول إلى Gemini. راجع قيمة GEMINI_API_KEY في إعدادات Vercel.",
+          message:
+            "تعذّر الوصول إلى مزوّد الذكاء الاصطناعي. راجع قيمة OPENROUTER_API_KEY في إعدادات السيرفر.",
         };
       return {
         ok: false,

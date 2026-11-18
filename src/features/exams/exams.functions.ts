@@ -26,13 +26,14 @@ export const generateAiExam = createServerFn({ method: "POST" })
   .handler(async ({ data, context }): Promise<GenerateExamResult> => {
     const { resolveProvider } = await import("@/lib/ai/config.server");
     const { AiProviderError } = await import("@/lib/ai/provider-error");
-    const { createGeminiProvider } = await import("@/lib/ai/gemini-adapter.server");
+    const { createProvider } = await import("@/lib/ai/provider.server");
     const { getStudentAdaptiveSummary } = await import("@/lib/ai/student-context.server");
     const choice = resolveProvider();
     if (choice.kind === "none")
       return {
         ok: false,
-        message: "توليد الامتحانات يحتاج إلى إعداد GEMINI_API_KEY في إعدادات السيرفر.",
+        message:
+          "توليد الامتحانات يحتاج إلى إعداد مفتاح OpenRouter (OPENROUTER_API_KEY) في إعدادات السيرفر.",
       };
     const student = await getStudentAdaptiveSummary(context.userId);
     const subjectAr = data.subject === "physics" ? "الفيزياء" : "الكيمياء";
@@ -54,7 +55,7 @@ export const generateAiExam = createServerFn({ method: "POST" })
       `أرجع JSON صالحًا فقط بالشكل: {"examTitle":"عنوان","questions":[{"id":"q1","prompt":"السؤال","options":["أ","ب","ج","د"],"correctIndex":0,"explanation":"التفسير","svgDiagram":"<svg...> (اختياري)"}]}`,
       "تأكد من وجود أربعة اختيارات وفهرس إجابة صحيح من 0 إلى 3 لكل سؤال.",
     ].join("\n");
-    const provider = createGeminiProvider(choice, { responseMimeType: "application/json" });
+    const provider = createProvider(choice, { responseMimeType: "application/json" });
     try {
       const raw = await provider.generate(
         systemPrompt,
@@ -116,7 +117,10 @@ export const generateAiExam = createServerFn({ method: "POST" })
       const status = e instanceof AiProviderError ? e.status : 500;
       console.error("generateAiExam error", status, e instanceof Error ? e.message : e);
       if (status === 401 || status === 403 || status === 400)
-        return { ok: false, message: "تعذّر الاتصال بـ Gemini. راجع مفتاح GEMINI_API_KEY." };
+        return {
+          ok: false,
+          message: "تعذّر الاتصال بمزوّد الذكاء الاصطناعي. راجع مفتاح OPENROUTER_API_KEY.",
+        };
       if (status === 429 || status === 503)
         return { ok: false, message: "Gemini مشغول حاليًا. حاول بعد قليل." };
       return { ok: false, message: "حدث خطأ أثناء توليد الامتحان. حاول مرة أخرى." };
