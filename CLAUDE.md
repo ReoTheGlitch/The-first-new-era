@@ -111,7 +111,7 @@ through the parent session.
 
 | Lane | Files it owns |
 |---|---|
-| **DB / auth** | `migrations/0001`–`0008`, `src/lib/db/`, `src/lib/auth/`, `src/features/**/*.functions.ts`, `src/features/**/*.server.ts`, `src/features/**/queries.ts`, `src/routes/auth.tsx`, `src/routes/_authenticated/route.tsx` |
+| **DB / auth** | `migrations/0001`–`0008`, `0011`, `src/lib/db/`, `src/lib/auth/`, `src/lib/security/`, `src/features/**/*.functions.ts`, `src/features/**/*.server.ts`, `src/features/**/queries.ts`, `src/routes/auth.tsx`, `src/routes/_authenticated/route.tsx` |
 | **AI provider** | `src/lib/ai/` (every file). May edit the model-call line inside `*.functions.ts` files from the DB lane **only** by coordinating with the DB agent — write the DB lane's agent first and let AI patch the calls after. |
 | **Content seed** | `migrations/0010+` **only**. Never schema changes. |
 | **UI / slop** | `src/components/`, `src/routes/**/*.tsx` **except** `route.tsx` and `auth.tsx`, `src/styles.css`, `public/manifest.json`, `public/sw.js` |
