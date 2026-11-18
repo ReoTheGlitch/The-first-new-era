@@ -31,7 +31,19 @@ dist-ssr
 *.sln
 *.sw?
 
+# أرشيفات مضغوطة
+*.zip
+
 # متغيرات البيئة السرية
 .env
 .env.*
 !.env.example
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# Local dev database (better-sqlite3)
+.data/

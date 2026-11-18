@@ -4,15 +4,18 @@ import { subjectQuery } from "@/features/student/queries";
 import { Card, PageHeader, StatusBadge } from "@/components/common";
 
 export const Route = createFileRoute("/_authenticated/app/subjects/$subjectSlug")({
-  head: () => ({
+  head: ({ loaderData }) => ({
     meta: [
-      { title: "المادة — العصر الجديد الأول" },
+      {
+        title: `${(loaderData as { nameAr?: string } | undefined)?.nameAr ?? "المادة"} — The first`,
+      },
       { name: "description", content: "وحدات ودروس المادة." },
     ],
   }),
-  loader: async ({ context, params }) => {
+  loader: async ({ context, params }): Promise<{ nameAr: string }> => {
     const s = await context.queryClient.ensureQueryData(subjectQuery(params.subjectSlug));
     if (!s) throw notFound();
+    return { nameAr: s.name_ar };
   },
   component: SubjectPage,
 });
@@ -56,7 +59,7 @@ function SubjectPage() {
                       <Link
                         to="/app/lessons/$lessonId"
                         params={{ lessonId: l.id }}
-                        className="press flex items-center justify-between gap-3 rounded-xl bg-muted/60 p-4 hover:bg-muted"
+                        className="press flex items-center justify-between gap-3 rounded-md bg-muted/60 p-4 hover:bg-muted"
                       >
                         <span className="min-w-0 truncate">{l.title_ar}</span>
                         <span className="shrink-0 text-sm text-primary">افتح الدرس</span>

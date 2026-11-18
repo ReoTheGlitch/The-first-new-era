@@ -1,41 +1,117 @@
-# العصر الجديد الأول
+# The first
 
-منصة تعليمية لطلاب الثانوية العامة في مصر (فيزياء وكيمياء): دروس، تدريب، مسابقات ومساعد ذكي اختياري.
+An Egyptian Grade-12 learning platform. Arabic-first, dark-mode. Students
+move through curriculum lessons, practice concepts with graded MCQs,
+chat with an AI tutor, sit AI-generated exams, and compete on a weekly
+leaderboard that rolls over every Monday on the Cairo civil clock.
 
-## التشغيل
+Live: **https://thefirst.mrwinter.org**
 
-1. ثبّت Node.js (الإصدار 20 أو أحدث).
-2. في ملف `.env` ضع `SUPABASE_SERVICE_ROLE_KEY` (من Supabase > Project Settings > API Keys > Secret key).
-3. في Supabase > SQL Editor الصق محتوى `supabase/schema.sql` ثم Run مرة واحدة.
-4. في الطرفية داخل المجلد:
+## Stack
 
-```
+- TanStack Start + TanStack Router (file-based routing, SSR)
+- React 19, Tailwind v4 (OKLCH), Radix primitives
+- Nitro → Cloudflare Workers (`cloudflare_module` preset)
+- Cloudflare D1 (SQLite) for data, Workers KV for static assets
+- OpenRouter for AI (default model: `google/gemini-2.5-flash`)
+- Self-hosted auth — PBKDF2 WebCrypto + session cookie
+
+## Quick start
+
+```bash
+git clone https://github.com/ReoTheGlitch/The-first-new-era.git
+cd The-first-new-era
 npm install
-npm run dev
+cp .env.example .env     # optional — only the AI key matters locally
+npm run dev              # http://localhost:3000
 ```
 
-ثم افتح http://localhost:3000
+First-run notes:
 
-## ملاحظات
+- The dev database (`.data/dev.db`, better-sqlite3) is created on first
+  access and migrations in `migrations/` are auto-applied.
+- Without `OPENROUTER_API_KEY` set, the tutor and exam builder return a
+  friendly error; everything else runs normally.
 
-- لتجربة التسجيل بسهولة: Supabase > Authentication > Sign In / Providers > Email، وأوقف Confirm email أثناء التجربة فقط.
-- المساعد الذكي لا يعمل إلا بعد وضع `GEMINI_API_KEY` في `.env`.
-- لا ترفع ملف `.env` إلى GitHub.
+## Scripts
 
-## هيكل المشروع
+```bash
+npm run dev          # dev server
+npm run build        # production build (Node preset)
+npm run build:cf     # production build (Cloudflare preset)
+npm run deploy:cf    # migrations → build → KV upload → wrangler deploy
+npm run lint         # ESLint + Prettier
+npm run format       # auto-fix Prettier
+npm run test         # vitest unit tests
+npm run e2e          # Playwright smoke tests (dev server must be running)
+npx tsc --noEmit     # strict type check
+```
 
-- `src/routes`: الصفحات
-- `src/features`: منطق الدروس والتدريب
-- `src/lib/ai`: المساعد الذكي (السيرفر فقط)
-- `src/integrations/supabase`: الاتصال بقاعدة البيانات
-- `supabase/schema.sql`: الجداول وسياسات الأمان وبيانات تجريبية
+## Dev branch
 
+All feature work goes on `ccr-52216415-px8xos`. The deploy script and
+GitHub automation watch this branch.
 
-## Gemini-only AI setup and persistent data
+## Documentation
 
-1. In Google AI Studio, revoke the previously exposed Gemini API key and create a replacement. Never commit the replacement key.
-2. In Vercel Project Settings → Environment Variables, set `GEMINI_API_KEY` and optionally `GEMINI_MODEL` (default: `gemini-2.5-flash`). Remove `ANTHROPIC_API_KEY` and `ANTHROPIC_MODEL` if they exist.
-3. In the Supabase SQL Editor, run `supabase/ai-persistence.sql` once. This creates user-owned tables for tutor conversations/messages and generated exams/results with Row Level Security.
-4. Deploy the updated project. Existing accounts and unrelated tables are not changed by this migration.
+**New to the project?** Start with [HANDOFF.md](./HANDOFF.md) — ten
+minutes gets you oriented.
 
-Claude/Anthropic code and its SDK dependency have been removed. AI chat history and generated exams are stored per authenticated Supabase user.
+| Topic | Where |
+|---|---|
+| Handoff summary | [HANDOFF.md](./HANDOFF.md) |
+| How the pieces fit | [docs/architecture.md](./docs/architecture.md) |
+| How to deploy | [docs/deploy.md](./docs/deploy.md) |
+| Adding lessons / subjects | [docs/content.md](./docs/content.md) |
+| Brand identity | [docs/brand.md](./docs/brand.md) |
+| Design study + heuristics | [docs/design-study.md](./docs/design-study.md) |
+| Anti-AI-slop rules | [docs/ai-slop-notes.md](./docs/ai-slop-notes.md) |
+| Performance | [docs/performance.md](./docs/performance.md) |
+| Security posture | [docs/security.md](./docs/security.md) |
+| Feature → GitHub → Cloudflare workflow | [docs/workflow.md](./docs/workflow.md) |
+| November 2026 migration notes | [docs/session-2026-11.md](./docs/session-2026-11.md) |
+| Claude session orientation | [CLAUDE.md](./CLAUDE.md) |
+
+## Status
+
+| Area | State |
+|---|---|
+| Auth | Working — custom session cookie over D1, rate-limited sign-up/sign-in, change-password UI live |
+| Physics content | Chapters 1-2 seeded (`migrations/0007`), teacher review pending |
+| Chemistry content | Chapters 1-2 seeded (`migrations/0010`), teacher review pending |
+| AI tutor + exams | Live via OpenRouter → `google/gemini-2.5-flash` |
+| Weekly competition | Round rotation + countdown implemented |
+| Streaks | Cairo-local, idempotent per day |
+| PWA | SVG favicon + 192/512 maskable PNGs, service worker caches static |
+| Security | HSTS, CSP, Permissions-Policy, X-Frame-Options, rate limits |
+| Performance | Entry JS 16 KB gzipped (lazy KaTeX, split vendor chunks) |
+
+## Project layout
+
+```
+.
+├── migrations/              # numbered SQLite migrations, auto-applied dev + prod
+├── src/
+│   ├── routes/              # TanStack file-based routes
+│   ├── features/            # feature modules (student, duel, exams, practice, mistakes, engagement, auth)
+│   ├── components/          # UI components, layout, brand, achievements
+│   ├── lib/
+│   │   ├── db/              # D1 adapter (better-sqlite3 in dev)
+│   │   ├── auth/            # password + session + requireAuth middleware
+│   │   ├── ai/              # OpenRouter provider + tutor & exam server fns
+│   │   ├── security/        # rate limiter + security headers
+│   │   ├── engagement/      # streak + weekly competition
+│   │   └── time/            # Cairo-local date math
+│   ├── server.ts            # Cloudflare fetch handler (SSR entry)
+│   └── styles.css           # Tailwind v4 + OKLCH tokens
+├── scripts/cf/              # deploy.sh, apply-migrations.mjs, cf-entry.mjs, kv-payload.mjs
+├── public/                  # static assets (favicon.svg, PNG icons, manifest.json, robots.txt, sitemap.xml, sw.js)
+├── docs/                    # architecture / deploy / content / design / security / etc.
+├── CLAUDE.md                # Claude Code session orientation
+├── HANDOFF.md               # start here if new to the project
+└── README.md                # this file
+```
+
+## License
+
+Private project. Not currently open-source licensed.

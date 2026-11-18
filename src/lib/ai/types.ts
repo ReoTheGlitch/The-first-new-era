@@ -17,9 +17,3 @@ export type TutorResult =
       code: "not_configured" | "rate_limited" | "provider_error" | "denied" | "credits";
       message: string;
     };
-
-export interface AiTutorProvider {
-  name: string;
-  model: string;
-  generate(system: string, messages: ChatMessage[], maxOutputTokens: number): Promise<string>;
-}

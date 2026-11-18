@@ -5,20 +5,32 @@ import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import { toast } from "sonner";
-import { Card, PageHeader } from "@/components/common";
-import { generateAiExam, saveExamResult, listSavedExams, type AiExamQuestion } from "@/features/exams/exams.functions";
+import { Card, PageHeader, SkeletonBlock } from "@/components/common";
+import {
+  generateAiExam,
+  saveExamResult,
+  listSavedExams,
+  type AiExamQuestion,
+} from "@/features/exams/exams.functions";
 import { sanitizeSvg } from "@/lib/sanitize-svg";
 
 export const Route = createFileRoute("/_authenticated/app/exams")({
   head: () => ({
     meta: [
-      { title: "الامتحانات — العصر الجديد الأول" },
+      { title: "الامتحانات — The first" },
       {
         name: "description",
-        content: "اختبر نفسك بامتحانات متجددة يولّدها الذكاء الاصطناعي حسب مستواك.",
+        content: "تدريب على الامتحان بأسئلة جديدة حسب مستواك.",
       },
     ],
   }),
+  pendingComponent: () => (
+    <div className="space-y-4">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <SkeletonBlock key={i} className="h-24" />
+      ))}
+    </div>
+  ),
   component: ExamsPage,
 });
 
@@ -27,7 +39,16 @@ function ExamsPage() {
   const persistExamResult = useServerFn(saveExamResult);
   const getSavedExams = useServerFn(listSavedExams);
   const [examId, setExamId] = useState<string | null>(null);
-  const [history, setHistory] = useState<Array<{id:string;subject:string;exam_title:string;score:number|null;submitted:boolean;created_at:string}>>([]);
+  const [history, setHistory] = useState<
+    Array<{
+      id: string;
+      subject: string;
+      exam_title: string;
+      score: number | null;
+      submitted: boolean;
+      created_at: string;
+    }>
+  >([]);
   const [subject, setSubject] = useState<"physics" | "chemistry">("physics");
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("medium");
   const [count, setCount] = useState<number>(5);
@@ -40,9 +61,17 @@ function ExamsPage() {
   const [submitted, setSubmitted] = useState(false);
 
   async function refreshHistory() {
-    try { const rows = await getSavedExams(); setHistory(rows as typeof history); } catch { /* history remains optional */ }
+    try {
+      const rows = await getSavedExams();
+      setHistory(rows as typeof history);
+    } catch {
+      /* history remains optional */
+    }
   }
-  useEffect(() => { void refreshHistory(); }, []);
+  useEffect(() => {
+    void refreshHistory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function startExam(e: React.FormEvent) {
     e.preventDefault();
@@ -76,16 +105,14 @@ function ExamsPage() {
       setSubmitted(true);
       await refreshHistory();
       toast.success("تم حفظ إجابتك ونتيجتك في سجل الامتحانات.");
-    } catch { toast.error("تعذّر حفظ النتيجة. حاول مرة أخرى."); }
+    } catch {
+      toast.error("تعذّر حفظ النتيجة. حاول مرة أخرى.");
+    }
   }
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="الامتحانات"
-        subtitle="اختبر نفسك بامتحان يولّده الذكاء الاصطناعي بأسئلة جديدة في كل مرة."
-        icon="exams"
-      />
+      <PageHeader title="الامتحانات" subtitle="أسئلة جديدة في كل مرة." icon="exams" />
 
       <Card className="p-5">
         <form onSubmit={startExam} className="grid gap-4 sm:grid-cols-4">
@@ -94,7 +121,7 @@ function ExamsPage() {
             <select
               value={subject}
               onChange={(e) => setSubject(e.target.value as "physics" | "chemistry")}
-              className="w-full rounded-xl border border-input bg-muted/60 px-3 py-2.5 text-sm"
+              className="w-full rounded-md border border-input bg-muted/60 px-3 py-2.5 text-sm"
             >
               <option value="physics">الفيزياء</option>
               <option value="chemistry">الكيمياء</option>
@@ -106,7 +133,7 @@ function ExamsPage() {
             <select
               value={difficulty}
               onChange={(e) => setDifficulty(e.target.value as "easy" | "medium" | "hard")}
-              className="w-full rounded-xl border border-input bg-muted/60 px-3 py-2.5 text-sm"
+              className="w-full rounded-md border border-input bg-muted/60 px-3 py-2.5 text-sm"
             >
               <option value="easy">تمهيدي</option>
               <option value="medium">قياسي (ثانوية عامة)</option>
@@ -119,7 +146,7 @@ function ExamsPage() {
             <select
               value={count}
               onChange={(e) => setCount(Number(e.target.value))}
-              className="w-full rounded-xl border border-input bg-muted/60 px-3 py-2.5 text-sm"
+              className="w-full rounded-md border border-input bg-muted/60 px-3 py-2.5 text-sm"
             >
               <option value={3}>3 أسئلة</option>
               <option value={5}>5 أسئلة</option>
@@ -134,7 +161,7 @@ function ExamsPage() {
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
               placeholder="مثال: قانون أوم، الحث..."
-              className="w-full rounded-xl border border-input bg-muted/60 px-3 py-2.5 text-sm"
+              className="w-full rounded-md border border-input bg-muted/60 px-3 py-2.5 text-sm"
             />
           </label>
 
@@ -142,7 +169,7 @@ function ExamsPage() {
             <button
               type="submit"
               disabled={busy}
-              className="press rounded-xl bg-brand px-6 py-2.5 text-sm font-medium text-primary-foreground disabled:opacity-50"
+              className="press rounded-lg bg-brand px-6 py-2.5 text-sm font-medium text-primary-foreground disabled:opacity-50"
             >
               {busy ? "جاري توليد امتحان جديد..." : "إنشاء امتحان جديد"}
             </button>
@@ -151,8 +178,35 @@ function ExamsPage() {
       </Card>
 
       <Card className="space-y-3 p-4">
-        <div className="flex items-center justify-between"><h2 className="font-semibold">سجل امتحاناتك</h2><span className="text-xs text-muted-foreground">آخر 20 امتحانًا</span></div>
-        {history.length ? <div className="space-y-2">{history.map((item)=><div key={item.id} className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background/40 p-3"><div className="min-w-0"><p className="truncate text-sm font-medium">{item.exam_title}</p><p className="text-xs text-muted-foreground">{item.subject==="physics"?"فيزياء":"كيمياء"} · {new Date(item.created_at).toLocaleDateString("ar-EG")}</p></div><span className="shrink-0 text-xs text-muted-foreground">{item.submitted && item.score!==null?`النتيجة: ${item.score}`:"لم يُصحح بعد"}</span></div>)}</div> : <p className="text-xs text-muted-foreground">ستظهر امتحاناتك هنا بعد إنشاء أول امتحان.</p>}
+        <div className="flex items-center justify-between">
+          <h2 className="font-semibold">سجل امتحاناتك</h2>
+          <span className="text-xs text-muted-foreground">آخر 20 امتحانًا</span>
+        </div>
+        {history.length ? (
+          <div className="space-y-2">
+            {history.map((item) => (
+              <div
+                key={item.id}
+                className="flex items-center justify-between gap-3 rounded-md border border-border bg-background/40 p-3"
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium">{item.exam_title}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {item.subject === "physics" ? "فيزياء" : "كيمياء"} ·{" "}
+                    {new Date(item.created_at).toLocaleDateString("ar-EG")}
+                  </p>
+                </div>
+                <span className="shrink-0 text-xs text-muted-foreground">
+                  {item.submitted && item.score !== null
+                    ? `النتيجة: ${item.score}`
+                    : "لم يُصحح بعد"}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-xs text-muted-foreground">ستظهر امتحاناتك هنا بعد إنشاء أول امتحان.</p>
+        )}
       </Card>
 
       {questions.length > 0 && (
@@ -160,7 +214,7 @@ function ExamsPage() {
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="text-xl font-semibold">{examTitle}</h2>
             {submitted && (
-              <span className="rounded-xl bg-accent px-4 py-1.5 text-sm font-semibold">
+              <span className="rounded-md bg-accent px-4 py-1.5 text-sm font-semibold">
                 النتيجة: {score} / {questions.length}
               </span>
             )}
@@ -180,7 +234,7 @@ function ExamsPage() {
 
                 {safeDiagram && (
                   <div
-                    className="overflow-x-auto rounded-xl border border-border bg-background/60 p-3 [&_svg]:mx-auto [&_svg]:max-h-64 [&_svg]:w-full"
+                    className="overflow-x-auto rounded-md border border-border bg-background/60 p-3 [&_svg]:mx-auto [&_svg]:max-h-64 [&_svg]:w-full"
                     dangerouslySetInnerHTML={{ __html: safeDiagram }}
                   />
                 )}
@@ -204,7 +258,7 @@ function ExamsPage() {
                         type="button"
                         disabled={submitted}
                         onClick={() => setAnswers((prev) => ({ ...prev, [q.id]: optIdx }))}
-                        className={`rounded-xl border px-4 py-3 text-start text-sm transition-colors [&_p]:inline ${stateClass}`}
+                        className={`rounded-md border px-4 py-3 text-start text-sm transition-colors [&_p]:inline ${stateClass}`}
                       >
                         <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
                           {opt}
@@ -215,7 +269,7 @@ function ExamsPage() {
                 </div>
 
                 {submitted && (
-                  <div className="rounded-xl bg-muted/50 p-3 text-xs leading-relaxed text-muted-foreground [&_p]:inline">
+                  <div className="rounded-md bg-muted/50 p-3 text-xs leading-relaxed text-muted-foreground [&_p]:inline">
                     <strong className="text-foreground">التفسير: </strong>
                     <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
                       {q.explanation}
@@ -230,7 +284,7 @@ function ExamsPage() {
             <button
               type="button"
               onClick={submitExam}
-              className="press rounded-xl bg-brand px-6 py-3 font-medium text-primary-foreground"
+              className="press rounded-lg bg-brand px-6 py-3 font-medium text-primary-foreground"
             >
               تصحيح الامتحان
             </button>

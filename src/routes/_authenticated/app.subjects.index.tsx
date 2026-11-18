@@ -7,7 +7,7 @@ import { PageHeader, StatusBadge } from "@/components/common";
 export const Route = createFileRoute("/_authenticated/app/subjects/")({
   head: () => ({
     meta: [
-      { title: "المواد الدراسية — العصر الجديد الأول" },
+      { title: "المواد الدراسية — The first" },
       { name: "description", content: "الفيزياء والكيمياء للصف الثالث الثانوي." },
     ],
   }),

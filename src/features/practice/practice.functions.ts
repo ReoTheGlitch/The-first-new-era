@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireAuth } from "@/lib/auth/require-auth";
 import {
   cairoDay,
   MIN_ANSWERS_FOR_QUALIFYING_SESSION,
@@ -21,17 +21,32 @@ const input = z.object({
  * attempts, XP transactions, streaks and achievements.
  */
 export const completePracticeSession = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAuth])
   .inputValidator((d: unknown) => input.parse(d))
   .handler(async ({ data, context }) => {
-    const { userId } = context;
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const userId = context.userId as string;
+    const db = context.db as import("@/lib/db/index.server").Db;
 
-    const { data: questions, error: qErr } = await supabaseAdmin
-      .from("questions")
-      .select("id, xp_value, explanation_ar, question_options(id, is_correct)")
-      .eq("concept_id", data.conceptId);
-    if (qErr || !questions?.length) throw new Error("تعذّر تحميل أسئلة هذا المفهوم.");
+    const [qRows, oRows] = await Promise.all([
+      db
+        .prepare("SELECT id, xp_value, explanation_ar FROM questions WHERE concept_id = ?")
+        .bind(data.conceptId)
+        .all<{ id: string; xp_value: number; explanation_ar: string | null }>(),
+      db
+        .prepare(
+          `SELECT o.id, o.question_id, o.is_correct FROM question_options o
+             JOIN questions q ON q.id = o.question_id WHERE q.concept_id = ?`,
+        )
+        .bind(data.conceptId)
+        .all<{ id: string; question_id: string; is_correct: number }>(),
+    ]);
+    if (!qRows.results.length) throw new Error("تعذّر تحميل أسئلة هذا المفهوم.");
+    const questions = qRows.results.map((q) => ({
+      ...q,
+      question_options: oRows.results
+        .filter((o) => o.question_id === q.id)
+        .map((o) => ({ id: o.id, is_correct: o.is_correct === 1 })),
+    }));
 
     const byId = new Map(questions.map((q) => [q.id, q]));
     const seen = new Set<string>();
@@ -61,43 +76,63 @@ export const completePracticeSession = createServerFn({ method: "POST" })
     const qualifying =
       graded.length === questions.length && graded.length >= MIN_ANSWERS_FOR_QUALIFYING_SESSION;
 
-    const { data: attempt, error: aErr } = await supabaseAdmin
-      .from("quiz_attempts")
-      .insert({
-        user_id: userId,
-        concept_id: data.conceptId,
-        completed_at: new Date().toISOString(),
-        correct_count: correct,
-        total_count: graded.length,
-        xp_awarded: xp,
-      })
-      .select("id")
-      .single();
-    if (aErr || !attempt) throw new Error("تعذّر حفظ المحاولة.");
-
-    await supabaseAdmin.from("attempt_answers").insert(
-      graded.map((g) => ({
-        attempt_id: attempt.id,
-        user_id: userId,
-        question_id: g.questionId,
-        option_id: g.optionId,
-        is_correct: g.isCorrect,
-      })),
-    );
+    const now = new Date().toISOString();
+    const attemptId = crypto.randomUUID();
+    await db.batch([
+      db
+        .prepare(
+          `INSERT INTO quiz_attempts
+             (id, user_id, concept_id, started_at, completed_at, correct_count, total_count, xp_awarded)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        )
+        .bind(attemptId, userId, data.conceptId, now, now, correct, graded.length, xp),
+      ...graded.map((g) =>
+        db
+          .prepare(
+            `INSERT INTO attempt_answers
+               (id, attempt_id, user_id, question_id, option_id, is_correct, answered_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          )
+          .bind(
+            crypto.randomUUID(),
+            attemptId,
+            userId,
+            g.questionId,
+            g.optionId,
+            g.isCorrect ? 1 : 0,
+            now,
+          ),
+      ),
+    ]);
 
     let streak = 0;
     const newAchievements: string[] = [];
     if (qualifying) {
-      if (xp > 0)
-        await supabaseAdmin
-          .from("xp_transactions")
-          .insert({ user_id: userId, amount: xp, reason: "practice_session", ref_id: attempt.id });
+      if (xp > 0) {
+        await db
+          .prepare(
+            "INSERT INTO xp_transactions (id, user_id, amount, reason, ref_id, created_at) VALUES (?, ?, ?, 'practice_session', ?, ?)",
+          )
+          .bind(crypto.randomUUID(), userId, xp, attemptId, now)
+          .run();
+        try {
+          const { awardCompetitionPoints } = await import("@/lib/engagement/competition.server");
+          await awardCompetitionPoints(db, userId, xp);
+        } catch (err) {
+          console.error("[competition] practice points failed", err);
+        }
+      }
 
-      const { data: s } = await supabaseAdmin
-        .from("streaks")
-        .select("*")
-        .eq("user_id", userId)
-        .maybeSingle();
+      const s = await db
+        .prepare(
+          "SELECT current_streak, longest_streak, last_activity_date FROM streaks WHERE user_id = ?",
+        )
+        .bind(userId)
+        .first<{
+          current_streak: number;
+          longest_streak: number;
+          last_activity_date: string | null;
+        }>();
       const next = nextStreak(
         {
           current: s?.current_streak ?? 0,
@@ -107,40 +142,53 @@ export const completePracticeSession = createServerFn({ method: "POST" })
         cairoDay(new Date()),
       );
       streak = next.current;
-      await supabaseAdmin.from("streaks").upsert({
-        user_id: userId,
-        current_streak: next.current,
-        longest_streak: next.longest,
-        last_activity_date: next.lastDay,
-        updated_at: new Date().toISOString(),
-      });
+      await db
+        .prepare(
+          `INSERT INTO streaks (user_id, current_streak, longest_streak, last_activity_date, updated_at)
+           VALUES (?, ?, ?, ?, ?)
+           ON CONFLICT(user_id) DO UPDATE SET
+             current_streak = excluded.current_streak,
+             longest_streak = excluded.longest_streak,
+             last_activity_date = excluded.last_activity_date,
+             updated_at = excluded.updated_at`,
+        )
+        .bind(userId, next.current, next.longest, next.lastDay, now)
+        .run();
 
       const codes = [
         "first_practice",
         ...(correct === graded.length ? ["perfect_session"] : []),
         ...(next.current >= 3 ? ["streak_3"] : []),
       ];
-      const { data: achs } = await supabaseAdmin
-        .from("achievements")
-        .select("id, code, title_ar, xp_reward")
-        .in("code", codes);
-      const { data: owned } = await supabaseAdmin
-        .from("user_achievements")
-        .select("achievement_id")
-        .eq("user_id", userId);
-      const ownedIds = new Set((owned ?? []).map((o) => o.achievement_id));
-      for (const a of achs ?? []) {
+      const { results: achs } = await db
+        .prepare(
+          `SELECT id, code, title_ar, xp_reward FROM achievements
+            WHERE code IN (${codes.map(() => "?").join(",")})`,
+        )
+        .bind(...codes)
+        .all<{ id: string; code: string; title_ar: string; xp_reward: number }>();
+      const { results: owned } = await db
+        .prepare("SELECT achievement_id FROM user_achievements WHERE user_id = ?")
+        .bind(userId)
+        .all<{ achievement_id: string }>();
+      const ownedIds = new Set(owned.map((o) => o.achievement_id));
+      for (const a of achs) {
         if (ownedIds.has(a.id)) continue;
-        await supabaseAdmin
-          .from("user_achievements")
-          .insert({ user_id: userId, achievement_id: a.id });
+        // INSERT OR IGNORE: the (user_id, achievement_id) PK makes a concurrent double-unlock harmless.
+        const { meta } = await db
+          .prepare(
+            "INSERT OR IGNORE INTO user_achievements (user_id, achievement_id, earned_at) VALUES (?, ?, ?)",
+          )
+          .bind(userId, a.id, now)
+          .run();
+        if (!meta.changes) continue;
         if (a.xp_reward > 0)
-          await supabaseAdmin.from("xp_transactions").insert({
-            user_id: userId,
-            amount: a.xp_reward,
-            reason: `achievement:${a.code}`,
-            ref_id: a.id,
-          });
+          await db
+            .prepare(
+              "INSERT INTO xp_transactions (id, user_id, amount, reason, ref_id, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+            )
+            .bind(crypto.randomUUID(), userId, a.xp_reward, `achievement:${a.code}`, a.id, now)
+            .run();
         newAchievements.push(a.title_ar);
       }
     }

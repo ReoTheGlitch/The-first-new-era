@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { changePassword } from "@/features/auth/auth.functions";
+import { saveSettings } from "@/features/student/student.functions";
 import { studentOverviewQuery } from "@/features/student/queries";
 import { Card, PageHeader } from "@/components/common";
 import { Switch } from "@/components/ui/switch";
@@ -10,7 +11,7 @@ import { Switch } from "@/components/ui/switch";
 export const Route = createFileRoute("/_authenticated/app/settings")({
   head: () => ({
     meta: [
-      { title: "الإعدادات — العصر الجديد الأول" },
+      { title: "الإعدادات — The first" },
       { name: "description", content: "الحساب وتفضيلات التعلم والخصوصية." },
     ],
   }),
@@ -35,7 +36,11 @@ function Row({
         <span className="block text-sm">{label}</span>
         {hint && <span className="block text-xs text-muted-foreground">{hint}</span>}
       </span>
-      <Switch checked={checked} onCheckedChange={onChange} />
+      <Switch
+        checked={checked}
+        onCheckedChange={onChange}
+        className="h-5 w-9 shadow-none data-[state=checked]:bg-primary data-[state=unchecked]:bg-muted [&>span]:size-4 [&>span]:shadow-none"
+      />
     </label>
   );
 }
@@ -71,25 +76,19 @@ function Settings() {
       return;
     }
     setSaving(true);
-    const [a, b] = await Promise.all([
-      supabase
-        .from("profiles")
-        .update({ display_name: trimmed, updated_at: new Date().toISOString() })
-        .eq("id", me.userId),
-      supabase
-        .from("learning_preferences")
-        .upsert({ user_id: me.userId, ...prefs, updated_at: new Date().toISOString() }),
-    ]);
-    setSaving(false);
-    if (a.error || b.error) {
+    try {
+      await saveSettings({ data: { displayName: trimmed, prefs } });
+    } catch {
+      setSaving(false);
       toast.error("تعذّر حفظ الإعدادات");
       return;
     }
+    setSaving(false);
     toast.success("تم حفظ الإعدادات");
     qc.invalidateQueries({ queryKey: ["student"] });
   }
 
-  const select = "w-full rounded-xl border border-input bg-muted/60 px-3 py-2.5 text-sm";
+  const select = "w-full rounded-md border border-input bg-muted/60 px-3 py-2.5 text-sm";
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <PageHeader title="الإعدادات" icon="settings" />
@@ -185,10 +184,106 @@ function Settings() {
       <button
         onClick={save}
         disabled={saving}
-        className="press w-full rounded-xl bg-brand px-6 py-3 font-medium text-primary-foreground disabled:opacity-50 sm:w-auto"
+        className="press w-full rounded-lg bg-brand px-6 py-3 font-medium text-primary-foreground disabled:opacity-50 sm:w-auto"
       >
         {saving ? "جارٍ الحفظ…" : "حفظ الإعدادات"}
       </button>
+      <PasswordChange />
     </div>
+  );
+}
+
+function PasswordChange() {
+  const [current, setCurrent] = useState("");
+  const [next, setNext] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (next.length < 8) {
+      toast.error("كلمة المرور الجديدة ٨ أحرف على الأقل.");
+      return;
+    }
+    if (next !== confirm) {
+      toast.error("التأكيد لا يطابق كلمة المرور الجديدة.");
+      return;
+    }
+    setBusy(true);
+    try {
+      const res = await changePassword({
+        data: { currentPassword: current, newPassword: next },
+      });
+      if ("error" in res) {
+        toast.error(res.error);
+      } else {
+        toast.success("تم تغيير كلمة المرور.");
+        setCurrent("");
+        setNext("");
+        setConfirm("");
+      }
+    } catch {
+      toast.error("تعذّر تغيير كلمة المرور. حاول مرة أخرى.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const inputClass =
+    "w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-primary/60";
+
+  return (
+    <form className="surface-card mt-6 space-y-4 p-4" onSubmit={submit}>
+      <div>
+        <h2 className="font-semibold">تغيير كلمة المرور</h2>
+        <p className="mt-1 text-xs text-muted-foreground">
+          سيتم تسجيل خروجك من الأجهزة الأخرى بعد التغيير.
+        </p>
+      </div>
+      <div className="space-y-3">
+        <label className="block space-y-1 text-sm">
+          <span className="text-muted-foreground">كلمة المرور الحالية</span>
+          <input
+            type="password"
+            autoComplete="current-password"
+            required
+            value={current}
+            onChange={(e) => setCurrent(e.target.value)}
+            className={inputClass}
+          />
+        </label>
+        <label className="block space-y-1 text-sm">
+          <span className="text-muted-foreground">كلمة المرور الجديدة</span>
+          <input
+            type="password"
+            autoComplete="new-password"
+            required
+            minLength={8}
+            value={next}
+            onChange={(e) => setNext(e.target.value)}
+            className={inputClass}
+          />
+        </label>
+        <label className="block space-y-1 text-sm">
+          <span className="text-muted-foreground">تأكيد كلمة المرور الجديدة</span>
+          <input
+            type="password"
+            autoComplete="new-password"
+            required
+            minLength={8}
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+            className={inputClass}
+          />
+        </label>
+      </div>
+      <button
+        type="submit"
+        disabled={busy}
+        className="press w-full rounded-md border border-input px-5 py-2.5 text-sm font-medium disabled:opacity-50 sm:w-auto"
+      >
+        {busy ? "جارٍ التحديث…" : "تحديث كلمة المرور"}
+      </button>
+    </form>
   );
 }

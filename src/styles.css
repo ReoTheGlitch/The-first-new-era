@@ -6,21 +6,51 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Design system — The first "new era". See docs/DESIGN_SYSTEM.md.
- * Dark-only: deep black / midnight-purple surfaces, violet–indigo–electric-blue accents.
+ * Design system — The first "new era".
+ *
+ * DIRECTION: Apple-calm. One neutral ramp (cool, near-zero chroma) drives every
+ * surface; hierarchy comes from type weight/size and hairline borders, not
+ * color or shadow. A single muted indigo accent is used sparingly (primary
+ * actions, focus, active state). Small radii, tabular numerals, no gradients,
+ * no blur, no glow, no decorative motion.
+ *
  * All colors are oklch tokens; components use semantic utilities only.
+ * Gradient tokens/utilities remain defined for back-compat but resolve to
+ * solid colors and are DEPRECATED.
  */
 
 @theme inline {
-  --font-display: "Readex Pro", "IBM Plex Sans Arabic", system-ui, sans-serif;
-  --font-sans: "IBM Plex Sans Arabic", "Readex Pro", system-ui, sans-serif;
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
+  --font-display: "Inter", "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --font-sans: "Inter", "IBM Plex Sans Arabic", system-ui, sans-serif;
+
+  /* Type scale */
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.125rem;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.375rem;
+  --text-base: 1rem;
+  --text-base--line-height: 1.625rem;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.25rem;
+  --text-xl--line-height: 1.75rem;
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 2rem;
+  --text-3xl: 1.875rem;
+  --text-3xl--line-height: 2.25rem;
+  --text-4xl: 2.25rem;
+  --text-4xl--line-height: 2.5rem;
+
+  /* Radius scale — small end preferred */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-2xl: 20px;
+  --radius-3xl: 24px;
+  --radius-4xl: 28px;
+  --radius-full: 9999px;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -64,52 +94,72 @@
 }
 
 :root {
-  --radius: 1rem;
-  --background: oklch(0.12 0.025 290);
-  --foreground: oklch(0.96 0.012 290);
-  --surface: oklch(0.16 0.035 288);
-  --surface-raised: oklch(0.2 0.045 286);
-  --card: oklch(0.165 0.035 288 / 0.82);
-  --card-foreground: oklch(0.96 0.012 290);
-  --popover: oklch(0.18 0.04 288);
-  --popover-foreground: oklch(0.96 0.012 290);
-  --primary: oklch(0.68 0.2 290);
-  --primary-foreground: oklch(0.99 0.005 290);
-  --secondary: oklch(0.23 0.05 285);
-  --secondary-foreground: oklch(0.94 0.02 290);
-  --muted: oklch(0.21 0.035 288);
-  --muted-foreground: oklch(0.72 0.03 290);
-  --accent: oklch(0.26 0.07 285);
-  --accent-foreground: oklch(0.97 0.01 290);
-  --destructive: oklch(0.66 0.2 22);
-  --destructive-foreground: oklch(0.98 0.01 20);
-  --success: oklch(0.75 0.16 160);
-  --warning: oklch(0.8 0.15 75);
-  --violet: oklch(0.68 0.2 295);
-  --indigo: oklch(0.6 0.2 275);
-  --electric: oklch(0.72 0.17 245);
-  --border: oklch(0.85 0.05 290 / 0.1);
-  --input: oklch(0.85 0.05 290 / 0.14);
-  --ring: oklch(0.7 0.18 280);
-  --chart-1: var(--violet);
+  --radius: var(--radius-md);
+
+  /* Neutral ramp (cool, near-zero chroma). Everything below derives from it. */
+  --neutral-50: oklch(0.985 0.002 260);
+  --neutral-100: oklch(0.965 0.003 260);
+  --neutral-200: oklch(0.92 0.004 260);
+  --neutral-300: oklch(0.86 0.005 260);
+  --neutral-400: oklch(0.73 0.007 260);
+  --neutral-500: oklch(0.6 0.008 260);
+  --neutral-600: oklch(0.48 0.008 260);
+  --neutral-700: oklch(0.37 0.008 260);
+  --neutral-800: oklch(0.27 0.008 260);
+  --neutral-900: oklch(0.2 0.007 260);
+  --neutral-950: oklch(0.15 0.006 260);
+
+  --background: var(--neutral-950);
+  --foreground: var(--neutral-100);
+  --surface: var(--neutral-900);
+  --surface-raised: var(--neutral-800);
+  --card: var(--neutral-900);
+  --card-foreground: var(--neutral-100);
+  --popover: var(--neutral-900);
+  --popover-foreground: var(--neutral-100);
+  --primary: oklch(0.72 0.1 270);
+  --primary-foreground: var(--neutral-950);
+  --secondary: var(--neutral-800);
+  --secondary-foreground: var(--neutral-100);
+  --muted: var(--neutral-800);
+  --muted-foreground: var(--neutral-400);
+  --accent: var(--neutral-800);
+  --accent-foreground: var(--neutral-50);
+  --destructive: oklch(0.68 0.14 25);
+  --destructive-foreground: var(--neutral-950);
+  --success: oklch(0.74 0.11 160);
+  --warning: oklch(0.8 0.1 80);
+  --violet: oklch(0.72 0.09 295);
+  --indigo: oklch(0.68 0.1 270);
+  --electric: oklch(0.74 0.09 240);
+  --border: color-mix(in oklch, var(--neutral-50) 10%, transparent);
+  --input: color-mix(in oklch, var(--neutral-50) 14%, transparent);
+  --ring: oklch(0.72 0.1 270 / 0.7);
+  --chart-1: var(--indigo);
   --chart-2: var(--electric);
-  --chart-3: var(--indigo);
+  --chart-3: var(--violet);
   --chart-4: var(--success);
   --chart-5: var(--warning);
-  --sidebar: oklch(0.14 0.03 289 / 0.9);
-  --sidebar-foreground: oklch(0.9 0.02 290);
+  --sidebar: var(--neutral-950);
+  --sidebar-foreground: var(--neutral-200);
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: oklch(0.24 0.06 286);
-  --sidebar-accent-foreground: oklch(0.98 0.01 290);
-  --sidebar-border: oklch(0.85 0.05 290 / 0.08);
+  --sidebar-accent: var(--neutral-800);
+  --sidebar-accent-foreground: var(--neutral-50);
+  --sidebar-border: color-mix(in oklch, var(--neutral-50) 8%, transparent);
   --sidebar-ring: var(--ring);
 
-  --gradient-brand: linear-gradient(135deg, var(--violet), var(--indigo) 55%, var(--electric));
-  --gradient-edge: linear-gradient(140deg, oklch(0.62 0.2 265 / 0.9), oklch(0.7 0.2 300 / 0.9));
-  --gradient-tile: linear-gradient(160deg, oklch(0.26 0.08 285), oklch(0.17 0.05 290));
-  --shadow-glow: 0 0 0 1px oklch(0.7 0.2 285 / 0.18), 0 12px 40px -12px oklch(0.6 0.22 285 / 0.45);
-  --shadow-card: 0 1px 0 0 oklch(1 0 0 / 0.04) inset, 0 20px 50px -30px oklch(0 0 0 / 0.8);
+  /* DEPRECATED: gradients are retired. Kept defined (as solids) so legacy references compile. */
+  --gradient-brand: var(--primary);
+  --gradient-edge: var(--primary);
+  --gradient-tile: var(--card);
+
+  /* Shadows: hairline border + at most one subtle layer. */
+  --shadow-xs: 0 1px 2px 0 oklch(0 0 0 / 0.2);
+  --shadow-sm: 0 2px 6px -1px oklch(0 0 0 / 0.28);
+  /* DEPRECATED aliases */
+  --shadow-card: var(--shadow-xs);
+  --shadow-glow: none;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -125,6 +175,7 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    font-feature-settings: "ss01", "cv11";
     overflow-x: hidden;
   }
   h1,
@@ -132,11 +183,12 @@
   h3,
   h4 {
     font-family: var(--font-display);
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
   }
   :focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 2px;
+    border-radius: var(--radius-xs);
   }
   .katex {
     direction: ltr;
@@ -145,54 +197,50 @@
   }
 }
 
-/* Ambient background light — kept behind content, slow, disabled for reduced motion */
+/* Legacy ambient utility — retained as a no-op so references don't 404.
+   The design has moved away from radial gradient washes. */
 @utility ambient {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background:
-    radial-gradient(45rem 30rem at 85% -10%, oklch(0.45 0.2 295 / 0.35), transparent 60%),
-    radial-gradient(40rem 28rem at 0% 110%, oklch(0.45 0.18 255 / 0.28), transparent 60%),
-    radial-gradient(30rem 20rem at 40% 40%, oklch(0.3 0.12 280 / 0.18), transparent 70%);
-  animation: ambient-drift 28s ease-in-out infinite alternate;
 }
 
 @utility surface-card {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: var(--radius-2xl);
-  box-shadow: var(--shadow-card);
-  backdrop-filter: blur(10px);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xs);
 }
 
+/* Retained name; glow is retired — now a hairline ring in the primary tint. */
 @utility glow-edge {
-  box-shadow: var(--shadow-glow);
+  box-shadow: 0 0 0 1px color-mix(in oklch, var(--primary) 35%, transparent);
 }
 
+/* Retained utility name, now a solid accent color — no gradient-on-text. */
 @utility text-gradient {
-  background: var(--gradient-brand);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--primary);
 }
 
+/* Solid primary surface — no gradient. */
 @utility bg-brand {
-  background: var(--gradient-brand);
+  background: var(--primary);
 }
 
+/* Solid card surface — no gradient. */
 @utility bg-tile {
-  background: var(--gradient-tile);
+  background: var(--card);
 }
 
 @utility press {
   transition:
-    transform 160ms var(--ease-out),
+    transform 120ms var(--ease-out),
     background-color 200ms,
     border-color 200ms,
     box-shadow 200ms;
   &:active {
-    transform: scale(0.97);
+    transform: scale(0.985);
   }
 }
 
@@ -210,34 +258,70 @@
     transform: none;
   }
 }
-@keyframes ambient-drift {
-  from {
-    transform: translate3d(0, 0, 0) scale(1);
+/* animate-float / ambient-drift are retired (no decorative motion). The
+   utility name stays as a no-op so any stale reference doesn't break. */
+@utility animate-float {
+  animation: none;
+}
+
+@keyframes achievement-pop {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.5) translateY(20px);
   }
-  to {
-    transform: translate3d(-2%, 2%, 0) scale(1.05);
+  70% {
+    transform: translateX(-50%) scale(1.05) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1) translateY(0);
   }
 }
-@keyframes float-soft {
+@utility achievement-pop {
+  animation: achievement-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes xp-pop-fade {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-10px) scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-24px) scale(0.9);
+  }
+}
+@utility xp-pop-fade {
+  animation: xp-pop-fade 1.6s ease-out forwards;
+}
+
+@keyframes skeleton-pulse {
   0%,
   100% {
-    transform: translateY(0);
+    opacity: 1;
   }
   50% {
-    transform: translateY(-6px);
+    opacity: 0.55;
   }
 }
-@utility animate-float {
-  animation: float-soft 6s ease-in-out infinite;
+@utility animate-skeleton {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    animation-duration: 0.001ms !important;
+    animation-duration: 0ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
+    transition-duration: 0ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
   }
 }
 .reduce-motion *,
@@ -245,6 +329,85 @@
 .reduce-motion *::after {
   animation: none !important;
   transition: none !important;
+}
+
+/* ===== Light mode tokens ===== */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --background: oklch(0.985 0.002 260);
+    --foreground: oklch(0.2 0.007 260);
+    --surface: oklch(1 0 0);
+    --surface-raised: oklch(0.965 0.003 260);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.2 0.007 260);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.2 0.007 260);
+    --primary: oklch(0.5 0.12 270);
+    --primary-foreground: oklch(0.99 0.002 260);
+    --secondary: oklch(0.95 0.003 260);
+    --secondary-foreground: oklch(0.27 0.008 260);
+    --muted: oklch(0.955 0.003 260);
+    --muted-foreground: oklch(0.48 0.008 260);
+    --accent: oklch(0.945 0.004 260);
+    --accent-foreground: oklch(0.2 0.007 260);
+    --destructive: oklch(0.55 0.16 25);
+    --destructive-foreground: oklch(0.99 0.002 260);
+    --success: oklch(0.52 0.11 160);
+    --warning: oklch(0.55 0.1 70);
+    --violet: oklch(0.52 0.1 295);
+    --indigo: oklch(0.5 0.12 270);
+    --electric: oklch(0.52 0.11 240);
+    --border: oklch(0.2 0.007 260 / 0.1);
+    --input: oklch(0.2 0.007 260 / 0.16);
+    --ring: oklch(0.5 0.12 270 / 0.6);
+    --sidebar: oklch(0.975 0.003 260);
+    --sidebar-foreground: oklch(0.27 0.008 260);
+    --sidebar-accent: oklch(0.94 0.004 260);
+    --sidebar-accent-foreground: oklch(0.2 0.007 260);
+    --sidebar-border: oklch(0.2 0.007 260 / 0.08);
+    --gradient-tile: var(--card);
+    --shadow-xs: 0 1px 2px 0 oklch(0 0 0 / 0.06);
+    --shadow-sm: 0 2px 6px -1px oklch(0 0 0 / 0.08);
+  }
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --background: oklch(0.985 0.002 260);
+  --foreground: oklch(0.2 0.007 260);
+  --surface: oklch(1 0 0);
+  --surface-raised: oklch(0.965 0.003 260);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.2 0.007 260);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.2 0.007 260);
+  --primary: oklch(0.5 0.12 270);
+  --primary-foreground: oklch(0.99 0.002 260);
+  --secondary: oklch(0.95 0.003 260);
+  --secondary-foreground: oklch(0.27 0.008 260);
+  --muted: oklch(0.955 0.003 260);
+  --muted-foreground: oklch(0.48 0.008 260);
+  --accent: oklch(0.945 0.004 260);
+  --accent-foreground: oklch(0.2 0.007 260);
+  --destructive: oklch(0.55 0.16 25);
+  --destructive-foreground: oklch(0.99 0.002 260);
+  --success: oklch(0.52 0.11 160);
+  --warning: oklch(0.55 0.1 70);
+  --violet: oklch(0.52 0.1 295);
+  --indigo: oklch(0.5 0.12 270);
+  --electric: oklch(0.52 0.11 240);
+  --border: oklch(0.2 0.007 260 / 0.1);
+  --input: oklch(0.2 0.007 260 / 0.16);
+  --ring: oklch(0.5 0.12 270 / 0.6);
+  --sidebar: oklch(0.975 0.003 260);
+  --sidebar-foreground: oklch(0.27 0.008 260);
+  --sidebar-accent: oklch(0.94 0.004 260);
+  --sidebar-accent-foreground: oklch(0.2 0.007 260);
+  --sidebar-border: oklch(0.2 0.007 260 / 0.08);
+  --gradient-tile: var(--card);
+  --shadow-xs: 0 1px 2px 0 oklch(0 0 0 / 0.06);
+  --shadow-sm: 0 2px 6px -1px oklch(0 0 0 / 0.08);
 }
 
 /* الرسومات التفاعلية للدروس */
@@ -317,4 +480,19 @@
   .lab .fl {
     animation: none;
   }
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility page-enter {
+  animation: page-enter 0.22s cubic-bezier(0.4, 0, 0.2, 1) both;
 }

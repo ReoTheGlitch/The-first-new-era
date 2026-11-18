@@ -4,9 +4,13 @@ import { useState, type ReactNode } from "react";
 import { AppIcon } from "@/components/icons/AppIcon";
 import { Logo } from "@/components/brand/Logo";
 import { mobileNav, primaryNav, secondaryNav, type NavItem } from "@/config/navigation";
-import { supabase } from "@/integrations/supabase/client";
+import { signOut } from "@/features/auth/auth.functions";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { CommandPalette } from "@/components/CommandPalette";
+import { PageTransition } from "@/components/PageTransition";
+import { StudyTimer } from "@/components/StudyTimer";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 function useSignOut() {
   const qc = useQueryClient();
@@ -14,7 +18,7 @@ function useSignOut() {
   return async () => {
     await qc.cancelQueries();
     qc.clear();
-    await supabase.auth.signOut();
+    await signOut();
     navigate({ to: "/auth", replace: true });
   };
 }
@@ -30,20 +34,23 @@ function NavLink({
     <Link
       to={item.to}
       activeOptions={{ exact: item.exact ?? false }}
-      aria-label={item.label}
       className={cn(
-        "press group relative flex items-center rounded-xl text-sidebar-foreground/75 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground data-[status=active]:bg-sidebar-accent data-[status=active]:text-sidebar-accent-foreground",
+        "press group relative flex items-center rounded-md text-sidebar-foreground/75 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground data-[status=active]:bg-sidebar-accent data-[status=active]:text-sidebar-accent-foreground",
         variant === "full" && "gap-3 px-3 py-2.5 text-sm",
         variant === "sheet" && "gap-3 px-3 py-3 text-base",
         variant === "rail" && "h-12 w-12 justify-center",
         variant === "bottom" &&
-          "min-h-14 flex-1 flex-col justify-center gap-1 text-[11px] data-[status=active]:bg-transparent",
+          "min-h-14 flex-1 flex-col justify-center gap-1 text-xs data-[status=active]:bg-transparent",
       )}
     >
-      <span className="transition-transform duration-300 group-hover:-translate-y-0.5 group-data-[status=active]:scale-110">
+      <span>
         <AppIcon name={item.icon} size={variant === "bottom" ? 22 : 22} />
       </span>
-      {variant !== "rail" && <span className="truncate">{item.label}</span>}
+      {variant !== "rail" ? (
+        <span className="truncate">{item.label}</span>
+      ) : (
+        <span className="sr-only">{item.label}</span>
+      )}
       {variant === "bottom" && (
         <span className="absolute top-0 h-0.5 w-8 rounded-full bg-brand opacity-0 group-data-[status=active]:opacity-100" />
       )}
@@ -61,9 +68,30 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className="relative z-10 flex min-h-screen">
         {/* Desktop sidebar */}
         <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-e border-sidebar-border bg-sidebar p-4 backdrop-blur-xl xl:flex">
-          <Link to="/app" className="mb-8 px-2 pt-2">
+          <Link to="/app" className="mb-4 px-2 pt-2">
             <Logo />
           </Link>
+          <button
+            type="button"
+            onClick={() =>
+              window.dispatchEvent(
+                new KeyboardEvent("keydown", { key: "k", ctrlKey: true, bubbles: true }),
+              )
+            }
+            className="press mb-4 flex w-full items-center justify-between rounded-md border border-border bg-muted/40 px-3 py-2 text-xs text-muted-foreground hover:border-primary/30 hover:text-foreground"
+          >
+            <span className="flex items-center gap-2">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
+                <path d="M20 20l-3-3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+              بحث سريع...
+            </span>
+            <span className="flex gap-1">
+              <kbd className="rounded border border-border px-1 py-0.5 font-sans text-xs">⌘</kbd>
+              <kbd className="rounded border border-border px-1 py-0.5 font-sans text-xs">K</kbd>
+            </span>
+          </button>
           <nav className="flex flex-col gap-1" aria-label="التنقل الرئيسي">
             {primaryNav.map((i) => (
               <NavLink key={i.to} item={i} variant="full" />
@@ -75,10 +103,13 @@ export function AppShell({ children }: { children: ReactNode }) {
             ))}
             <button
               onClick={signOut}
-              className="press rounded-xl px-3 py-2.5 text-start text-sm text-muted-foreground hover:bg-sidebar-accent/60"
+              className="press rounded-md px-3 py-2.5 text-start text-sm text-muted-foreground hover:bg-sidebar-accent/60"
             >
               تسجيل الخروج
             </button>
+            <div className="flex items-center gap-2 px-2 pt-1">
+              <ThemeToggle />
+            </div>
           </div>
         </aside>
 
@@ -103,16 +134,40 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Link to="/app">
               <Logo />
             </Link>
-            <Link
-              to="/app/profile"
-              aria-label="الملف الشخصي"
-              className="press grid h-10 w-10 place-items-center rounded-xl"
-            >
-              <AppIcon name="profile" size={22} />
-            </Link>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() =>
+                  window.dispatchEvent(
+                    new KeyboardEvent("keydown", { key: "k", ctrlKey: true, bubbles: true }),
+                  )
+                }
+                aria-label="البحث السريع"
+                className="press hidden min-h-11 items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs text-muted-foreground sm:flex"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden>
+                  <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
+                  <path
+                    d="M20 20l-3-3"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <kbd className="font-sans">⌘K</kbd>
+              </button>
+              <ThemeToggle />
+              <Link
+                to="/app/profile"
+                aria-label="الملف الشخصي"
+                className="press grid h-11 w-11 place-items-center rounded-md"
+              >
+                <AppIcon name="profile" size={22} />
+              </Link>
+            </div>
           </header>
           <main className="mx-auto w-full max-w-7xl flex-1 px-4 pb-28 pt-6 sm:px-6 md:pb-10 lg:px-10 lg:pt-10">
-            {children}
+            <PageTransition>{children}</PageTransition>
           </main>
         </div>
       </div>
@@ -127,14 +182,14 @@ export function AppShell({ children }: { children: ReactNode }) {
         ))}
         <button
           onClick={() => setMoreOpen(true)}
-          className="press flex min-h-14 flex-1 flex-col items-center justify-center gap-1 text-[11px] text-sidebar-foreground/75"
+          className="press flex min-h-14 flex-1 flex-col items-center justify-center gap-1 text-xs text-sidebar-foreground/75"
         >
           <AppIcon name="more" size={22} />
           المزيد
         </button>
       </nav>
       <Sheet open={moreOpen} onOpenChange={setMoreOpen}>
-        <SheetContent side="bottom" className="rounded-t-3xl border-border bg-popover">
+        <SheetContent side="bottom" className="rounded-t-lg border-border bg-popover">
           <SheetHeader>
             <SheetTitle className="text-start">المزيد</SheetTitle>
           </SheetHeader>
@@ -145,13 +200,15 @@ export function AppShell({ children }: { children: ReactNode }) {
             ))}
             <button
               onClick={signOut}
-              className="press rounded-xl px-3 py-3 text-start text-base text-muted-foreground"
+              className="press rounded-md px-3 py-3 text-start text-base text-muted-foreground"
             >
               تسجيل الخروج
             </button>
           </div>
         </SheetContent>
       </Sheet>
+      <StudyTimer />
+      <CommandPalette />
     </div>
   );
 }

@@ -25,7 +25,7 @@ export function ModePackPicker({ mode, onMode, packs, packKey, onPack }: Props) 
             aria-checked={mode === m.key}
             onClick={() => onMode(m.key)}
             className={cn(
-              "rounded-xl border px-2 py-3 text-sm font-medium transition-colors",
+              "rounded-md border px-2 py-3 text-sm font-medium transition-colors",
               mode === m.key
                 ? "border-primary bg-primary/15"
                 : "border-border text-muted-foreground hover:text-foreground",
@@ -42,7 +42,7 @@ export function ModePackPicker({ mode, onMode, packs, packKey, onPack }: Props) 
         <select
           value={packKey}
           onChange={(e) => onPack(e.target.value)}
-          className="w-full rounded-xl border border-input bg-muted/60 px-3 py-3 text-sm"
+          className="w-full rounded-md border border-input bg-muted/60 px-3 py-3 text-sm"
         >
           {groups.map((g) => (
             <optgroup key={g} label={g}>

@@ -18,6 +18,21 @@ export default defineConfig(({ command, mode }) => {
     resolve: {
       dedupe: ["react", "react-dom", "@tanstack/react-router", "@tanstack/react-query"],
     },
+    build: {
+      rollupOptions: {
+        output: {
+          // Client only; SSR/nitro bundles are unaffected by this split in practice.
+          manualChunks(id: string) {
+            if (!id.includes("node_modules")) return undefined;
+            if (/node_modules\/(react|react-dom|scheduler)\//.test(id)) return "react-core";
+            if (/node_modules\/@tanstack\/(react-router|router-core|history)\//.test(id))
+              return "router";
+            if (/node_modules\/@tanstack\/(react-query|query-core)\//.test(id)) return "query";
+            return undefined;
+          },
+        },
+      },
+    },
     plugins: [
       tsConfigPaths(),
       // يوجّه نقطة دخول السيرفر إلى src/server.ts
@@ -25,7 +40,9 @@ export default defineConfig(({ command, mode }) => {
       viteReact(),
       tailwindcss(),
       // نيترو مطلوب عند البناء فقط
-      ...(command === "build" ? [nitro()] : []),
+      ...(command === "build"
+        ? [nitro(process.env["CF_BUILD"] === "1" ? { preset: "cloudflare_module" } : {})]
+        : []),
     ],
   };
 });

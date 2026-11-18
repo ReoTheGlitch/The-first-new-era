@@ -1,4 +1,4 @@
-import { hasSupabaseAdminEnv, supabaseAdmin } from "@/integrations/supabase/client.server";
+import { getDb } from "@/lib/db/index.server";
 
 export type StudentAdaptiveSummary = {
   totalXp: number;
@@ -18,36 +18,43 @@ export async function getStudentAdaptiveSummary(userId: string): Promise<Student
     promptSummary: "",
   };
 
-  if (!hasSupabaseAdminEnv) return empty;
-
   try {
+    const db = getDb();
     const [xpRes, streakRes, attemptsRes, mistakesRes] = await Promise.allSettled([
-      supabaseAdmin.from("xp_transactions").select("amount").eq("user_id", userId),
-      supabaseAdmin.from("streaks").select("current_streak").eq("user_id", userId).maybeSingle(),
-      supabaseAdmin
-        .from("quiz_attempts")
-        .select("correct_count, total_count")
-        .eq("user_id", userId)
-        .order("started_at", { ascending: false })
-        .limit(10),
-      supabaseAdmin
-        .from("attempt_answers")
-        .select("questions(concepts(title_ar))")
-        .eq("user_id", userId)
-        .eq("is_correct", false)
-        .order("answered_at", { ascending: false })
-        .limit(12),
+      db
+        .prepare("SELECT COALESCE(SUM(amount), 0) AS total FROM xp_transactions WHERE user_id = ?")
+        .bind(userId)
+        .first<{ total: number }>(),
+      db
+        .prepare("SELECT current_streak FROM streaks WHERE user_id = ?")
+        .bind(userId)
+        .first<{ current_streak: number }>(),
+      db
+        .prepare(
+          `SELECT correct_count, total_count FROM quiz_attempts
+            WHERE user_id = ? ORDER BY started_at DESC LIMIT 10`,
+        )
+        .bind(userId)
+        .all<{ correct_count: number; total_count: number }>(),
+      db
+        .prepare(
+          `SELECT c.title_ar AS title FROM attempt_answers aa
+             JOIN questions q ON q.id = aa.question_id
+             JOIN concepts c ON c.id = q.concept_id
+            WHERE aa.user_id = ? AND aa.is_correct = 0
+            ORDER BY aa.answered_at DESC LIMIT 12`,
+        )
+        .bind(userId)
+        .all<{ title: string | null }>(),
     ]);
 
-    const xpRows = xpRes.status === "fulfilled" ? (xpRes.value.data ?? []) : [];
-    const totalXp = xpRows.reduce((sum, r) => sum + (r.amount ?? 0), 0);
+    const totalXp = xpRes.status === "fulfilled" ? (xpRes.value?.total ?? 0) : 0;
 
-    const streak =
-      streakRes.status === "fulfilled" ? (streakRes.value.data?.current_streak ?? 0) : 0;
+    const streak = streakRes.status === "fulfilled" ? (streakRes.value?.current_streak ?? 0) : 0;
 
     let accuracyPct: number | null = null;
-    if (attemptsRes.status === "fulfilled" && (attemptsRes.value.data?.length ?? 0) > 0) {
-      const rows = attemptsRes.value.data ?? [];
+    if (attemptsRes.status === "fulfilled" && attemptsRes.value.results.length > 0) {
+      const rows = attemptsRes.value.results;
       const correct = rows.reduce((s, r) => s + (r.correct_count ?? 0), 0);
       const total = rows.reduce((s, r) => s + (r.total_count ?? 0), 0);
       if (total > 0) accuracyPct = Math.round((correct / total) * 100);
@@ -55,12 +62,7 @@ export async function getStudentAdaptiveSummary(userId: string): Promise<Student
 
     const weakSet = new Set<string>();
     if (mistakesRes.status === "fulfilled") {
-      for (const row of mistakesRes.value.data ?? []) {
-        const q = (row as { questions?: { concepts?: { title_ar?: string } | null } | null })
-          .questions;
-        const title = q?.concepts?.title_ar;
-        if (title) weakSet.add(title);
-      }
+      for (const row of mistakesRes.value.results) if (row.title) weakSet.add(row.title);
     }
     const weakConcepts = Array.from(weakSet).slice(0, 4);
 
