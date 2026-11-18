@@ -32,7 +32,7 @@ export default class ErrorBoundary extends Component<Props, State> {
 
     return (
       <div className="flex min-h-[40vh] items-center justify-center px-4">
-        <div className="w-full max-w-sm rounded-2xl border border-destructive/30 bg-destructive/5 p-8 text-center">
+        <div className="w-full max-w-sm rounded-lg border border-destructive/30 bg-destructive/5 p-8 text-center">
           <div className="mb-4 flex justify-center">
             <svg
               width="40"
@@ -61,13 +61,13 @@ export default class ErrorBoundary extends Component<Props, State> {
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <button
               onClick={() => window.location.reload()}
-              className="press rounded-xl bg-brand px-5 py-2.5 text-sm font-medium text-primary-foreground"
+              className="press rounded-lg bg-brand px-5 py-2.5 text-sm font-medium text-primary-foreground"
             >
               تحديث الصفحة
             </button>
             <a
               href="/app"
-              className="press rounded-xl border border-input px-5 py-2.5 text-sm font-medium text-foreground"
+              className="press rounded-md border border-input px-5 py-2.5 text-sm font-medium text-foreground"
             >
               الرئيسية
             </a>

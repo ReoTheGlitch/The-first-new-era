@@ -19,7 +19,7 @@ function LabView({ lab }: { lab: Lab }) {
 
   return (
     <div className="lab space-y-4">
-      <div className="lab-stage rounded-2xl border border-border p-3 sm:p-4">
+      <div className="lab-stage rounded-lg border border-border p-3 sm:p-4">
         {/* الرسم مبني من أرقام فقط، ولا يدخل فيه نص من المستخدم */}
         <div dangerouslySetInnerHTML={{ __html: result.g }} />
         <div className="mt-3 flex flex-wrap gap-x-8 gap-y-2 border-t border-border pt-3">
