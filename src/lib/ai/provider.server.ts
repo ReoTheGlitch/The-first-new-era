@@ -1,14 +1,17 @@
 import type { AiTutorProvider } from "./types";
 import type { ProviderChoice } from "./config.server";
-import { createGeminiProvider } from "./gemini-adapter.server";
 import { createOpenRouterProvider } from "./openrouter-adapter.server";
 
-/** يختار المزوّد المناسب حسب الإعداد الحالي. */
-export function createProvider(
+/**
+ * يختار المزوّد المناسب حسب الإعداد الحالي.
+ * OpenRouter (المعتمد) يُحمّل مباشرة؛ محوّل Gemini يُحمّل كسولًا عند الحاجة فقط
+ * حتى لا تُضمّن حزمة @google/genai الكبيرة في الحالة الافتراضية.
+ */
+export async function createProvider(
   choice: Exclude<ProviderChoice, { kind: "none" }>,
   options?: { responseMimeType?: string },
-): AiTutorProvider {
-  return choice.kind === "openrouter"
-    ? createOpenRouterProvider(choice, options)
-    : createGeminiProvider(choice, options);
+): Promise<AiTutorProvider> {
+  if (choice.kind === "openrouter") return createOpenRouterProvider(choice, options);
+  const { createGeminiProvider } = await import("./gemini-adapter.server");
+  return createGeminiProvider(choice, options);
 }

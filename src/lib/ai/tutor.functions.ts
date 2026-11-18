@@ -160,7 +160,7 @@ export const askTutor = createServerFn({ method: "POST" })
       .filter(Boolean)
       .join("\n");
 
-    const provider = createProvider(choice);
+    const provider = await createProvider(choice);
     const history = data.messages.slice(-AI_LIMITS.maxHistoryMessages);
     let conversationId = data.conversationId ?? undefined;
     try {

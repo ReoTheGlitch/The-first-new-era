@@ -11,7 +11,9 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "deploy:cf": "vite build && wrangler deploy --config .output/server/wrangler.json",
+    "cf:preview": "vite build && wrangler dev --config .output/server/wrangler.json"
   },
   "overrides": {
     "rolldown": "1.2.1"
@@ -98,6 +100,7 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.56.1",
     "vite": "8.1.5",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.10",
+    "wrangler": "^4.164.0"
   }
 }

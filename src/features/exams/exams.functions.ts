@@ -55,7 +55,7 @@ export const generateAiExam = createServerFn({ method: "POST" })
       `أرجع JSON صالحًا فقط بالشكل: {"examTitle":"عنوان","questions":[{"id":"q1","prompt":"السؤال","options":["أ","ب","ج","د"],"correctIndex":0,"explanation":"التفسير","svgDiagram":"<svg...> (اختياري)"}]}`,
       "تأكد من وجود أربعة اختيارات وفهرس إجابة صحيح من 0 إلى 3 لكل سؤال.",
     ].join("\n");
-    const provider = createProvider(choice, { responseMimeType: "application/json" });
+    const provider = await createProvider(choice, { responseMimeType: "application/json" });
     try {
       const raw = await provider.generate(
         systemPrompt,
