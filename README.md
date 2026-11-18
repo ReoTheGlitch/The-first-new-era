@@ -47,29 +47,6 @@ npm run e2e          # Playwright smoke tests (dev server must be running)
 npx tsc --noEmit     # strict type check
 ```
 
-## Project layout
-
-```
-.
-├── migrations/              # numbered SQLite migrations, auto-applied dev + prod
-├── src/
-│   ├── routes/              # TanStack file-based routes
-│   ├── features/            # feature modules (student, duel, exams, practice, mistakes, engagement)
-│   ├── components/          # UI components, layout, brand, achievements
-│   ├── lib/
-│   │   ├── db/              # D1 adapter (better-sqlite3 in dev)
-│   │   ├── auth/            # password + session + requireAuth middleware
-│   │   ├── ai/              # OpenRouter provider + tutor & exam server fns
-│   │   ├── engagement/      # streak + weekly competition
-│   │   └── time/            # Cairo-local date math
-│   ├── server.ts            # Cloudflare fetch handler (SSR entry)
-│   └── styles.css           # Tailwind v4 + OKLCH tokens
-├── scripts/cf/              # deploy.sh, apply-migrations.mjs, cf-entry.mjs, kv-payload.mjs
-├── docs/                    # architecture / deploy / content / design notes
-├── CLAUDE.md                # Claude Code session orientation
-└── README.md                # this file
-```
-
 ## Dev branch
 
 All feature work goes on `ccr-52216415-px8xos`. The deploy script and
@@ -77,12 +54,21 @@ GitHub automation watch this branch.
 
 ## Documentation
 
+**New to the project?** Start with [HANDOFF.md](./HANDOFF.md) — ten
+minutes gets you oriented.
+
 | Topic | Where |
 |---|---|
+| Handoff summary | [HANDOFF.md](./HANDOFF.md) |
 | How the pieces fit | [docs/architecture.md](./docs/architecture.md) |
 | How to deploy | [docs/deploy.md](./docs/deploy.md) |
 | Adding lessons / subjects | [docs/content.md](./docs/content.md) |
-| UI design rules | [docs/ai-slop-notes.md](./docs/ai-slop-notes.md) |
+| Brand identity | [docs/brand.md](./docs/brand.md) |
+| Design study + heuristics | [docs/design-study.md](./docs/design-study.md) |
+| Anti-AI-slop rules | [docs/ai-slop-notes.md](./docs/ai-slop-notes.md) |
+| Performance | [docs/performance.md](./docs/performance.md) |
+| Security posture | [docs/security.md](./docs/security.md) |
+| Feature → GitHub → Cloudflare workflow | [docs/workflow.md](./docs/workflow.md) |
 | November 2026 migration notes | [docs/session-2026-11.md](./docs/session-2026-11.md) |
 | Claude session orientation | [CLAUDE.md](./CLAUDE.md) |
 
@@ -90,13 +76,41 @@ GitHub automation watch this branch.
 
 | Area | State |
 |---|---|
-| Auth | Working — custom session cookie over D1 |
+| Auth | Working — custom session cookie over D1, rate-limited sign-up/sign-in, change-password UI live |
 | Physics content | Chapters 1-2 seeded (`migrations/0007`), teacher review pending |
 | Chemistry content | Chapters 1-2 seeded (`migrations/0010`), teacher review pending |
-| AI tutor | Wired to OpenRouter; needs `OPENROUTER_API_KEY` secret on the worker |
+| AI tutor + exams | Live via OpenRouter → `google/gemini-2.5-flash` |
 | Weekly competition | Round rotation + countdown implemented |
 | Streaks | Cairo-local, idempotent per day |
-| PWA | Service worker caches static assets, bypasses openrouter.ai |
+| PWA | SVG favicon + 192/512 maskable PNGs, service worker caches static |
+| Security | HSTS, CSP, Permissions-Policy, X-Frame-Options, rate limits |
+| Performance | Entry JS 16 KB gzipped (lazy KaTeX, split vendor chunks) |
+
+## Project layout
+
+```
+.
+├── migrations/              # numbered SQLite migrations, auto-applied dev + prod
+├── src/
+│   ├── routes/              # TanStack file-based routes
+│   ├── features/            # feature modules (student, duel, exams, practice, mistakes, engagement, auth)
+│   ├── components/          # UI components, layout, brand, achievements
+│   ├── lib/
+│   │   ├── db/              # D1 adapter (better-sqlite3 in dev)
+│   │   ├── auth/            # password + session + requireAuth middleware
+│   │   ├── ai/              # OpenRouter provider + tutor & exam server fns
+│   │   ├── security/        # rate limiter + security headers
+│   │   ├── engagement/      # streak + weekly competition
+│   │   └── time/            # Cairo-local date math
+│   ├── server.ts            # Cloudflare fetch handler (SSR entry)
+│   └── styles.css           # Tailwind v4 + OKLCH tokens
+├── scripts/cf/              # deploy.sh, apply-migrations.mjs, cf-entry.mjs, kv-payload.mjs
+├── public/                  # static assets (favicon.svg, PNG icons, manifest.json, robots.txt, sitemap.xml, sw.js)
+├── docs/                    # architecture / deploy / content / design / security / etc.
+├── CLAUDE.md                # Claude Code session orientation
+├── HANDOFF.md               # start here if new to the project
+└── README.md                # this file
+```
 
 ## License
 

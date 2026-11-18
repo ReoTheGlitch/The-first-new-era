@@ -66,13 +66,18 @@ Snapshot of what landed across this push, for anyone picking up next.
 - Parent-agent → sub-agent lane discipline documented in `CLAUDE.md`. Sonnet for feature work, Haiku for grep/audit/verify, never Opus or Fable.
 - Migrations: numbered SQLite files in `migrations/`, auto-applied in dev (better-sqlite3) and by `deploy:cf` (via REST API) in prod.
 
+## Also landed (final sweep)
+
+- Change-password UI on `/app/settings` wired to `changePassword` server fn; signs out other sessions on rotation.
+- `public/robots.txt` + `public/sitemap.xml` for SEO basics.
+- Favicon/PWA icons regenerated from the SVG LogoMark (total icon payload 224 KB → 16 KB).
+- `OPENROUTER_API_KEY` set as a Cloudflare Worker secret — AI tutor and exam builder live.
+
 ## User-action items still open
 
-1. **`OPENROUTER_API_KEY`** — add as a Cloudflare Worker secret (Workers & Pages → new-era-learning → Settings → Variables and Secrets). Without it the tutor and exam builder return a friendly error; nothing else breaks.
-2. **`CLOUDFLARE_API_TOKEN`** — add as a GitHub repo secret (Settings → Secrets and variables → Actions). Without it the push-to-deploy flow 401s on `deploy:cf`; manual `npm run deploy:cf` from a session with the token works.
-3. **Change-password UI** — the server fn exists; the settings page needs a password-change form.
-4. **Teacher review of seeded content** — every lesson is `origin='editorial'` and `status='unverified'`.
-5. **Turnstile / WAF rules** — mentioned in `docs/security.md` as next-step anti-bot work.
+1. **`CLOUDFLARE_API_TOKEN`** — add as a GitHub repo secret (Settings → Secrets and variables → Actions). Without it the push-to-deploy flow 401s on `deploy:cf`; manual `npm run deploy:cf` from a shell with the token set works.
+2. **Teacher review of seeded content** — every lesson is `origin='editorial'` and `status='unverified'`.
+3. **Turnstile / WAF rules** — mentioned in `docs/security.md` as next-step anti-bot work.
 
 ## File map
 
