@@ -197,7 +197,7 @@ function LessonPage() {
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           aria-label="العودة للأعلى"
-          className="press fixed bottom-20 left-4 z-40 flex h-10 w-10 items-center justify-center rounded-full border border-input bg-popover text-sm shadow-lg md:bottom-8"
+          className="press fixed bottom-20 left-4 z-40 flex h-10 w-10 items-center justify-center rounded-full border border-border bg-popover text-sm shadow-md md:bottom-8"
         >
           ↑
         </button>
