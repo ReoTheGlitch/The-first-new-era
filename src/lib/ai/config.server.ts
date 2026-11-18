@@ -6,18 +6,19 @@ export const AI_LIMITS = {
   requestsPerHour: 30,
 };
 
-export type ProviderChoice =
-  | { kind: "gemini"; apiKey: string; model: string }
-  | { kind: "none" };
+export type ProviderChoice = { kind: "gemini"; apiKey: string; model: string } | { kind: "none" };
 
 /** Gemini هو المزوّد الوحيد المدعوم. */
 export function resolveProvider(): ProviderChoice {
   const apiKey = (
-    process.env["GEMINI_API_KEY"] || process.env["GOOGLE_GENERATIVE_AI_API_KEY"] || ""
+    process.env["GEMINI_API_KEY"] ||
+    process.env["GOOGLE_GENERATIVE_AI_API_KEY"] ||
+    ""
   ).trim();
   if (!apiKey) return { kind: "none" };
   return {
     kind: "gemini",
     apiKey,
-model: (process.env["GEMINI_MODEL"] || "gemini-3.8-flash").trim(),  };
+    model: (process.env["GEMINI_MODEL"] || "gemini-2.5-flash").trim(),
+  };
 }
