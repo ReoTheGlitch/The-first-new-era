@@ -106,7 +106,7 @@ export function CommandPalette() {
             className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
             aria-label="بحث سريع"
           />
-          <kbd className="hidden rounded-xs border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground sm:inline">
+          <kbd className="hidden rounded-xs border border-border px-1.5 py-0.5 text-xs text-muted-foreground sm:inline">
             Esc
           </kbd>
         </div>
@@ -132,7 +132,7 @@ export function CommandPalette() {
           ))}
         </ul>
 
-        <div className="flex items-center justify-between border-t border-border px-4 py-2 text-[11px] text-muted-foreground">
+        <div className="flex items-center justify-between border-t border-border px-4 py-2 text-xs text-muted-foreground">
           <span>
             <kbd className="rounded-xs border border-border px-1 py-0.5">↑</kbd>
             <kbd className="ms-1 rounded-xs border border-border px-1 py-0.5">↓</kbd>

@@ -221,7 +221,7 @@ function Assistant() {
                   className="min-w-0 flex-1 text-start"
                 >
                   <span className="block truncate text-xs font-medium">{c.title}</span>
-                  <span className="text-[10px] text-muted-foreground">
+                  <span className="text-xs text-muted-foreground">
                     {new Date(c.updated_at).toLocaleDateString("ar-EG")}
                   </span>
                 </button>

@@ -50,7 +50,7 @@ function Stat({
       <div className="min-w-0">
         <p className="text-xs text-muted-foreground">{label}</p>
         <p className="text-2xl font-semibold tabular-nums">{value}</p>
-        {hint && <p className="truncate text-[11px] text-muted-foreground">{hint}</p>}
+        {hint && <p className="truncate text-xs text-muted-foreground">{hint}</p>}
       </div>
     </Card>
   );
@@ -99,7 +99,7 @@ function Dashboard() {
           <div className="grid items-center gap-6 sm:grid-cols-[minmax(0,1fr)_auto]">
             <div className="min-w-0">
               <p className="text-xs text-muted-foreground">لوحة الطالب</p>
-              <h1 className="mt-1 truncate text-3xl font-semibold sm:text-4xl">{me.displayName}</h1>
+              <h1 className="mt-1 truncate text-2xl font-semibold sm:text-4xl">{me.displayName}</h1>
               <p className="mt-3 max-w-lg text-sm text-muted-foreground">
                 {fresh
                   ? "لم تبدأ أي جلسة بعد. اختر مفهومًا وابدأ التدريب."
@@ -159,7 +159,7 @@ function Dashboard() {
               <p className="text-2xl font-semibold tabular-nums">
                 {me.streak > 0 ? `${me.streak} يوم` : "لا يوجد نشاط اليوم"}
               </p>
-              <p className="truncate text-[11px] text-muted-foreground">
+              <p className="truncate text-xs text-muted-foreground">
                 أطول سلسلة: {me.longestStreak}
               </p>
             </div>
@@ -179,7 +179,7 @@ function Dashboard() {
                   style={{ width: `${Math.round(me.level.progress * 100)}%` }}
                 />
               </div>
-              <p className="mt-0.5 text-[11px] text-muted-foreground">
+              <p className="mt-0.5 text-xs text-muted-foreground">
                 {me.level.into} / {me.level.needed} XP • المستوى {me.level.level}
               </p>
             </div>

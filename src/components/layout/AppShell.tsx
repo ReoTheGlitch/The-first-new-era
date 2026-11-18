@@ -40,7 +40,7 @@ function NavLink({
         variant === "sheet" && "gap-3 px-3 py-3 text-base",
         variant === "rail" && "h-12 w-12 justify-center",
         variant === "bottom" &&
-          "min-h-14 flex-1 flex-col justify-center gap-1 text-[11px] data-[status=active]:bg-transparent",
+          "min-h-14 flex-1 flex-col justify-center gap-1 text-xs data-[status=active]:bg-transparent",
       )}
     >
       <span>
@@ -88,10 +88,10 @@ export function AppShell({ children }: { children: ReactNode }) {
               بحث سريع...
             </span>
             <span className="flex gap-1">
-              <kbd className="rounded border border-border px-1 py-0.5 font-sans text-[10px]">
+              <kbd className="rounded border border-border px-1 py-0.5 font-sans text-xs">
                 ⌘
               </kbd>
-              <kbd className="rounded border border-border px-1 py-0.5 font-sans text-[10px]">
+              <kbd className="rounded border border-border px-1 py-0.5 font-sans text-xs">
                 K
               </kbd>
             </span>
@@ -147,7 +147,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   )
                 }
                 aria-label="البحث السريع"
-                className="press hidden min-h-11 items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-[11px] text-muted-foreground sm:flex"
+                className="press hidden min-h-11 items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs text-muted-foreground sm:flex"
               >
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden>
                   <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
@@ -186,7 +186,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         ))}
         <button
           onClick={() => setMoreOpen(true)}
-          className="press flex min-h-14 flex-1 flex-col items-center justify-center gap-1 text-[11px] text-sidebar-foreground/75"
+          className="press flex min-h-14 flex-1 flex-col items-center justify-center gap-1 text-xs text-sidebar-foreground/75"
         >
           <AppIcon name="more" size={22} />
           المزيد

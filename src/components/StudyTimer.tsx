@@ -160,7 +160,7 @@ export function StudyTimer() {
             type="button"
             onClick={() => changeMode(m)}
             className={cn(
-              "flex-1 py-1.5 text-[10px] font-medium transition-colors",
+              "flex-1 py-1.5 text-xs font-medium transition-colors",
               mode === m
                 ? "bg-primary/10 text-primary"
                 : "text-muted-foreground hover:text-foreground",

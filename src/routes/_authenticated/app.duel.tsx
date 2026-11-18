@@ -271,7 +271,7 @@ function LiveDuel({
         <p className="text-sm text-muted-foreground">
           وضع {modeLabel}. شارك الكود مع صديقك، أو انتظر حتى ينضم منافس.
         </p>
-        <p dir="ltr" className="font-display text-5xl font-semibold tracking-[0.3em]">
+        <p dir="ltr" className="font-display text-2xl font-semibold tracking-[0.3em]">
           {state.code}
         </p>
         <button
@@ -352,7 +352,7 @@ function LiveDuel({
           <p className="text-sm text-muted-foreground">
             {state.index === 0 ? `يبدأ تحدي ${modeLabel} خلال` : "الجولة التالية خلال"}
           </p>
-          <p className="font-display text-6xl font-semibold">{Math.ceil(-elapsed)}</p>
+          <p className="font-display text-4xl font-semibold">{Math.ceil(-elapsed)}</p>
           {state.prev && !speed && (
             <Reveal
               prev={state.prev}

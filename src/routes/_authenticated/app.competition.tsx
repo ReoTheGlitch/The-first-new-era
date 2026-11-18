@@ -101,7 +101,7 @@ function BoardRow({ r }: { r: BoardRow }) {
         <span className="min-w-0 flex-1 truncate">
           {r.display_name}
           {r.is_me && (
-            <span className="ms-2 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold text-primary">
+            <span className="ms-2 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-semibold text-primary">
               أنت
             </span>
           )}
@@ -119,7 +119,7 @@ function BoardRow({ r }: { r: BoardRow }) {
           <p className="truncate font-medium">
             {r.display_name}
             {r.is_me && (
-              <span className="ms-2 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold text-primary">
+              <span className="ms-2 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-semibold text-primary">
                 أنت
               </span>
             )}
@@ -222,7 +222,7 @@ function Competition() {
                     <span className="min-w-0 flex-1 truncate">
                       {r.display_name}
                       {r.is_me && (
-                        <span className="ms-2 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                        <span className="ms-2 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-semibold text-primary">
                           أنت
                         </span>
                       )}

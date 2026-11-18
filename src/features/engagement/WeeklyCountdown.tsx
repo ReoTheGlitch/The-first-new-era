@@ -55,7 +55,7 @@ function Segment({ value, label }: { value: number; label: string }) {
   return (
     <span className="flex items-baseline gap-1">
       <span className="text-foreground">{String(value).padStart(2, "0")}</span>
-      <span className="text-[11px] font-medium text-muted-foreground">{label}</span>
+      <span className="text-xs font-medium text-muted-foreground">{label}</span>
     </span>
   );
 }
