@@ -176,7 +176,6 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     font-feature-settings: "ss01", "cv11";
-    font-variant-numeric: tabular-nums;
     overflow-x: hidden;
   }
   h1,

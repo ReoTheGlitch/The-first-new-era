@@ -61,7 +61,7 @@ function Podium({ board }: { board: BoardRow[] }) {
           >
             {r.display_name}
           </p>
-          <p className="text-xs text-muted-foreground">{r.total_xp} XP</p>
+          <p className="text-xs tabular-nums text-muted-foreground">{r.total_xp} XP</p>
           <div
             className="flex w-20 items-center justify-center rounded-t-md font-semibold"
             style={{
@@ -81,7 +81,7 @@ function Podium({ board }: { board: BoardRow[] }) {
 function RankCell({ rank }: { rank: number }) {
   return (
     <span className="flex w-10 shrink-0 items-center justify-center gap-1">
-      <span className="font-semibold text-muted-foreground">{rank}</span>
+      <span className="font-semibold tabular-nums text-muted-foreground">{rank}</span>
       {/* rank-change indicator — static "–" until historical data is available */}
       <span className="text-xs text-muted-foreground/50">–</span>
     </span>
@@ -106,7 +106,7 @@ function BoardRow({ r }: { r: BoardRow }) {
             </span>
           )}
         </span>
-        <span className="font-medium">{r.total_xp} XP</span>
+        <span className="font-medium tabular-nums">{r.total_xp} XP</span>
       </li>
 
       {/* Mobile card */}
@@ -125,7 +125,7 @@ function BoardRow({ r }: { r: BoardRow }) {
             )}
           </p>
         </div>
-        <span className="shrink-0 font-medium">{r.total_xp} XP</span>
+        <span className="shrink-0 font-medium tabular-nums">{r.total_xp} XP</span>
       </li>
     </>
   );
@@ -163,15 +163,17 @@ function Competition() {
       <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-3">
         <Card className="p-4">
           <p className="text-xs text-muted-foreground">نقاطك الإجمالية</p>
-          <p className="text-2xl font-semibold">{me.totalXp}</p>
+          <p className="text-2xl font-semibold tabular-nums">{me.totalXp}</p>
         </Card>
         <Card className="p-4">
           <p className="text-xs text-muted-foreground">مستواك</p>
-          <p className="text-2xl font-semibold">{me.level.level}</p>
+          <p className="text-2xl font-semibold tabular-nums">{me.level.level}</p>
         </Card>
         <Card className="col-span-2 p-4 sm:col-span-1">
           <p className="text-xs text-muted-foreground">ترتيبك العام</p>
-          <p className="text-2xl font-semibold">{board.find((r) => r.is_me)?.rank ?? "—"}</p>
+          <p className="text-2xl font-semibold tabular-nums">
+            {board.find((r) => r.is_me)?.rank ?? "—"}
+          </p>
         </Card>
       </div>
       <Tabs defaultValue="weekly" dir="rtl">

@@ -88,12 +88,8 @@ export function AppShell({ children }: { children: ReactNode }) {
               بحث سريع...
             </span>
             <span className="flex gap-1">
-              <kbd className="rounded border border-border px-1 py-0.5 font-sans text-xs">
-                ⌘
-              </kbd>
-              <kbd className="rounded border border-border px-1 py-0.5 font-sans text-xs">
-                K
-              </kbd>
+              <kbd className="rounded border border-border px-1 py-0.5 font-sans text-xs">⌘</kbd>
+              <kbd className="rounded border border-border px-1 py-0.5 font-sans text-xs">K</kbd>
             </span>
           </button>
           <nav className="flex flex-col gap-1" aria-label="التنقل الرئيسي">
