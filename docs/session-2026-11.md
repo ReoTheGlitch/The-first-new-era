@@ -1,53 +1,90 @@
 # November 2026 session log
 
-Context for anyone picking up where the November 2026 push left off.
+Snapshot of what landed across this push, for anyone picking up next.
 
-## What landed this round
+## Live
 
-1. **External rename to "The first"** across landing, root metadata, PWA
-   manifest, Logo component. Internal Arabic naming preserved via
-   `BRAND_NAME_AR`. Tagline: "تعلم منهجك الدراسي بطريقة تفاعلية".
-2. **Off Supabase, onto Cloudflare D1.** Full schema port
-   (`migrations/0001`–`0008`) applied to `new-era-db`. Custom auth with
-   PBKDF2 WebCrypto + session cookie middleware. Every server function
-   migrated off PostgREST to D1 SQL.
-3. **Off Gemini SDK, onto OpenRouter.** `src/lib/ai/provider.server.ts`
-   hits OpenAI-compatible `/chat/completions`. Default model
-   `google/gemini-2.5-flash`, fallback `google/gemini-2.5-flash-lite`,
-   strict JSON schema for exam generation.
-4. **De-AI-slopped the UI.** Gradients retired across `styles.css` and
-   components (`bg-brand`, `bg-tile`, `text-gradient` utilities are now
-   solid). DailyQuote, "AI-generated" badges, chatbot-style praise,
-   `animate-float` all gone. Community page replaced its three-across
-   icon-card coming-soon grid with one sentence. See
-   [ai-slop-notes.md](./ai-slop-notes.md) for the rule set.
-5. **Streak system** on Africa/Cairo civil clock. `touchStreak(db, userId)`
-   is idempotent per Cairo day; resets on a missed day.
-6. **Weekly competition rounds.** `getOrCreateActiveRound` rotates on
-   first call after each Monday 00:00 Cairo. `WeeklyCountdown.tsx`
-   client ticker renders days / hours / minutes to `ends_at`.
-7. **Grade-12 Egyptian chemistry seed** — real content across chapters 1
-   and 2 (equilibrium, acids & bases), migration 0010.
-8. **Deploy pipeline** now applies pending D1 migrations before every
-   deploy — see [deploy.md](./deploy.md).
+- https://thefirst.mrwinter.org (Cloudflare Worker `new-era-learning`, D1 `new-era-db`, KV `new-era-static`).
+- HTTP → HTTPS 301 at the zone; HSTS `max-age=31536000; includeSubDomains`; full CSP/Permissions-Policy/X-Frame-Options/X-Content-Type-Options/Referrer-Policy from the Worker.
 
-## Known follow-ups
+## Platform shift
 
-- **OpenRouter key.** Add `OPENROUTER_API_KEY` as a worker secret in the
-  Cloudflare dashboard before the AI tutor and exam builder work live.
-- **Teacher review.** All seeded content (physics + chemistry) is
-  `origin='editorial'` and `status='unverified'`. Flip to `verified` only
-  after a subject-matter review.
-- **Password reset.** The Supabase email-based reset flow is gone. A
-  logged-in "change password" server fn is on the roadmap but not built;
-  for now, password changes require admin intervention.
+| | Was | Now |
+|---|---|---|
+| Database | Supabase Postgres | Cloudflare D1 (migrations 0001–0011, 29 tables) |
+| Auth | Supabase Auth | PBKDF2 WebCrypto + hashed-token session cookie; rate-limited sign-up/sign-in |
+| AI | `@google/genai` SDK, Gemini direct | OpenRouter OpenAI-compatible → `google/gemini-2.5-flash` (fallback `-flash-lite`) with strict JSON schema for exams |
+| Analytics | `@vercel/analytics` | removed |
+| Static hosting | Vite preview | Worker + KV asset serving via a thin `env.ASSETS` shim |
+| CI/CD | none | `.github/workflows/deploy.yml` runs tsc/lint/tests + `deploy:cf` on push |
 
-## Files to know
+## Product features shipped
 
-- `src/lib/db/index.server.ts` — D1 adapter + Node/better-sqlite3 fallback.
-- `src/lib/auth/{password,session,require-auth}.server.ts` — auth stack.
-- `src/lib/ai/provider.server.ts` — OpenRouter provider.
-- `src/lib/time/cairo.ts` — Cairo-civil date math.
-- `src/lib/engagement/{streak,competition}.server.ts` — engagement rules.
-- `scripts/cf/{deploy.sh,apply-migrations.mjs,cf-entry.mjs,kv-payload.mjs}`
-  — the full Cloudflare path.
+- "The first" external brand (English) with Arabic kept inside the app. Tagline "تعلم منهجك الدراسي بطريقة تفاعلية".
+- Chemistry book seeded (`migrations/0010_seed_chemistry.sql`): 2 units, 8 lessons, 16 concepts, 100 questions across equilibrium + acids/bases.
+- Streak system on the Africa/Cairo civil clock (`src/lib/engagement/streak.server.ts`): one per Cairo day, wired into practice / exam / tutor message / lesson open.
+- Weekly competition (`competition_rounds` + `competition_scores`): auto-rotates every Monday 00:00 Cairo, live countdown on `/app/competition`.
+- Rate-limited auth: sign-up 5/IP/hour, sign-in 10/IP/15 min + 5/IP+email/15 min. Blocked users see a friendly Arabic minutes-until-retry message.
+- Change-password server fn exists (`src/features/auth/auth.functions.ts`); no change-password UI yet.
+- Service worker caches static assets, routes AI calls around the cache.
+
+## UI refresh
+
+- Direction: Apple-calm. Cool neutral ramp, hairline borders, muted indigo accent used sparingly.
+- OKLCH palette tightened; radii consolidated to **sm / md / lg / full** app-wide (0 `rounded-xl`/`2xl`/`3xl` outside shadcn primitives).
+- Type scale enforced (no arbitrary `text-[Npx]`, max display size `text-4xl`).
+- `shadow-lg`/`shadow-xl` on floating layers replaced with `border + shadow-md`.
+- `tabular-nums` scoped to numeric cells instead of global body.
+- Zero gradients in rendered page, zero emoji in UI (SVG icons throughout), no decorative motion. "AI-generated" badges and chatbot encouragement removed.
+
+## Brand
+
+- New SVG LogoMark (`src/components/brand/LogoMark.tsx`): monoline numeral "1" on a 32×32 grid, `currentColor` strokes.
+- Favicons regenerated from the SVG:
+  - `/favicon.svg` (374 B, scales to any size)
+  - `/favicon.png` 32×32 (525 B)
+  - `/app-icon-192.png` (3.4 KB maskable)
+  - `/app-icon-512.png` (12 KB maskable, down from 139 KB)
+- `docs/brand.md` + `docs/design-study.md` document the system and the research behind it.
+
+## Performance
+
+| Metric | Before | After |
+|---|---|---|
+| Initial entry JS gzipped | 197 KB | **16 KB** |
+| First-paint critical (entry + react + router + query) | 197 KB | ~130 KB gzipped |
+| KaTeX bundling | eager in entry | lazy on demand (77 KB gzip chunk) |
+| Icon payload | 224 KB | 16 KB |
+| Font weights loaded | 6 (Readex Pro) | 6 total across 2 faces (Inter + IBM Plex Sans Arabic, 3 weights each) |
+| `prefers-reduced-motion` | partial | full zero-duration lockdown |
+| Touch targets | mixed | ≥ 44 px on all primary nav/header actions |
+
+## Pipeline and conventions
+
+- Dev branch: `ccr-52216415-px8xos`. Never push to `main`.
+- CI: `.github/workflows/deploy.yml` runs tsc, lint, tests, `deploy:cf` on push.
+- Parent-agent → sub-agent lane discipline documented in `CLAUDE.md`. Sonnet for feature work, Haiku for grep/audit/verify, never Opus or Fable.
+- Migrations: numbered SQLite files in `migrations/`, auto-applied in dev (better-sqlite3) and by `deploy:cf` (via REST API) in prod.
+
+## User-action items still open
+
+1. **`OPENROUTER_API_KEY`** — add as a Cloudflare Worker secret (Workers & Pages → new-era-learning → Settings → Variables and Secrets). Without it the tutor and exam builder return a friendly error; nothing else breaks.
+2. **`CLOUDFLARE_API_TOKEN`** — add as a GitHub repo secret (Settings → Secrets and variables → Actions). Without it the push-to-deploy flow 401s on `deploy:cf`; manual `npm run deploy:cf` from a session with the token works.
+3. **Change-password UI** — the server fn exists; the settings page needs a password-change form.
+4. **Teacher review of seeded content** — every lesson is `origin='editorial'` and `status='unverified'`.
+5. **Turnstile / WAF rules** — mentioned in `docs/security.md` as next-step anti-bot work.
+
+## File map
+
+- `scripts/cf/deploy.sh` — the one-command deploy. Reads token, applies migrations, builds CF preset, uploads to KV, runs wrangler deploy.
+- `scripts/cf/cf-entry.mjs` — Worker entry shim. Serves KV static assets, injects security headers, exposes bindings on `globalThis.__CF_ENV__`.
+- `scripts/cf/apply-migrations.mjs` — numbered migration runner against remote D1.
+- `src/lib/db/index.server.ts` — one D1-shaped adapter with better-sqlite3 fallback.
+- `src/lib/auth/` — password / session helpers + `requireAuth` middleware.
+- `src/lib/ai/provider.server.ts` — OpenRouter OpenAI-compat client.
+- `src/lib/security/` — rate limiter + security headers library.
+- `src/lib/engagement/` — streak + weekly competition logic.
+- `src/lib/time/cairo.ts` — Africa/Cairo civil-clock date math.
+- `src/components/brand/LogoMark.tsx` — the mark.
+- `migrations/0001`–`0011` — schema + seed content + rate limits.
+- `docs/architecture.md | brand.md | content.md | deploy.md | design-study.md | performance.md | security.md | workflow.md` — the reference set.
