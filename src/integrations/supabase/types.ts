@@ -35,6 +35,113 @@ export type Database = {
         };
         Relationships: [];
       };
+      ai_chat_conversations: {
+        Row: {
+          created_at: string;
+          id: string;
+          subject: string | null;
+          title: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          subject?: string | null;
+          title?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          subject?: string | null;
+          title?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      ai_chat_messages: {
+        Row: {
+          content: string;
+          conversation_id: string;
+          created_at: string;
+          id: string;
+          role: string;
+          user_id: string;
+        };
+        Insert: {
+          content: string;
+          conversation_id: string;
+          created_at?: string;
+          id?: string;
+          role: string;
+          user_id: string;
+        };
+        Update: {
+          content?: string;
+          conversation_id?: string;
+          created_at?: string;
+          id?: string;
+          role?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "ai_chat_messages_conversation_id_fkey";
+            columns: ["conversation_id"];
+            isOneToOne: false;
+            referencedRelation: "ai_chat_conversations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      ai_generated_exams: {
+        Row: {
+          answers: Json;
+          completed_at: string | null;
+          created_at: string;
+          difficulty: string;
+          exam_title: string;
+          id: string;
+          questions: Json;
+          score: number | null;
+          subject: string;
+          submitted: boolean;
+          topic: string | null;
+          user_id: string;
+        };
+        Insert: {
+          answers?: Json;
+          completed_at?: string | null;
+          created_at?: string;
+          difficulty: string;
+          exam_title: string;
+          id?: string;
+          questions: Json;
+          score?: number | null;
+          subject: string;
+          submitted?: boolean;
+          topic?: string | null;
+          user_id: string;
+        };
+        Update: {
+          answers?: Json;
+          completed_at?: string | null;
+          created_at?: string;
+          difficulty?: string;
+          exam_title?: string;
+          id?: string;
+          questions?: Json;
+          score?: number | null;
+          subject?: string;
+          submitted?: boolean;
+          topic?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       ai_interactions: {
         Row: {
           created_at: string;

@@ -24,8 +24,15 @@ export default defineConfig(({ command, mode }) => {
       tanstackStart({ server: { entry: "server" } }),
       viteReact(),
       tailwindcss(),
-      // نيترو مطلوب عند البناء فقط
-      ...(command === "build" ? [nitro()] : []),
+      // نيترو مطلوب عند البناء فقط — الهدف الافتراضي Cloudflare Workers
+      ...(command === "build"
+        ? [
+            nitro({
+              preset: process.env["NITRO_PRESET"] || "cloudflare_module",
+              compatibilityDate: "2025-09-01",
+            }),
+          ]
+        : []),
     ],
   };
 });

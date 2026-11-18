@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
   type ErrorComponentProps,
@@ -13,6 +14,21 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
+import { cn } from "@/lib/utils";
+
+/** شريط تقدّم رفيع أعلى الصفحة يظهر أثناء التنقل بين المسارات. */
+function RouteProgress() {
+  const active = useRouterState({ select: (s) => s.status === "pending" });
+  return (
+    <div
+      aria-hidden
+      className={cn(
+        "route-progress pointer-events-none fixed inset-x-0 top-0 z-[100] h-0.5 overflow-hidden transition-opacity duration-300",
+        active ? "opacity-100" : "opacity-0",
+      )}
+    />
+  );
+}
 
 function NotFoundComponent() {
   return (
@@ -131,6 +147,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <RouteProgress />
       <Outlet />
       <Toaster position="top-center" richColors />
     </QueryClientProvider>
