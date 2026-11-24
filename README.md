@@ -1,41 +1,117 @@
-# العصر الجديد الأول
+# العصر الجديد الأول · The First "New Era"
 
-منصة تعليمية لطلاب الثانوية العامة في مصر (فيزياء وكيمياء): دروس، تدريب، مسابقات ومساعد ذكي اختياري.
+An Arabic-language learning platform for Egyptian Grade‑12 students (الثانوية العامة) covering
+**physics and chemistry** — lessons, adaptive practice, AI‑generated exams, a built‑in AI tutor,
+duels, and weekly competitions.
 
-## التشغيل
+> The app UI is in Arabic (RTL). This README is in English for contributors.
 
-1. ثبّت Node.js (الإصدار 20 أو أحدث).
-2. في ملف `.env` ضع `SUPABASE_SERVICE_ROLE_KEY` (من Supabase > Project Settings > API Keys > Secret key).
-3. في Supabase > SQL Editor الصق محتوى `supabase/schema.sql` ثم Run مرة واحدة.
-4. في الطرفية داخل المجلد:
+## Stack
 
-```
+| Layer | Technology |
+|---|---|
+| Framework | [TanStack Start](https://tanstack.com/start) (React 19) + Vite 8 |
+| Styling | Tailwind CSS v4 (OKLCH) + shadcn/ui |
+| Backend | [Supabase](https://supabase.com) — Postgres, Auth, Row‑Level Security |
+| AI | [OpenRouter](https://openrouter.ai) → `google/gemini-2.5-flash` (direct Google Gemini as fallback) |
+| Hosting | [Cloudflare Workers](https://workers.cloudflare.com) via Nitro (`cloudflare_module`) |
+| Math rendering | KaTeX (lazy‑loaded) |
+
+## Features
+
+- **Lessons & concepts** — structured physics/chemistry content with interactive SVG labs.
+- **Adaptive practice** — questions tuned to the student's level and weak topics.
+- **AI tutor** — explains concepts in Arabic with LaTeX math and generated diagrams.
+- **AI exam generator** — multiple‑choice exams by subject/difficulty, auto‑graded.
+- **Gamification** — XP, streaks (Cairo‑local), weekly competitions, 1v1 duels.
+- **Mistakes tracking** — review and reinforce past errors.
+
+## Prerequisites
+
+- Node.js 20+
+- A [Supabase](https://supabase.com) project (free tier works)
+- An [OpenRouter](https://openrouter.ai) API key for the AI features
+
+## Local setup
+
+```bash
+git clone https://github.com/ReoTheGlitch/The-first-new-era
+cd The-first-new-era
 npm install
-npm run dev
+cp .env.example .env     # then fill in the values (see below)
+npm run dev              # http://localhost:3000
 ```
 
-ثم افتح http://localhost:3000
+### Database
 
-## ملاحظات
+In the Supabase **SQL Editor**, run the files in `supabase/` once, in this order:
 
-- لتجربة التسجيل بسهولة: Supabase > Authentication > Sign In / Providers > Email، وأوقف Confirm email أثناء التجربة فقط.
-- المساعد الذكي لا يعمل إلا بعد وضع `GEMINI_API_KEY` في `.env`.
-- لا ترفع ملف `.env` إلى GitHub.
+1. `schema.sql` — core tables, RLS policies, seed data
+2. `ai-persistence.sql` — AI tutor conversations & generated exams
+3. `competition-modes.sql`, `duels.sql` — gamification
+4. `content-physics.sql` — physics lesson/question content
 
-## هيكل المشروع
+> For easy testing, temporarily disable **Confirm email** under Supabase → Authentication → Providers → Email.
 
-- `src/routes`: الصفحات
-- `src/features`: منطق الدروس والتدريب
-- `src/lib/ai`: المساعد الذكي (السيرفر فقط)
-- `src/integrations/supabase`: الاتصال بقاعدة البيانات
-- `supabase/schema.sql`: الجداول وسياسات الأمان وبيانات تجريبية
+## Environment variables
 
+All server‑side keys are read from the environment and are **never** exposed to the browser
+(no `VITE_` prefix). `VITE_`‑prefixed values are inlined into the client bundle at build time.
 
-## Gemini-only AI setup and persistent data
+| Variable | Where | Purpose |
+|---|---|---|
+| `VITE_SUPABASE_URL` | build + client | Supabase project URL |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | build + client | Supabase anon/publishable key |
+| `SUPABASE_URL` | server | Supabase project URL |
+| `SUPABASE_PUBLISHABLE_KEY` | server | Supabase anon/publishable key |
+| `SUPABASE_SERVICE_ROLE_KEY` | server | Service role key (rate limits, admin reads) — **secret** |
+| `OPENROUTER_API_KEY` | server | OpenRouter API key — **secret** |
+| `OPENROUTER_MODEL` | server | Model id (default `google/gemini-2.5-flash`) |
+| `GEMINI_API_KEY` | server | Optional: direct Google Gemini fallback (used only if `OPENROUTER_API_KEY` is empty) |
 
-1. In Google AI Studio, revoke the previously exposed Gemini API key and create a replacement. Never commit the replacement key.
-2. In Vercel Project Settings → Environment Variables, set `GEMINI_API_KEY` and optionally `GEMINI_MODEL` (default: `gemini-2.5-flash`). Remove `ANTHROPIC_API_KEY` and `ANTHROPIC_MODEL` if they exist.
-3. In the Supabase SQL Editor, run `supabase/ai-persistence.sql` once. This creates user-owned tables for tutor conversations/messages and generated exams/results with Row Level Security.
-4. Deploy the updated project. Existing accounts and unrelated tables are not changed by this migration.
+Copy `.env.example` to `.env` and fill it in. **Never commit a real `.env`** — it is gitignored, and
+`.env.example` must stay placeholder‑only.
 
-Claude/Anthropic code and its SDK dependency have been removed. AI chat history and generated exams are stored per authenticated Supabase user.
+## Scripts
+
+| Script | Does |
+|---|---|
+| `npm run dev` | Dev server on :3000 |
+| `npm run build` | Production build (targets Cloudflare Workers) |
+| `npm run lint` | ESLint |
+| `npm run test` | Vitest |
+| `npm run deploy:cf` | Build + deploy to Cloudflare Workers |
+| `npm run cf:preview` | Build + run the Worker locally with `wrangler dev` |
+
+## Deployment (Cloudflare Workers)
+
+The build uses the Nitro `cloudflare_module` preset and auto‑generates `.output/server/wrangler.json`
+(with `nodejs_compat` and the assets binding). Supabase remains the backend — only compute runs on
+Cloudflare, so Row‑Level Security is preserved.
+
+**Option A — GitHub Actions (recommended).** Add these **repo secrets** (Settings → Secrets and
+variables → Actions): `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `VITE_SUPABASE_URL`,
+`VITE_SUPABASE_PUBLISHABLE_KEY`. Pushing to `main` (or a manual run of the **Deploy** workflow)
+builds and deploys.
+
+**Option B — local.** `CLOUDFLARE_API_TOKEN=<token> npm run deploy:cf`
+
+After the first deploy, set the **Worker runtime secrets** in the Cloudflare dashboard (or
+`wrangler secret put <NAME>`): `OPENROUTER_API_KEY`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`,
+`SUPABASE_SERVICE_ROLE_KEY`. Then point your custom domain at the Worker via a Workers Custom Domain.
+
+## Project structure
+
+```
+src/
+  routes/            TanStack Start file-based routes (_authenticated/ = app shell)
+  features/          Domain logic (practice, exams, duel, mistakes, student)
+  lib/ai/            AI tutor: provider factory, OpenRouter/Gemini adapters (server-only)
+  components/        UI (shadcn/ui), brand, labs, layout
+  integrations/      Supabase client, auth middleware, generated DB types
+supabase/            SQL schema, RLS, seed content
+```
+
+## License
+
+No license is set. Add one before redistributing.

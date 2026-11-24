@@ -37,4 +37,11 @@ export default tseslint.config(
     },
   },
   eslintPluginPrettier,
+  {
+    // رسومات المختبر مكتوبة بأرقام فقط دون أنواع، لذا نسمح بـ @ts-nocheck هنا فقط
+    files: ["src/components/labs/lab-engine.ts"],
+    rules: {
+      "@typescript-eslint/ban-ts-comment": "off",
+    },
+  },
 );
